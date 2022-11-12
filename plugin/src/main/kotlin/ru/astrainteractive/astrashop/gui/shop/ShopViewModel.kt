@@ -11,6 +11,8 @@ import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astrashop.domain.models.ShopItemStack
 import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.modules.DataSourceModule
+import ru.astrainteractive.astrashop.modules.TranslationModule
+import ru.astrainteractive.astrashop.utils.AstraPermission
 
 interface PagingProvider {
     val page: Int
@@ -21,7 +23,7 @@ interface PagingProvider {
 class ShopViewModel(private val configName: String, private val pagingProvider: PagingProvider) : ViewModel() {
     val state = MutableStateFlow<ShopListState>(ShopListState.Loading)
     private val dataSource by DataSourceModule
-
+    private val translation by TranslationModule
     private fun onEditStateClicked(state: ShopListState.ListEditMode, e: InventoryClickEvent) {
         if (e.isShiftClick && e.isRightClick && e.clickedInventory?.holder is ShopGUI) {
 
@@ -50,14 +52,6 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
     }
 
     fun ItemStack.isSimple(): Boolean {
-        print("""
-            hasItemMeta: ${hasItemMeta()}\n
-            hasDisplayName: ${itemMeta.hasDisplayName()}\n
-            hasEnchants: ${itemMeta.hasEnchants()}\n
-            hasAttributeModifiers: ${itemMeta.hasAttributeModifiers()}\n
-            hasCustomModelData: ${itemMeta.hasCustomModelData()}\n
-            hasLore: ${itemMeta.hasLore()}\n
-        """.trimIndent())
         return !hasItemMeta() ||
                 (!itemMeta.hasDisplayName()
                         && !itemMeta.hasEnchants()
@@ -70,6 +64,10 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
         when (val state = state.value) {
             is ShopListState.ListEditMode -> onEditStateClicked(state, e)
             is ShopListState.List -> {
+                if (!AstraPermission.EditShop.hasPermission(e.whoClicked)) {
+                    e.whoClicked.sendMessage(translation.noPermission)
+                    return
+                }
                 if (!e.isRightClick) return
                 if (e.clickedInventory?.holder !is ShopGUI) return
                 this.state.value = ShopListState.ListEditMode(state.config, e.slot)

@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.menu.IInventoryButton
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
+import ru.astrainteractive.astrashop.gui.buy.BuyState
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.withMeta
@@ -26,10 +27,10 @@ fun button(
 
 private val translation by TranslationModule
 
-fun BackButton(onClick: (e: InventoryClickEvent) -> Unit): IInventoryButton  = button(
+fun BackButton(onClick: (e: InventoryClickEvent) -> Unit): IInventoryButton = button(
     49,
     ItemStack(Material.PAPER).apply {
-        editMeta { it.setDisplayName("Back") }
+        editMeta { it.setDisplayName(translation.buttonBack) }
     },
     onClick
 )
@@ -38,7 +39,7 @@ val NextButton: IInventoryButton
     get() = button(
         53,
         ItemStack(Material.PAPER).apply {
-            editMeta { it.setDisplayName("Next") }
+            editMeta { it.setDisplayName(translation.menuNextPage) }
         }
     )
 
@@ -46,7 +47,7 @@ val PrevButton: IInventoryButton
     get() = button(
         45,
         ItemStack(Material.PAPER).apply {
-            editMeta { it.setDisplayName("Prev") }
+            editMeta { it.setDisplayName(translation.menuPrevPage) }
         }
     )
 
@@ -60,10 +61,14 @@ val SellInfoButton: IInventoryButton
         setDisplayName(translation.buttonSell)
     })
 
-fun BalanceButton(shopConfig: ShopConfig): IInventoryButton {
+fun BalanceButton(state: BuyState.Loaded? = null): IInventoryButton {
     return button(0, ItemStack(Material.EMERALD).withMeta {
         setDisplayName(translation.buttonInformation)
-        lore = shopConfig.options.lore
+        lore = listOf(
+            translation.shopInfoStock.replace("{stock}", state?.item?.stock?.toString() ?: "0"),
+            translation.shopInfoPrice.replace("{price}", state?.item?.price?.toString() ?: "0"),
+            translation.shopInfoBalance.replace("{balance}", state?.playerBalance?.toString() ?: "0")
+        )
     })
 }
 

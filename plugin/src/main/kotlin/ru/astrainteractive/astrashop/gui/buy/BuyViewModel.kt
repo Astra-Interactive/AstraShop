@@ -2,13 +2,11 @@ package ru.astrainteractive.astrashop.gui.buy
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.architecture.ViewModel
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.ShopItemStack
 import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.modules.DataSourceModule
@@ -33,7 +31,8 @@ class BuyViewModel(
         state.value = BuyState.Loaded(
             item,
             instance.options,
-            instance
+            instance,
+            economy.getBalance(player.uniqueId)?.toInt()?:0
         )
     }
 
@@ -41,7 +40,7 @@ class BuyViewModel(
     fun onBuyClicked(amount: Int) {
         val state = state.value as? BuyState.Loaded ?: return
         val item = state.item
-        if (item.stock<=1){
+        if (item.stock != -1 && item.stock <= 1) {
             player.sendMessage("В магазине недостаточно предметов")
             return
         }
@@ -83,22 +82,22 @@ class BuyViewModel(
 
             else -> throw Exception("Not spigot item")
         }
-        for (i in 0 until amount) {
-            player.inventory.removeItem(itemStack)
-        }
-        val money = amount * item.price
+        val couldNotRemoveAmount = player.inventory.removeItem(itemStack.copy(amount)).map { it.value.amount }.sum()
+        val sellAmount = amount - couldNotRemoveAmount
+        val money = sellAmount * item.price
         economy.addMoney(player.uniqueId, money)
         player.sendMessage("Вы получили $money\$")
 
-        changeStockAmount(+amount)
+        changeStockAmount(+sellAmount)
     }
 
     private fun changeStockAmount(i: Int) = viewModelScope.launch(Dispatchers.IO) {
         val state = state.value as? BuyState.Loaded ?: return@launch
         val item = state.item
-
-        val newAmount = (item.stock + i).coerceAtLeast(1)
-        item.stock = newAmount
+        if (item.stock != -1) {
+            val newAmount = (item.stock + i).coerceAtLeast(1)
+            item.stock = newAmount
+        }
         dataSource.updateShop(state.instance)
         loadItems()
     }

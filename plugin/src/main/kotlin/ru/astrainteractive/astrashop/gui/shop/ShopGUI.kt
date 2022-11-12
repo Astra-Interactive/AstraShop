@@ -8,12 +8,14 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.gui.*
 import ru.astrainteractive.astrashop.gui.buy.BuyGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
+import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.toItemStack
 import ru.astrainteractive.astrashop.utils.withMeta
 
@@ -41,7 +43,7 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
     }
     override val nextPageButton: IInventoryButton = NextButton
     override val prevPageButton: IInventoryButton = PrevButton
-
+    private val translation by TranslationModule
     override val maxItemsAmount: Int
         get() = viewModel.state.value.items.keys.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 0
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
@@ -99,7 +101,8 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
 
     private fun renderEditModeButton() {
         val itemStack = ItemStack(Material.BARRIER).withMeta {
-            setDisplayName("Edit mode")
+            setDisplayName(translation.buttonEditMode)
+            lore = listOf(translation.buttonEditModeExit)
         }
         button(prevPageButton.index + 1,itemStack){
             viewModel.exitEditMode()
@@ -112,9 +115,9 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
             val item = items[index.toString()] ?: continue
             val itemStack = item.toItemStack().withMeta {
                 lore = listOf(
-                    "${ChatColor.WHITE}Stock: ${item.stock}",
-                    "${ChatColor.WHITE}Median: ${item.median}",
-                    "${ChatColor.WHITE}Price: ${item.price}",
+                    translation.shopInfoStock.replace("{stock}",item.stock.toString()),
+                    translation.shopInfoPrice.replace("{price}",item.price.toString()),
+                    if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
                 )
             }
             button(i, itemStack) {

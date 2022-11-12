@@ -7,11 +7,13 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.*
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
+import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.inventoryIndex
 import ru.astrainteractive.astrashop.utils.toItemStack
 import ru.astrainteractive.astrashop.utils.withMeta
@@ -19,7 +21,7 @@ import ru.astrainteractive.astrashop.utils.withMeta
 
 class ShopsGUI(player: Player) : PaginatedMenu(), IClickablePaginated {
     override var clicks: HashMap<Int, (InventoryClickEvent) -> Unit> = HashMap()
-
+    private val translation by TranslationModule
     private val viewModel = ShopsViewModel()
 
     override val playerMenuUtility: IPlayerHolder = object : IPlayerHolder {
@@ -36,7 +38,7 @@ class ShopsGUI(player: Player) : PaginatedMenu(), IClickablePaginated {
     override val prevPageButton: IInventoryButton = PrevButton
     override val maxItemsAmount: Int = viewModel.shops.size
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
-    override var menuTitle: String = "Shops"
+    override var menuTitle: String = translation.menuTitle
     override var page: Int = 0
 
     override fun onInventoryClicked(e: InventoryClickEvent) {

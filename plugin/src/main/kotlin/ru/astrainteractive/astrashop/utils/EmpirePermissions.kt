@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 
 sealed class AstraPermission(val value: String) {
     object Reload : AstraPermission("astra_template.reload")
-    object Damage : AstraPermission("astra_template.damage")
+    object EditShop:AstraPermission("astra_template.edit_shop")
     fun hasPermission(player: CommandSender) = player.hasPermission(value)
 
     /**
