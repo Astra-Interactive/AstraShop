@@ -28,8 +28,14 @@ object ShopItemParser {
     fun saveItem(shopConfig: ShopConfig) {
         val fileManager = shopConfig.fileManager
         val fileConfiguration = fileManager.fileConfiguration
+        fileConfiguration.set("items",null)
         shopConfig.items.forEach { index, item ->
-            val itemSection = fileConfiguration.getConfigurationSection("items.${index}")
+            val path = "items.${index}"
+            if (!fileConfiguration.contains(path))
+                fileConfiguration.createSection(path)
+
+            val itemSection = fileConfiguration.getConfigurationSection(path)
+
             when (item) {
                 is ShopItemStack -> itemSection?.set("itemStack", item.itemStack)
                 is ShopMaterial -> itemSection?.set("material", item.material.name)
@@ -58,7 +64,7 @@ object ShopItemParser {
         return ShopConfig(
             configName = fileManager.configName,
             options = options,
-            items = items
+            items = HashMap(items)
         )
     }
 

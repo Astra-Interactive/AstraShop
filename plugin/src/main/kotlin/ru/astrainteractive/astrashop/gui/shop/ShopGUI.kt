@@ -3,14 +3,14 @@ package ru.astrainteractive.astrashop.gui.shop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.ShopItemStack
-import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.gui.*
 import ru.astrainteractive.astrashop.gui.buy.BuyGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
@@ -21,7 +21,14 @@ import ru.astrainteractive.astrashop.utils.withMeta
 class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMenu(), IClickablePaginated {
     override var clicks: HashMap<Int, (InventoryClickEvent) -> Unit> = HashMap()
 
-    private val viewModel = ShopViewModel(shopConfig)
+    private val pagingProvider = object : PagingProvider {
+        override val page: Int
+            get() = this@ShopGUI.page
+        override val maxItemsPerPage: Int
+            get() = this@ShopGUI.maxItemsPerPage
+
+    }
+    private val viewModel = ShopViewModel(shopConfig.configName, pagingProvider)
 
     override val playerMenuUtility: IPlayerHolder = object : IPlayerHolder {
         override val player: Player = player
@@ -35,11 +42,17 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
     override val nextPageButton: IInventoryButton = NextButton
     override val prevPageButton: IInventoryButton = PrevButton
 
-    override val maxItemsAmount: Int = viewModel.items.keys.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 0
+    override val maxItemsAmount: Int
+        get() = viewModel.state.value.items.keys.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 0
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override val maxItemsPerPage: Int = menuSize.size - AstraMenuSize.XXS.size
-    override var menuTitle: String = viewModel.shopConfig.options.title
+    override var menuTitle: String = shopConfig.options.title
     override var page: Int = 0
+
+    val myClickDetector = DSLEvent.event(InventoryClickEvent::class.java, inventoryEventHandler) { e ->
+        e.isCancelled = true
+        viewModel.onClicked(e)
+    }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         super.onInventoryClicked(e)
@@ -56,35 +69,59 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
     }
 
     override fun onPageChanged() {
-        render()
+        render(viewModel.state.value)
     }
 
     override fun onCreated() {
-        render()
+        viewModel.state.collectOn {
+            println("Collected")
+            render(it)
+        }
     }
 
-    private fun render() {
+    private fun render(state: ShopListState) {
         inventory.clear()
         setManageButtons()
         rememberClick(backPageButton)
-        val items = viewModel.items
+        when (state) {
+            is ShopListState.ListEditMode -> {
+                renderItemList(state.items)
+                renderEditModeButton()
+            }
 
+            is ShopListState.List -> {
+                renderItemList(state.items)
+            }
+
+            ShopListState.Loading -> {}
+        }
+    }
+
+    private fun renderEditModeButton() {
+        val itemStack = ItemStack(Material.BARRIER).withMeta {
+            setDisplayName("Edit mode")
+        }
+        button(prevPageButton.index + 1,itemStack){
+            viewModel.exitEditMode()
+        }.also(::rememberClick).set(inventory)
+    }
+
+    private fun renderItemList(items: Map<String, ShopConfig.ShopItem>) {
         for (i in 0 until maxItemsPerPage) {
             val index = maxItemsPerPage * page + i
             val item = items[index.toString()] ?: continue
-            val itemStack = buildItem(item)
-            button(i,itemStack){
-                onItemClicked(item)
+            val itemStack = item.toItemStack().withMeta {
+                lore = listOf(
+                    "${ChatColor.WHITE}Stock: ${item.stock}",
+                    "${ChatColor.WHITE}Median: ${item.median}",
+                    "${ChatColor.WHITE}Price: ${item.price}",
+                )
+            }
+            button(i, itemStack) {
+                if (it.isLeftClick && !it.isShiftClick && viewModel.state.value is ShopListState.List)
+                    onItemClicked(item)
             }.also(::rememberClick).set(inventory)
         }
-
     }
 
-    private fun buildItem(item: ShopConfig.ShopItem) = item.toItemStack().withMeta {
-        lore = listOf(
-            "${ChatColor.WHITE}Stock: ${item.stock}",
-            "${ChatColor.WHITE}Median: ${item.median}",
-            "${ChatColor.WHITE}Price: ${item.price}",
-        )
-    }
 }

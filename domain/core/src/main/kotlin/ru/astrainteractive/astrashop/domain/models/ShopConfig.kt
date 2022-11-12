@@ -3,7 +3,7 @@ package ru.astrainteractive.astrashop.domain.models
 data class ShopConfig(
     val configName: String,
     val options: Options,
-    val items: Map<String, ShopItem>
+    val items: HashMap<String, ShopItem>
 ) {
     data class Options(
         val lore: List<String>,

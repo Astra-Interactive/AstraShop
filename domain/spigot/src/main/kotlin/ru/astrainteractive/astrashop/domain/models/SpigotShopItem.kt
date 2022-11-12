@@ -5,21 +5,21 @@ import org.bukkit.inventory.ItemStack
 
 data class ShopItemStack(
     override val itemIndex: Int,
-    override val median: Double,
-    override var stock: Int,
-    override val price: Double,
-    override val priceMax: Double,
-    override val priceMin: Double,
+    override val median: Double = -1.0,
+    override var stock: Int = -1,
+    override val price: Double = -1.0,
+    override val priceMax: Double = -1.0,
+    override val priceMin: Double = -1.0,
     val itemStack: ItemStack,
 ) : ShopConfig.ShopItem
 
 data class ShopMaterial(
     override val itemIndex: Int,
-    override val median: Double,
-    override var stock: Int,
-    override val price: Double,
-    override val priceMax: Double,
-    override val priceMin: Double,
+    override val median: Double = -1.0,
+    override var stock: Int = -1,
+    override val price: Double = -1.0,
+    override val priceMax: Double = -1.0,
+    override val priceMin: Double = -1.0,
     val material: Material
 ) : ShopConfig.ShopItem
 
