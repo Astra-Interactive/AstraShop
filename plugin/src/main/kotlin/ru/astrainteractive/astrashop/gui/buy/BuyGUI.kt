@@ -40,15 +40,8 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, player: Player) 
 
 
     override fun onCreated() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.state.collectLatest {
-                println("Collected")
-                withContext(Dispatchers.BukkitMain){
-                    render(it)
-                    println("Rendered")
-                }
-            }
-            println("Collection stopped")
+        viewModel.state.collectOn {
+            render(it)
         }
     }
 

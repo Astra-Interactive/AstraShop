@@ -3,6 +3,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.commands.DSLCommand
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.utils.registerCommand
 import ru.astrainteractive.astrashop.commands.*
@@ -27,13 +28,19 @@ class CommandManager {
      */
     init {
         reload()
-        AstraLibs.registerCommand("shop") { sender, _ ->
-            (sender as? Player)?.let {
+        DSLCommand("shop") {
+            if (args.isNotEmpty()) (sender as? Player)?.let {
                 PluginScope.launch(Dispatchers.IO) {
                     ShopsGUI(it).open()
                 }
             }
-
+            argument(
+                index = 0,
+                parser = { it },
+                onResult = {
+                    sender.sendMessage("Открытие по названию еще не сделано :(")
+                }
+            )
         }
     }
 

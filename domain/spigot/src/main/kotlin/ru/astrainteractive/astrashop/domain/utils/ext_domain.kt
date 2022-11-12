@@ -34,7 +34,6 @@ public inline fun <T, K> ConfigurationSection.associate(
 }
 
 fun getFilesList() = AstraLibs.instance.dataFolder.listFiles().map {
-    println(it.absolutePath)
     it
 }
 
