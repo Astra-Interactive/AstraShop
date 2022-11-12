@@ -20,17 +20,11 @@ import ru.astrainteractive.astrashop.utils.toItemStack
 import ru.astrainteractive.astrashop.utils.withMeta
 
 
-class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMenu(), IClickablePaginated {
+class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMenu(), IClickablePaginated,
+    PagingProvider {
     override var clicks: HashMap<Int, (InventoryClickEvent) -> Unit> = HashMap()
 
-    private val pagingProvider = object : PagingProvider {
-        override val page: Int
-            get() = this@ShopGUI.page
-        override val maxItemsPerPage: Int
-            get() = this@ShopGUI.maxItemsPerPage
-
-    }
-    private val viewModel = ShopViewModel(shopConfig.configName, pagingProvider)
+    private val viewModel = ShopViewModel(shopConfig.configName, this)
 
     override val playerMenuUtility: IPlayerHolder = object : IPlayerHolder {
         override val player: Player = player
@@ -60,10 +54,6 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
         super.onInventoryClicked(e)
         e.isCancelled = true
         handleClick(e)
-    }
-
-    private fun onItemClicked(it: ShopConfig.ShopItem) = lifecycleScope.launch(Dispatchers.IO) {
-        BuyGUI(shopConfig, it, playerMenuUtility.player).open()
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
@@ -104,7 +94,7 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
             setDisplayName(translation.buttonEditMode)
             lore = listOf(translation.buttonEditModeExit)
         }
-        button(prevPageButton.index + 1,itemStack){
+        button(prevPageButton.index + 1, itemStack) {
             viewModel.exitEditMode()
         }.also(::rememberClick).set(inventory)
     }
@@ -115,14 +105,16 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
             val item = items[index.toString()] ?: continue
             val itemStack = item.toItemStack().withMeta {
                 lore = listOf(
-                    translation.shopInfoStock.replace("{stock}",item.stock.toString()),
-                    translation.shopInfoPrice.replace("{price}",item.price.toString()),
+                    translation.shopInfoStock.replace("{stock}", item.stock.toString()),
+                    translation.shopInfoPrice.replace("{price}", item.price.toString()),
                     if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
                 )
             }
             button(i, itemStack) {
                 if (it.isLeftClick && !it.isShiftClick && viewModel.state.value is ShopListState.List)
-                    onItemClicked(item)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        BuyGUI(shopConfig, item, playerMenuUtility.player).open()
+                    }
             }.also(::rememberClick).set(inventory)
         }
     }

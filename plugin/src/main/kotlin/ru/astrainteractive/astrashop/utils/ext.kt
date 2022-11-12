@@ -9,6 +9,7 @@ import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import java.util.*
+
 fun ShopsGUI.inventoryIndex(i: Int) = i + maxItemsPerPage * page
 
 fun IEconomyProvider.hasAtLeast(amount: Number, uuid: UUID): Boolean {
@@ -29,6 +30,7 @@ fun ItemStack.copy(amount: Int = this.amount) = clone().apply {
 fun ItemStack.withMeta(block: ItemMeta.() -> Unit): ItemStack = this.apply {
     editMeta(block)
 }
+
 fun ShopConfig.TitleItem.toItemStack(): ItemStack {
     val titleItem = this as SpigotTitleItem
     return ItemStack(titleItem.material).withMeta {
@@ -36,4 +38,21 @@ fun ShopConfig.TitleItem.toItemStack(): ItemStack {
         setCustomModelData(titleItem.customModelData)
         this.lore = titleItem.lore
     }
+}
+
+fun ItemStack.isSimple(): Boolean {
+    return !hasItemMeta() ||
+            (!itemMeta.hasDisplayName()
+                    && !itemMeta.hasEnchants()
+                    && !itemMeta.hasAttributeModifiers()
+                    && !itemMeta.hasCustomModelData()
+                    && !itemMeta.hasLore())
+}
+
+fun ItemStack.asShopItem(index:Int): ShopConfig.ShopItem {
+    return if (isSimple()) ShopMaterial(
+        itemIndex = index,
+        material = type
+    ) else ShopItemStack(itemIndex = index, itemStack = this)
+
 }
