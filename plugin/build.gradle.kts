@@ -1,7 +1,7 @@
 group = Dependencies.group
 version = Dependencies.version
-val pluginName = "AstraTemplate"
-description = "Template plugin from AstraInteractive"
+val pluginName = "AstraShop"
+description = "Shop plugin for EmpireSMP"
 
 plugins {
     java
@@ -17,6 +17,7 @@ java {
     java.sourceCompatibility = JavaVersion.VERSION_1_8
     java.targetCompatibility = JavaVersion.VERSION_17
 }
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -36,7 +37,6 @@ repositories {
     astraLibs(project)
     paperMC(project)
 }
-
 dependencies {
     // Kotlin
     implementation(Dependencies.Libraries.kotlinGradlePlugin)
@@ -66,8 +66,8 @@ dependencies {
     compileOnly(Dependencies.Libraries.vaultAPI)
     compileOnly(Dependencies.Libraries.coreprotect)
     implementation(Dependencies.Libraries.bstats)
-    // Local
-    implementation(project(":domain"))
+    implementation(project(":domain:core"))
+    implementation(project(":domain:spigot"))
 }
 
 tasks {
@@ -119,7 +119,7 @@ tasks.shadowJar {
         include(dependency(Dependencies.Libraries.kotlinxSerializationYaml))
         include(dependency(Dependencies.Libraries.bstats))
     }
-    relocate("org.bstats", "${Dependencies.group}.astratemplate")
+    relocate("org.bstats", "${Dependencies.group}.astrashop")
     isReproducibleFileOrder = true
     mergeServiceFiles()
     dependsOn(configurations)

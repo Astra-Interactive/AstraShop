@@ -1,4 +1,4 @@
-main: ru.astrainteractive.astratemplate.AstraTemplate
+main: ru.astrainteractive.astrashop.AstraShop
 prefix: AstraTemplate
 description: '${description}'
 version: '${version}'
@@ -11,6 +11,7 @@ softdepend: [ ]
 depend: [ ]
 loadbefore: [ ]
 commands:
+  shop:
   add:
   rickandmorty:
   atempreload:
