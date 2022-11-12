@@ -1,22 +1,30 @@
 package ru.astrainteractive.astrashop.gui.buy
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.modules.DataSourceModule
 import ru.astrainteractive.astrashop.utils.copy
 import ru.astrainteractive.astrashop.utils.toItemStack
 import kotlin.math.pow
 
 
-class BuyGUI(shopConfig: ShopConfig, val item: ShopConfig.ShopItem, player: Player) : Menu(), IClickablePaginated {
+class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, player: Player) : Menu(), IClickablePaginated {
 
     override var clicks: HashMap<Int, (InventoryClickEvent) -> Unit> = HashMap()
-
-    private val viewModel = BuyViewModel(shopConfig, item, player)
+    private val dataSource by DataSourceModule
+    private val viewModel = BuyViewModel(shopConfig.configName, item.itemIndex, player)
 
     override val playerMenuUtility: IPlayerHolder = object : IPlayerHolder {
         override val player: Player = player
@@ -32,7 +40,16 @@ class BuyGUI(shopConfig: ShopConfig, val item: ShopConfig.ShopItem, player: Play
 
 
     override fun onCreated() {
-        render()
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.state.collectLatest {
+                println("Collected")
+                withContext(Dispatchers.BukkitMain){
+                    render(it)
+                    println("Rendered")
+                }
+            }
+            println("Collection stopped")
+        }
     }
 
 
@@ -45,7 +62,8 @@ class BuyGUI(shopConfig: ShopConfig, val item: ShopConfig.ShopItem, player: Play
         viewModel.clear()
     }
 
-    private fun setItemList(startIndex: Int, itemBuilder: ItemStack.() -> Unit) {
+    private fun setItemList(startIndex: Int, state: BuyState.Loaded, itemBuilder: ItemStack.() -> Unit) {
+        val item = state.item
         IntRange(startIndex, startIndex + 6).forEach { j ->
             val i = j - startIndex
             val amount = 2.0.pow(i).toInt()
@@ -60,21 +78,29 @@ class BuyGUI(shopConfig: ShopConfig, val item: ShopConfig.ShopItem, player: Play
         }
     }
 
-    private fun render() {
-        forgetClicks()
-        rememberClick(balanceButton)
-        rememberClick(backButton)
-        balanceButton.set(inventory)
-        backButton.set(inventory)
-        buyInfoButton.set(inventory)
-        sellInfoButton.set(inventory)
+    private fun render(buyState: BuyState) {
+        inventory.clear()
+        when (buyState) {
+            is BuyState.Loaded -> {
+                forgetClicks()
+                rememberClick(balanceButton)
+                rememberClick(backButton)
+                balanceButton.set(inventory)
+                backButton.set(inventory)
+                buyInfoButton.set(inventory)
+                sellInfoButton.set(inventory)
 
-        setItemList(2) {
+                setItemList(2, buyState) {
 
+                }
+                setItemList(11, buyState) {
+
+                }
+            }
+
+            BuyState.Loading -> {}
         }
-        setItemList(11) {
 
-        }
     }
 
 

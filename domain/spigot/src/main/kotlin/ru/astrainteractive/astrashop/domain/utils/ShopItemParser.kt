@@ -32,7 +32,7 @@ object ShopItemParser {
             val itemSection = fileConfiguration.getConfigurationSection("items.${index}")
             when (item) {
                 is ShopItemStack -> itemSection?.set("itemStack", item.itemStack)
-                is ShopMaterial -> itemSection?.set("material", item.material)
+                is ShopMaterial -> itemSection?.set("material", item.material.name)
             }
             itemSection?.set("median", item.median)
             itemSection?.set("stock", item.stock)
@@ -40,7 +40,8 @@ object ShopItemParser {
             itemSection?.set("priceMax", item.priceMax)
             itemSection?.set("priceMin", item.priceMin)
         }
-        fileManager.save()
+        fileConfiguration.save(fileManager.configFile)
+//        fileManager.save()
     }
 
     fun parseShopFileOrNull(fileManager: FileManager): ShopConfig? =

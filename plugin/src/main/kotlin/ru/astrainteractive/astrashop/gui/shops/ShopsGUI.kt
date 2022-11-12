@@ -45,9 +45,6 @@ class ShopsGUI(player: Player) : PaginatedMenu(), IClickablePaginated {
         handleClick(e)
     }
 
-    private fun onShopClicked(it: ShopConfig) = lifecycleScope.launch(Dispatchers.IO) {
-        ShopGUI(it, playerMenuUtility.player).open()
-    }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
         viewModel.clear()
@@ -67,9 +64,10 @@ class ShopsGUI(player: Player) : PaginatedMenu(), IClickablePaginated {
             val index = inventoryIndex(i)
             val item = shops.getOrNull(index) ?: continue
             button(i, item.options.titleItem.toItemStack()) {
-                onShopClicked(item)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    ShopGUI(item, playerMenuUtility.player).open()
+                }
             }.also(::rememberClick).set(inventory)
         }
-
     }
 }

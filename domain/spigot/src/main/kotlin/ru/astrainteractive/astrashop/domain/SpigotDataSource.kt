@@ -6,6 +6,7 @@ import ru.astrainteractive.astrashop.domain.utils.ShopItemParser
 import ru.astrainteractive.astrashop.utils.getYmlFiles
 
 class SpigotDataSource : IDataSource {
+
     override suspend fun fetchShopList(): List<ShopConfig> {
         return getYmlFiles()?.mapNotNull(ShopItemParser::parseShopFileOrNull) ?: emptyList()
     }

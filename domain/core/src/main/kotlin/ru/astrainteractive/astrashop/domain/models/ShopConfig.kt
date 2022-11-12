@@ -18,7 +18,7 @@ data class ShopConfig(
     interface ShopItem {
         val itemIndex: Int
         val median: Double
-        val stock: Int
+        var stock: Int
         val price: Double
         val priceMax: Double
         val priceMin: Double
