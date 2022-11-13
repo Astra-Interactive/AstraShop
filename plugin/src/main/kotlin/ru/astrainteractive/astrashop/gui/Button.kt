@@ -65,9 +65,9 @@ fun BalanceButton(state: BuyState.Loaded? = null): IInventoryButton {
     return button(0, ItemStack(Material.EMERALD).withMeta {
         setDisplayName(translation.buttonInformation)
         lore = listOf(
-            translation.shopInfoStock.replace("{stock}", state?.item?.stock?.toString() ?: "0"),
-            translation.shopInfoPrice.replace("{price}", state?.item?.price?.toString() ?: "0"),
-            translation.shopInfoBalance.replace("{balance}", state?.playerBalance?.toString() ?: "0")
+            translation.shopInfoStock(state?.item?.stock?:0),
+            translation.shopInfoPrice(state?.item?.price?:0),
+            translation.shopInfoBalance(state?.playerBalance?:0)
         )
     })
 }

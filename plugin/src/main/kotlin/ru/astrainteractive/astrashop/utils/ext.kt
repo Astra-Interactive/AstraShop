@@ -1,7 +1,9 @@
 package ru.astrainteractive.astrashop.utils
 
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import ru.astrainteractive.astralibs.menu.IPlayerHolder
 import ru.astrainteractive.astralibs.utils.economy.IEconomyProvider
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.ShopItemStack
@@ -39,6 +41,7 @@ fun ShopConfig.TitleItem.toItemStack(): ItemStack {
         this.lore = titleItem.lore
     }
 }
+
 
 fun ItemStack.isSimple(): Boolean {
     return !hasItemMeta() ||

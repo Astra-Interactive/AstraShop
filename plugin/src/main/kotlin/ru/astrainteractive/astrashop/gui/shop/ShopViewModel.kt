@@ -6,16 +6,19 @@ import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.architecture.ViewModel
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astrashop.domain.models.ShopItemStack
-import ru.astrainteractive.astrashop.domain.models.ShopMaterial
+import ru.astrainteractive.astrashop.gui.buy.BuyGUI
+import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
+import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
+import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import ru.astrainteractive.astrashop.modules.DataSourceModule
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.AstraPermission
 import ru.astrainteractive.astrashop.utils.asShopItem
-import ru.astrainteractive.astrashop.utils.isSimple
 
 class ShopViewModel(private val configName: String, private val pagingProvider: PagingProvider) : ViewModel() {
     val state = MutableStateFlow<ShopListState>(ShopListState.Loading)
+    val maxItemsAmount: Int
+        get() = state.value.items.keys.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 0
     private val dataSource by DataSourceModule
     private val translation by TranslationModule
 
@@ -64,7 +67,7 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
     }
 
 
-    fun onClicked(e: InventoryClickEvent) {
+    private fun onEditModeClick(e: InventoryClickEvent) {
         when (val state = state.value) {
             is ShopListState.ListEditMode -> onEditStateClicked(state, e)
             is ShopListState.List -> startEditMode(state, e)
@@ -72,10 +75,22 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
         }
     }
 
-
-    fun exitEditMode() {
+    private fun exitEditMode() {
         val state = state.value as? ShopListState.ListEditMode ?: return
         this.state.value = ShopListState.List(state.config)
+    }
+
+    fun onIntent(intent: ShopIntent) = viewModelScope.launch(Dispatchers.IO) {
+        when (intent) {
+            is ShopIntent.OpenShops -> ShopsGUI(intent.playerHolder.player).open()
+            is ShopIntent.OpenBuyGui -> {
+                if (!intent.isValid()) return@launch
+                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder.player)
+            }
+
+            ShopIntent.ExitEditMode -> exitEditMode()
+            is ShopIntent.EditModeClick -> onEditModeClick(intent.e)
+        }
     }
 
     init {

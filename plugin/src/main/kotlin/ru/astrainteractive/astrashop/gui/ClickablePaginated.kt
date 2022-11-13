@@ -2,19 +2,18 @@ package ru.astrainteractive.astrashop.gui
 
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.menu.IInventoryButton
-import ru.astrainteractive.astralibs.menu.PaginatedMenu
 
-interface IClickablePaginated {
-    var clicks: HashMap<Int, (InventoryClickEvent) -> Unit>
+class ClickListener {
+    private var clicks: HashMap<Int, (InventoryClickEvent) -> Unit> = HashMap()
 
-    fun rememberClick(button: IInventoryButton) {
+    fun remember(button: IInventoryButton) {
         clicks[button.index] = button.onClick
     }
 
-    fun forgetClicks() {
+    fun clear() {
         clicks.clear()
     }
-    fun handleClick(e:InventoryClickEvent){
+    fun handle(e:InventoryClickEvent){
         clicks[e.slot]?.invoke(e)
     }
 }

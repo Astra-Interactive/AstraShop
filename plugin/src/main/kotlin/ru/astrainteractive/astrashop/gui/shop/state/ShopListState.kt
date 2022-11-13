@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.gui.shop
+package ru.astrainteractive.astrashop.gui.shop.state
 
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 
