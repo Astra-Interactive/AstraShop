@@ -13,6 +13,7 @@ import ru.astrainteractive.astrashop.gui.*
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.modules.TranslationModule
+import ru.astrainteractive.astrashop.utils.AstraPermission
 import ru.astrainteractive.astrashop.utils.toItemStack
 import ru.astrainteractive.astrashop.utils.withMeta
 
@@ -66,6 +67,7 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
 
 
     private fun renderEditModeButton() {
+        if (!AstraPermission.EditShop.hasPermission(playerMenuUtility.player)) return
         val itemStack = when (viewModel.state.value) {
             is ShopListState.Loading, is ShopListState.List -> ItemStack(Material.LIGHT).withMeta {
                 setDisplayName(translation.buttonEditModeDisabled)
