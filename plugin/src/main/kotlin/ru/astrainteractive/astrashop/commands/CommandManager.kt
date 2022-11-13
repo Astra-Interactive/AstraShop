@@ -29,7 +29,7 @@ class CommandManager {
     init {
         reload()
         DSLCommand("shop") {
-            if (args.isNotEmpty()) (sender as? Player)?.let {
+            if (args.isEmpty()) (sender as? Player)?.let {
                 PluginScope.launch(Dispatchers.IO) {
                     ShopsGUI(it).open()
                 }

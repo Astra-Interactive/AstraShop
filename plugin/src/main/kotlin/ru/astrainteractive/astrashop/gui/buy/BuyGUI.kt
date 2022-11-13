@@ -1,5 +1,7 @@
 package ru.astrainteractive.astrashop.gui.buy
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -8,6 +10,7 @@ import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.modules.DataSourceModule
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.copy
@@ -48,10 +51,9 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, player: Player) 
     }
 
 
-
     private fun setActionButton(type: BuyType, i: Int, state: BuyState.Loaded) {
         val amount = 2.0.pow(i).toInt()
-        if (state.item.stock != -1 && state.item.stock < amount) return
+        if (type == BuyType.BUY && state.item.stock != -1 && state.item.stock < amount) return
         val totalPrice = (amount * state.item.price).toInt()
 
         val title = when (type) {
@@ -73,20 +75,23 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, player: Player) 
                 BuyType.BUY -> viewModel.onBuyClicked(amount)
                 BuyType.SELL -> viewModel.onSellClicked(amount)
             }
-        }
+        }.also(clickListener::remember).set(inventory)
     }
 
     private fun render(buyState: BuyState) {
         inventory.clear()
+        clickListener.clear()
+
         when (buyState) {
             is BuyState.Loaded -> {
-                clear()
                 clickListener.remember(balanceButton)
                 clickListener.remember(backButton)
+
                 balanceButton.set(inventory)
                 backButton.set(inventory)
                 buyInfoButton.set(inventory)
                 sellInfoButton.set(inventory)
+
                 for (i in 0 until 7) {
                     setActionButton(BuyType.SELL, i, buyState)
                     setActionButton(BuyType.BUY, i, buyState)

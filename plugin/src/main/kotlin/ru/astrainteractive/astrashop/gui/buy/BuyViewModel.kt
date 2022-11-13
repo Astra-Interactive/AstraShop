@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.architecture.ViewModel
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.domain.models.ShopItemStack
 import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.modules.DataSourceModule
@@ -24,21 +25,21 @@ class BuyViewModel(
     private val economy by EconomyModule
     private val dataSource by DataSourceModule
     val state = MutableStateFlow<BuyState>(BuyState.Loading)
-    private fun loadItems() = viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun loadItems(){
+        state.value = BuyState.Loading
         val instance = dataSource.fetchShop(configName)
         val item = instance.items[itemIndex.toString()]!!
-        state.value = BuyState.Loading
         state.value = BuyState.Loaded(
             item,
             instance.options,
             instance,
-            economy.getBalance(player.uniqueId)?.toInt()?:0
+            economy.getBalance(player.uniqueId)?.toInt() ?: 0
         )
     }
 
 
     fun onBuyClicked(amount: Int) {
-        val state = state.value as? BuyState.Loaded ?: return
+        val state = state.value.asState<BuyState.Loaded>() ?: return
         val item = state.item
         if (item.stock != -1 && item.stock <= 1) {
             player.sendMessage("В магазине недостаточно предметов")
@@ -61,7 +62,7 @@ class BuyViewModel(
     }
 
     fun onSellClicked(amount: Int) {
-        val state = state.value as? BuyState.Loaded ?: return
+        val state = state.value.asState<BuyState.Loaded>() ?: return
         val item = state.item
         val itemStack = when (item) {
             is ShopItemStack -> {
@@ -103,6 +104,6 @@ class BuyViewModel(
     }
 
     init {
-        loadItems()
+        viewModelScope.launch(Dispatchers.IO) { loadItems() }
     }
 }

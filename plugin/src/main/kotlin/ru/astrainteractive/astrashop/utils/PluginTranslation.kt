@@ -23,10 +23,14 @@ class PluginTranslation : BaseTranslation() {
     val menuNextPage = translationValue("menu.next_page", "#18dbd1След. страница")
     val menuTitle = translationValue("menu.title", "#18dbd1Магазины")
     val menuEdit = translationValue("menu.edit", "#18dbd1Редактировать: ПКМ")
+    val menuDeleteItem = translationValue("menu.delete_item", "#18dbd1Удалить: Shift+ПКМ")
 
 
-    val buttonEditMode = translationValue("buttons.edit_mode", "#db2c18Режим редактирования")
-    val buttonEditModeExit = translationValue("buttons.edit_mode_exit", "#db2c18Выйти: ЛКМ")
+    val buttonEditModeEnabled = translationValue("buttons.edit_mode.enabled", "#db2c18Режим редактирования ВКЛ")
+    val buttonEditModeDisabled = translationValue("buttons.edit_mode.disabled", "#42f596Режим редактирования ВЫКЛ")
+    val buttonEditModeExit = translationValue("buttons.edit_mode.exit", "#db2c18Выйти: ЛКМ")
+    val buttonEditModeEnter = translationValue("buttons.edit_mode.enter", "#42f596Войти: ЛКМ")
+
     val buttonBack = translationValue("buttons.back", "#db2c18Назад")
     val buttonInformation = translationValue("buttons.information", "#18dbd1Подробнее")
 
@@ -43,7 +47,7 @@ class PluginTranslation : BaseTranslation() {
     val buttonBuy = translationValue("buttons.buy", "#18dbd1Купить")
     val buttonSell = translationValue("buttons.sell", "#db2c18Продать")
     private val buttonBuyAmount = translationValue("buttons.buy_amount", "#18dbd1Купить x{amount}")
-    fun buttonBuyAmount(amount: Int) = buttonBuyAmount.replace("{amount}", buttonBuyAmount.toString())
+    fun buttonBuyAmount(amount: Int) = buttonBuyAmount.replace("{amount}", amount.toString())
     private val buttonSellAmount = translationValue("buttons.sell_amount", "#db2c18Продать x{amount}")
     fun buttonSellAmount(amount: Int) = buttonSellAmount.replace("{amount}", amount.toString())
 }

@@ -6,13 +6,13 @@ import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.architecture.ViewModel
 import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.gui.buy.BuyGUI
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import ru.astrainteractive.astrashop.modules.DataSourceModule
 import ru.astrainteractive.astrashop.modules.TranslationModule
-import ru.astrainteractive.astrashop.utils.AstraPermission
 import ru.astrainteractive.astrashop.utils.asShopItem
 
 class ShopViewModel(private val configName: String, private val pagingProvider: PagingProvider) : ViewModel() {
@@ -23,27 +23,49 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
     private val translation by TranslationModule
 
     private fun load() = viewModelScope.launch(Dispatchers.IO) {
+        val oldState = state.value
         state.value = ShopListState.Loading
         val config = dataSource.fetchShop(configName)
-        state.value = ShopListState.List(config)
+        state.value = when (oldState) {
+            is ShopListState.List, is ShopListState.Loading -> ShopListState.List(config)
+            is ShopListState.ListEditMode -> ShopListState.ListEditMode(config)
+        }
     }
 
-    private fun onRemoveItemClicked(state: ShopListState.ListEditMode, e: InventoryClickEvent) {
-        if (!e.isShiftClick && !e.isRightClick && e.clickedInventory?.holder !is ShopGUI) return
-
-        state.config.items.remove(pagingProvider.index(e.slot).toString())
+    private fun onRemoveItemClicked(intent: ShopIntent.DeleteItem) {
+        if (!intent.isValid()) return
+        val state = state.value.asState<ShopListState.List>() ?: return
+        state.config.items.remove(pagingProvider.index(intent.e.slot).toString())
         viewModelScope.launch(Dispatchers.IO) {
             dataSource.updateShop(state.config)
             load()
         }
     }
 
-    private fun onSetItemClicked(state: ShopListState.ListEditMode, e: InventoryClickEvent) {
-        if (e.clickedInventory?.holder is ShopGUI) return
-        val clickedItem = e.currentItem ?: return
+    private fun onSetItemClicked(state: ShopListState.ListEditMode, newEvent: InventoryClickEvent) {
+        val oldEvent = state.clickEvent ?: return
+        val shopItemIndex = pagingProvider.index(oldEvent.slot, page = state.oldClickedItemPage ?: pagingProvider.page)
+        val shopItem = state.config.items[shopItemIndex.toString()]
 
-        val index = pagingProvider.index(state.clickedSlot)
-        state.config.items[index.toString()] = clickedItem.asShopItem(index)
+        val isNewClickOnPlayerInventory = newEvent.clickedInventory?.holder == newEvent.whoClicked.inventory.holder
+
+        if (isNewClickOnPlayerInventory) {
+            val newItem = newEvent.currentItem ?: return
+            state.config.items[shopItemIndex.toString()] = newItem.asShopItem(shopItemIndex)
+        } else {
+            val clickedShopItemIndex = pagingProvider.index(newEvent.slot)
+            val clickedItem = state.config.items[clickedShopItemIndex.toString()]
+
+            if (clickedItem == null)
+                state.config.items.remove(shopItemIndex.toString())
+            else
+                state.config.items[shopItemIndex.toString()] = clickedItem
+
+            if (shopItem == null)
+                state.config.items.remove(clickedShopItemIndex.toString())
+            else
+                state.config.items[clickedShopItemIndex.toString()] = shopItem
+        }
         viewModelScope.launch(Dispatchers.IO) {
             dataSource.updateShop(state.config)
             load()
@@ -51,28 +73,9 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
     }
 
 
-    private fun onEditStateClicked(state: ShopListState.ListEditMode, e: InventoryClickEvent) {
-        onRemoveItemClicked(state, e)
-        onSetItemClicked(state, e)
-    }
-
-    private fun startEditMode(state: ShopListState.List, e: InventoryClickEvent) {
-        if (!AstraPermission.EditShop.hasPermission(e.whoClicked)) {
-            e.whoClicked.sendMessage(translation.noPermission)
-            return
-        }
-        if (!e.isRightClick) return
-        if (e.clickedInventory?.holder !is ShopGUI) return
-        this.state.value = ShopListState.ListEditMode(state.config, e.slot)
-    }
-
-
-    private fun onEditModeClick(e: InventoryClickEvent) {
-        when (val state = state.value) {
-            is ShopListState.ListEditMode -> onEditStateClicked(state, e)
-            is ShopListState.List -> startEditMode(state, e)
-            ShopListState.Loading -> Unit
-        }
+    private fun enterEditMode() {
+        val state = state.value.asState<ShopListState.List>() ?: return
+        this.state.value = ShopListState.ListEditMode(state.config)
     }
 
     private fun exitEditMode() {
@@ -83,13 +86,27 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
     fun onIntent(intent: ShopIntent) = viewModelScope.launch(Dispatchers.IO) {
         when (intent) {
             is ShopIntent.OpenShops -> ShopsGUI(intent.playerHolder.player).open()
+
             is ShopIntent.OpenBuyGui -> {
                 if (!intent.isValid()) return@launch
-                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder.player)
+                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder.player).open()
             }
 
-            ShopIntent.ExitEditMode -> exitEditMode()
-            is ShopIntent.EditModeClick -> onEditModeClick(intent.e)
+            is ShopIntent.ToggleEditModeClick -> {
+                if (state.value is ShopListState.ListEditMode) exitEditMode()
+                else enterEditMode()
+            }
+
+            is ShopIntent.DeleteItem -> onRemoveItemClicked(intent)
+            is ShopIntent.InventoryClick -> {
+                val state = state.value.asState<ShopListState.ListEditMode>() ?: return@launch
+                if (state.clickEvent == null && intent.isShopGUI()) {
+                    this@ShopViewModel.state.value =
+                        state.copy(clickEvent = intent.e, oldClickedItemPage = pagingProvider.page)
+                } else if (state.clickEvent != null) {
+                    onSetItemClicked(state, intent.e)
+                }
+            }
         }
     }
 

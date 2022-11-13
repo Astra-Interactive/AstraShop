@@ -70,9 +70,10 @@ class ShopsGUI(player: Player) : PaginatedMenu() {
     }
 
     private fun render(state: ShopsState = viewModel.state.value) {
-        clear()
-        setManageButtons()
+        inventory.clear()
+        clickListener.clear()
         clickListener.remember(backPageButton)
+        setManageButtons()
 
         when (state) {
             is ShopsState.Loaded -> renderLoadedState(state)

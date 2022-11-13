@@ -41,13 +41,15 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
 
     val myClickDetector = DSLEvent.event(InventoryClickEvent::class.java, inventoryEventHandler) { e ->
         e.isCancelled = true
-        viewModel.onIntent(ShopIntent.EditModeClick(e))
+        if (!listOf(prevPageButton.index + 1,backPageButton.index,prevPageButton.index,nextPageButton.index).contains(e.slot))
+            ShopIntent.InventoryClick(e).also(viewModel::onIntent)
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         super.onInventoryClicked(e)
         e.isCancelled = true
         clickListener.handle(e)
+        viewModel.onIntent(ShopIntent.DeleteItem(e, e.isRightClick, e.isShiftClick))
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
@@ -55,7 +57,7 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
     }
 
     override fun onPageChanged() {
-        render(viewModel.state.value)
+        render()
     }
 
     override fun onCreated() {
@@ -64,12 +66,21 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
 
 
     private fun renderEditModeButton() {
-        val itemStack = ItemStack(Material.BARRIER).withMeta {
-            setDisplayName(translation.buttonEditMode)
-            lore = listOf(translation.buttonEditModeExit)
+        val itemStack = when (viewModel.state.value) {
+            is ShopListState.Loading, is ShopListState.List -> ItemStack(Material.LIGHT).withMeta {
+                setDisplayName(translation.buttonEditModeDisabled)
+                lore = listOf(translation.buttonEditModeEnter)
+            }
+
+            is ShopListState.ListEditMode -> ItemStack(Material.BARRIER).withMeta {
+                setDisplayName(translation.buttonEditModeEnabled)
+                lore = listOf(translation.buttonEditModeExit)
+            }
         }
+
+
         button(prevPageButton.index + 1, itemStack) {
-            viewModel.onIntent(ShopIntent.ExitEditMode)
+            viewModel.onIntent(ShopIntent.ToggleEditModeClick)
         }.also(clickListener::remember).set(inventory)
     }
 
@@ -81,6 +92,7 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
                 lore = listOf(
                     translation.shopInfoStock(item.stock),
                     translation.shopInfoPrice(item.price.toInt()),
+                    translation.menuDeleteItem,
                     if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
                 )
             }
@@ -88,22 +100,24 @@ class ShopGUI(private val shopConfig: ShopConfig, player: Player) : PaginatedMen
                 ShopIntent.OpenBuyGui(
                     shopConfig, item, playerMenuUtility,
                     it.isLeftClick, it.isShiftClick, viewModel.state.value
-                ).also(viewModel::onIntent)
+                ).let(viewModel::onIntent)
             }.also(clickListener::remember).set(inventory)
         }
     }
 
     private fun render(state: ShopListState = viewModel.state.value) {
         inventory.clear()
+        clickListener.clear()
         setManageButtons()
         clickListener.remember(backPageButton)
         when (state) {
             is ShopListState.ListEditMode -> {
-                renderItemList(state.items)
                 renderEditModeButton()
+                renderItemList(state.items)
             }
 
             is ShopListState.List -> {
+                renderEditModeButton()
                 renderItemList(state.items)
             }
 
