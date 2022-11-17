@@ -72,12 +72,12 @@ fun BalanceButton(state: BuyState.Loaded? = null): IInventoryButton {
     })
 }
 
-fun BackToShopButton(shopConfig: ShopConfig, player: Player, lifecycleScope: CoroutineScope): IInventoryButton {
+fun BackToShopButton(shopConfig: ShopConfig, playerHolder: PlayerHolder, lifecycleScope: CoroutineScope): IInventoryButton {
     return button(9, ItemStack(Material.BARRIER).withMeta {
         setDisplayName(translation.buttonBack)
     }) {
         lifecycleScope.launch(Dispatchers.IO) {
-            ShopGUI(shopConfig, player).open()
+            ShopGUI(shopConfig, playerHolder).open()
         }
     }
 }

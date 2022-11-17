@@ -85,11 +85,11 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
 
     fun onIntent(intent: ShopIntent) = viewModelScope.launch(Dispatchers.IO) {
         when (intent) {
-            is ShopIntent.OpenShops -> ShopsGUI(intent.playerHolder.player).open()
+            is ShopIntent.OpenShops -> ShopsGUI(intent.playerHolder).open()
 
             is ShopIntent.OpenBuyGui -> {
                 if (!intent.isValid()) return@launch
-                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder.player).open()
+                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder).open()
             }
 
             is ShopIntent.ToggleEditModeClick -> {

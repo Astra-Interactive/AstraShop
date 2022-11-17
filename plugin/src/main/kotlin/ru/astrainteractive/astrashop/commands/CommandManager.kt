@@ -1,48 +1,10 @@
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.bukkit.entity.Player
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.commands.DSLCommand
-import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.utils.registerCommand
-import ru.astrainteractive.astrashop.commands.*
-import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
-import ru.astrainteractive.astrashop.modules.TranslationModule
+package ru.astrainteractive.astrashop.commands
 
 
-/**
- * Command handler for your plugin
- * It's better to create different executors for different commands
- * @see Reload
- */
-class CommandManager {
-    val translation by TranslationModule
+object CommandManager {
 
-    /**
-     * Here you should declare commands for your plugin
-     *
-     * Commands stored in plugin.yml
-     *
-     * etemp has TabCompleter
-     */
-    init {
+    fun enable() {
         reload()
-        DSLCommand("shop") {
-            if (args.isEmpty()) (sender as? Player)?.let {
-                PluginScope.launch(Dispatchers.IO) {
-                    ShopsGUI(it).open()
-                }
-            }
-            argument(
-                index = 0,
-                parser = { it },
-                onResult = {
-                    sender.sendMessage("Открытие по названию еще не сделано :(")
-                }
-            )
-        }
+        shop()
     }
-
-
 }

@@ -1,6 +1,5 @@
 package ru.astrainteractive.astrashop.commands
 
-import CommandManager
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astralibs.AstraLibs

@@ -19,18 +19,17 @@ import ru.astrainteractive.astrashop.utils.withMeta
 import kotlin.math.pow
 
 
-class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, player: Player) : Menu() {
+class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val playerMenuUtility: PlayerHolder) : Menu() {
 
-    private val viewModel = BuyViewModel(shopConfig.configName, item.itemIndex, player)
+    private val viewModel = BuyViewModel(shopConfig.configName, item.itemIndex, playerMenuUtility.player)
     private val translation by TranslationModule
     private val clickListener = ClickListener()
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XS
     override var menuTitle: String = item.toItemStack().itemMeta.displayName.ifEmpty { item.toItemStack().type.name }
 
-    override val playerMenuUtility = PlayerHolder(player)
 
-    private val backButton = BackToShopButton(shopConfig, player, lifecycleScope)
+    private val backButton = BackToShopButton(shopConfig, playerMenuUtility, lifecycleScope)
     private val buyInfoButton = BuyInfoButton
     private val sellInfoButton = SellInfoButton
     private val balanceButton: IInventoryButton
@@ -54,7 +53,7 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, player: Player) 
     private fun setActionButton(type: BuyType, i: Int, state: BuyState.Loaded) {
         val amount = 2.0.pow(i).toInt()
         if (type == BuyType.BUY && state.item.stock != -1 && state.item.stock < amount) return
-        val totalPrice = (amount * state.item.price).toInt()
+        val totalPrice = (amount * state.item.price).toInt().coerceAtLeast(0)
 
         val title = when (type) {
             BuyType.BUY -> translation.buttonBuyAmount(amount)

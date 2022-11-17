@@ -18,7 +18,7 @@ import ru.astrainteractive.astrashop.utils.inventoryIndex
 import ru.astrainteractive.astrashop.utils.toItemStack
 
 
-class ShopsGUI(player: Player) : PaginatedMenu() {
+class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
 
     private val translation by TranslationModule
     private val viewModel = ShopsViewModel()
@@ -26,12 +26,15 @@ class ShopsGUI(player: Player) : PaginatedMenu() {
 
     override val menuSize: AstraMenuSize = AstraMenuSize.XL
     override var menuTitle: String = translation.menuTitle
-    override var page: Int = 0
+    override var page: Int
+        get() = playerMenuUtility.shopsPage
+        set(value){
+            playerMenuUtility.shopsPage = value
+        }
     override val maxItemsPerPage: Int = menuSize.size - AstraMenuSize.XXS.size
     override val maxItemsAmount: Int
         get() = viewModel.maxItemsAmount
 
-    override val playerMenuUtility = PlayerHolder(player)
 
     override val nextPageButton: IInventoryButton = NextButton
     override val prevPageButton: IInventoryButton = PrevButton
@@ -63,7 +66,7 @@ class ShopsGUI(player: Player) : PaginatedMenu() {
             val item = state.shops.getOrNull(index) ?: continue
             button(i, item.options.titleItem.toItemStack()) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    ShopGUI(item, playerMenuUtility.player).open()
+                    ShopGUI(item, playerMenuUtility).open()
                 }
             }.also(clickListener::remember).set(inventory)
         }
