@@ -25,7 +25,7 @@ data class ShopMaterial(
 
 data class SpigotTitleItem(
     val material: Material,
-    val customModelData: Int,
+    val customModelData: Int = 0,
     val name: String,
-    val lore: List<String>
+    val lore: List<String> = emptyList()
 ) : ShopConfig.TitleItem

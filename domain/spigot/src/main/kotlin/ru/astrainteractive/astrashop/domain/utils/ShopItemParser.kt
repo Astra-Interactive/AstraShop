@@ -7,8 +7,6 @@ import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.ShopItemStack
 import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
-import ru.astrainteractive.astrashop.utils.associate
-import ru.astrainteractive.astrashop.utils.fileManager
 
 object ShopItemParser {
     class ShopParseException(message: String) : Exception(message)

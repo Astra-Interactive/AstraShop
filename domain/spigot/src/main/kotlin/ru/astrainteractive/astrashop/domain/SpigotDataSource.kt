@@ -3,7 +3,7 @@ package ru.astrainteractive.astrashop.domain
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.utils.ShopItemParser
-import ru.astrainteractive.astrashop.utils.getYmlFiles
+import ru.astrainteractive.astrashop.domain.utils.getYmlFiles
 
 class SpigotDataSource : IDataSource {
 

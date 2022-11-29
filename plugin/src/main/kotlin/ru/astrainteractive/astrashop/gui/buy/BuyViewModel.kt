@@ -57,6 +57,7 @@ class BuyViewModel(
                     amount, state.item, state.instance, player
                 )
             )
+            loadItems()
         }
     }
 

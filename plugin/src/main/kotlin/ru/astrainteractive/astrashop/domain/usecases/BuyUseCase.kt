@@ -35,7 +35,7 @@ class BuyUseCase(private val economy: IEconomyProvider) : IUseCase<BuyUseCase.Re
             player.sendMessage("В магазине недостаточно предметов")
             return Result.Failure
         }
-        if (!economy.hasAtLeast(19, player.uniqueId)) {
+        if (!economy.hasAtLeast(item.price, player.uniqueId)) {
             player.sendMessage("Недостаточно денег")
             return Result.Failure
         }

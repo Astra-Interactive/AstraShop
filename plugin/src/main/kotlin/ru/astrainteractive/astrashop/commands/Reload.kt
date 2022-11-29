@@ -4,7 +4,7 @@ import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.utils.registerCommand
-import ru.astrainteractive.astrashop.utils.AstraPermission
+import ru.astrainteractive.astrashop.utils.Permission
 
 /**
  * Reload command handler
@@ -17,7 +17,7 @@ import ru.astrainteractive.astrashop.utils.AstraPermission
  */
 fun CommandManager.reload() = AstraLibs.registerCommand("atempreload") { sender, args ->
     val translation = TranslationModule.value
-    if (!AstraPermission.Reload.hasPermission(sender)) {
+    if (!Permission.Reload.hasPermission(sender)) {
         sender.sendMessage(translation.noPermission)
         return@registerCommand
     }

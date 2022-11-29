@@ -1,7 +1,6 @@
 package ru.astrainteractive.astrashop.gui.shop
 
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
@@ -13,7 +12,7 @@ import ru.astrainteractive.astrashop.gui.*
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.modules.TranslationModule
-import ru.astrainteractive.astrashop.utils.AstraPermission
+import ru.astrainteractive.astrashop.utils.Permission
 import ru.astrainteractive.astrashop.utils.toItemStack
 import ru.astrainteractive.astrashop.utils.withMeta
 
@@ -52,7 +51,8 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
         super.onInventoryClicked(e)
         e.isCancelled = true
         clickListener.handle(e)
-        viewModel.onIntent(ShopIntent.DeleteItem(e, e.isRightClick, e.isShiftClick))
+        if (Permission.EditShop.hasPermission(playerMenuUtility.player))
+            viewModel.onIntent(ShopIntent.DeleteItem(e, e.isRightClick, e.isShiftClick))
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
@@ -69,7 +69,7 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
 
 
     private fun renderEditModeButton() {
-        if (!AstraPermission.EditShop.hasPermission(playerMenuUtility.player)) return
+        if (!Permission.EditShop.hasPermission(playerMenuUtility.player)) return
         val itemStack = when (viewModel.state.value) {
             is ShopListState.Loading, is ShopListState.List -> ItemStack(Material.LIGHT).withMeta {
                 setDisplayName(translation.buttonEditModeDisabled)
@@ -84,7 +84,8 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
 
 
         button(prevPageButton.index + 1, itemStack) {
-            viewModel.onIntent(ShopIntent.ToggleEditModeClick)
+            if (Permission.EditShop.hasPermission(playerMenuUtility.player))
+                viewModel.onIntent(ShopIntent.ToggleEditModeClick)
         }.also(clickListener::remember).set(inventory)
     }
 
@@ -95,7 +96,7 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
             val itemStack = item.toItemStack().withMeta {
                 lore = listOf(
                     translation.shopInfoStock(item.stock),
-                    translation.shopInfoPrice(item.price.toInt()),
+                    translation.shopInfoPrice(item.price),
                     translation.menuDeleteItem,
                     if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
                 )

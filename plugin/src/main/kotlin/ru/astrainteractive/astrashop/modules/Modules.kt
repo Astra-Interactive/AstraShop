@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop.modules
 
+import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.di.module
 import ru.astrainteractive.astralibs.di.reloadable
 import ru.astrainteractive.astralibs.di.value
@@ -27,14 +28,16 @@ val EconomyModule = reloadable<IEconomyProvider> {
 //    VaultEconomyProvider.also { VaultEconomyProvider.onEnable() }
 }
 val BuyInteractorModule = value {
+    val economy: IEconomyProvider by EconomyModule
     BuyInteractor(
-        BuyUseCase(VaultEconomyProvider),
+        BuyUseCase(economy),
         ChangeStockAmountUseCase(DataSourceModule.value)
     )
 }
 val SellInteractorModule = value {
+    val economy: IEconomyProvider by EconomyModule
     SellInteractor(
-        SellUseCase(VaultEconomyProvider),
+        SellUseCase(economy),
         ChangeStockAmountUseCase(DataSourceModule.value)
     )
 }

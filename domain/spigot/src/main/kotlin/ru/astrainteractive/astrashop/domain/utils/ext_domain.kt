@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.utils
+package ru.astrainteractive.astrashop.domain.utils
 
 import org.bukkit.configuration.ConfigurationSection
 import ru.astrainteractive.astralibs.AstraLibs
