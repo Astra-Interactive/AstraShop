@@ -27,7 +27,8 @@ class BuyUseCase(private val economy: IEconomyProvider) : IUseCase<BuyUseCase.Re
         val item = params.shopItem
         val player = params.player
         val amount = params.amount
-        if (item.price <= 0) {
+        val totalPrice = amount*item.price
+        if (totalPrice <= 0) {
             player.sendMessage("Предмет не продается")
             return Result.Failure
         }
@@ -35,11 +36,11 @@ class BuyUseCase(private val economy: IEconomyProvider) : IUseCase<BuyUseCase.Re
             player.sendMessage("В магазине недостаточно предметов")
             return Result.Failure
         }
-        if (!economy.hasAtLeast(item.price, player.uniqueId)) {
+        if (!economy.hasAtLeast(totalPrice, player.uniqueId)) {
             player.sendMessage("Недостаточно денег")
             return Result.Failure
         }
-        if (!economy.takeMoney(player.uniqueId, item.price)) {
+        if (!economy.takeMoney(player.uniqueId, totalPrice)) {
             player.sendMessage("Недостаточно денег")
             return Result.Failure
         }

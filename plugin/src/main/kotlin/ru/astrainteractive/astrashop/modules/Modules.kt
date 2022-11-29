@@ -24,8 +24,8 @@ val TranslationModule = reloadable {
     PluginTranslation()
 }
 val EconomyModule = reloadable<IEconomyProvider> {
-    MockEconomyProvider
-//    VaultEconomyProvider.also { VaultEconomyProvider.onEnable() }
+//    MockEconomyProvider
+    VaultEconomyProvider.also { VaultEconomyProvider.onEnable() }
 }
 val BuyInteractorModule = value {
     val economy: IEconomyProvider by EconomyModule
