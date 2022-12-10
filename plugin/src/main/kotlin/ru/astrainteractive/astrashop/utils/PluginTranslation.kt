@@ -18,10 +18,12 @@ class PluginTranslation : BaseTranslation() {
     val reloadComplete = translationValue("general.reload_complete", "#42f596Перезагрузка успешно завершена")
     val noPermission = translationValue("general.no_permission", "#db2c18У вас нет прав!")
 
+    val itemNotBuying = translationValue("general.item_not_for_buy", "#db2c18Предмет не закупается")
     //Menu
     val menuPrevPage = translationValue("menu.prev_page", "#18dbd1Пред. страница")
     val menuNextPage = translationValue("menu.next_page", "#18dbd1След. страница")
     val menuTitle = translationValue("menu.title", "#18dbd1Магазины")
+    val quickSellTitle = translationValue("menu.quick_sell", "#18dbd1Быстрая продажа")
     val menuEdit = translationValue("menu.edit", "#18dbd1Редактировать: ПКМ")
     val menuDeleteItem = translationValue("menu.delete_item", "#18dbd1Удалить: Shift+ПКМ")
 

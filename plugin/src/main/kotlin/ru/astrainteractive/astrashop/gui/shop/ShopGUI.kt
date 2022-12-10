@@ -42,6 +42,7 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
 
 
     val myClickDetector = DSLEvent.event(InventoryClickEvent::class.java, inventoryEventHandler) { e ->
+        if (e.whoClicked!=playerMenuUtility.player)return@event
         e.isCancelled = true
         if (!listOf(prevPageButton.index + 1,backPageButton.index,prevPageButton.index,nextPageButton.index).contains(e.slot))
             ShopIntent.InventoryClick(e).also(viewModel::onIntent)
@@ -49,6 +50,7 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         super.onInventoryClicked(e)
+        if (e.whoClicked!=playerMenuUtility.player)return
         e.isCancelled = true
         clickListener.handle(e)
         if (Permission.EditShop.hasPermission(playerMenuUtility.player))
