@@ -5,4 +5,9 @@ Advantages:
 - [x] Editable GUI
 - [x] Asynchronous
 
+### Commands:
+/shop - open shop gui
+
+/shop qs - open quick sell menu
+
 More plugins from AstraInteractive [AstraInteractive](https://github.com/Astra-Interactive)
