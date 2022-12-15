@@ -6,7 +6,7 @@ import java.net.URI
 import java.util.*
 
 object Dependencies {
-    const val version = "1.0.0-beta01"
+    const val version = "1.0.0-beta02"
     const val group = "com.astrainteractive"
     const val destinationDirectoryPath = "D:\\Minecraft Servers\\EmpireProjekt_remake\\smp\\plugins"
 

@@ -9,7 +9,7 @@ import ru.astrainteractive.astrashop.gui.PlayerHolder
 import ru.astrainteractive.astrashop.gui.quick_sell.QuickSellGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 
-fun CommandManager.shop() = DSLCommand("shop") {
+fun CommandManager.shop() = DSLCommand("ashop") {
     if (args.isEmpty()) (sender as? Player)?.let {
         PluginScope.launch(Dispatchers.IO) {
             ShopsGUI(PlayerHolder(it)).open()

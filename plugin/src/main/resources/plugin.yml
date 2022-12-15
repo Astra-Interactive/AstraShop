@@ -11,7 +11,7 @@ softdepend: [ ]
 depend: [ ]
 loadbefore: [ ]
 commands:
-  shop:
+  ashop:
   add:
   rickandmorty:
   atempreload:

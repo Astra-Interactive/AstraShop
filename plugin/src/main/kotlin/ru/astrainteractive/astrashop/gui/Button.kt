@@ -64,8 +64,9 @@ val SellInfoButton: IInventoryButton
 fun BalanceButton(state: BuyState.Loaded? = null): IInventoryButton {
     return button(0, ItemStack(Material.EMERALD).withMeta {
         setDisplayName(translation.buttonInformation)
+        val stock = state?.item?.stock?:-1
         lore = listOf(
-            translation.shopInfoStock(state?.item?.stock?:0),
+            translation.shopInfoStock(stock),
             translation.shopInfoPrice(state?.item?.price?:0),
             translation.shopInfoBalance(state?.playerBalance?:0)
         )

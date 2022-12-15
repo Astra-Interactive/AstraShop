@@ -37,10 +37,10 @@ class PluginTranslation : BaseTranslation() {
     val buttonInformation = translationValue("buttons.information", "#18dbd1Подробнее")
 
     private val shopInfoStock = translationValue("buttons.information_stock", "#18dbd1Склад: {stock}")
-    fun shopInfoStock(stock: Int) = shopInfoStock.replace("{stock}", stock.toString())
+    fun shopInfoStock(stock: Int) = shopInfoStock.replace("{stock}", if (stock==-1) "∞" else stock.toString())
 
     private val shopInfoPrice = translationValue("buttons.information_price", "#18dbd1Цена: {price}")
-    fun shopInfoPrice(price: Number) = shopInfoPrice.replace("{price}", price.toString())
+    fun shopInfoPrice(price: Number) = shopInfoPrice.replace("{price}", if (price.toInt()<=0) "-" else price.toString())
 
     private val shopInfoBalance = translationValue("buttons.information_balance", "#18dbd1Баланс: {balance}")
     fun shopInfoBalance(balance: Int) = shopInfoBalance.replace("{balance}", balance.toString())
