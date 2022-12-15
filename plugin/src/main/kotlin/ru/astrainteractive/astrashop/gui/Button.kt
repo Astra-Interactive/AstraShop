@@ -68,6 +68,7 @@ fun BalanceButton(state: BuyState.Loaded? = null): IInventoryButton {
         lore = listOf(
             translation.shopInfoStock(stock),
             translation.shopInfoPrice(state?.item?.price?:0),
+            translation.shopInfoSellPrice(state?.item?.getSellPrice()?:0),
             translation.shopInfoBalance(state?.playerBalance?:0)
         )
     })

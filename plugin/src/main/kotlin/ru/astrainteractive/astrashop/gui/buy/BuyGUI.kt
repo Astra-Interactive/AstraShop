@@ -53,7 +53,8 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
     private fun setActionButton(type: BuyType, i: Int, state: BuyState.Loaded) {
         val amount = 2.0.pow(i).toInt()
         if (type == BuyType.BUY && state.item.stock != -1 && state.item.stock < amount) return
-        val totalPrice = (amount * state.item.price).coerceAtLeast(0.0)
+        val totalPriceBuy  = (amount * state.item.price).coerceAtLeast(0.0)
+        val totalPriceSell  = (amount * state.item.getSellPrice()).coerceAtLeast(0.0)
 
         val title = when (type) {
             BuyType.BUY -> translation.buttonBuyAmount(amount)
@@ -61,8 +62,8 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
         }
 
         val priceDescription = when (type) {
-            BuyType.BUY -> translation.shopInfoPrice(totalPrice)
-            BuyType.SELL -> translation.shopInfoPrice(totalPrice)
+            BuyType.BUY -> translation.shopInfoPrice(totalPriceBuy)
+            BuyType.SELL -> translation.shopInfoPrice(totalPriceSell)
         }
 
         val itemStack = state.item.toItemStack().copy(amount).withMeta {

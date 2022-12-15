@@ -99,6 +99,7 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
                 lore = listOf(
                     translation.shopInfoStock(item.stock),
                     translation.shopInfoPrice(item.price),
+                    translation.shopInfoSellPrice(item.getSellPrice()),
                     translation.menuDeleteItem,
                     if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
                 )

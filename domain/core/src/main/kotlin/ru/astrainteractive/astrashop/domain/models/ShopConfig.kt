@@ -22,5 +22,6 @@ data class ShopConfig(
         val price: Double
         val priceMax: Double
         val priceMin: Double
+        fun getSellPrice() = Math.round(price * 0.4 * 10.0) / 10.0
     }
 }
