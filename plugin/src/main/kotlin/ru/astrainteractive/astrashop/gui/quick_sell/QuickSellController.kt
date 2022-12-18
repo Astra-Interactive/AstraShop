@@ -37,13 +37,9 @@ class QuickSellController : Controller() {
     }
 
     fun isSimilar(shopItem: ShopConfig.ShopItem, itemStack: ItemStack) = when (shopItem) {
-        is ShopMaterial -> {
-            itemStack.isSimilar(ItemStack(shopItem.material))
-        }
+        is ShopMaterial -> itemStack.isSimilar(ItemStack(shopItem.material))
 
-        is ShopItemStack -> {
-            itemStack.isSimilar(shopItem.itemStack)
-        }
+        is ShopItemStack -> itemStack.isSimilar(shopItem.itemStack)
 
         else -> throw NotImplementedError()
     }

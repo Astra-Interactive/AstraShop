@@ -1,6 +1,7 @@
 package ru.astrainteractive.astrashop.domain.usecases
 
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.domain.IUseCase
 import ru.astrainteractive.astralibs.utils.economy.IEconomyProvider
 import ru.astrainteractive.astrashop.asState
@@ -48,9 +49,13 @@ class BuyUseCase(private val economy: IEconomyProvider) : IUseCase<BuyUseCase.Re
         player.sendMessage("Вы потратили $totalPrice\$")
         val itemStack = item.toItemStack().copy(amount)
         val notFittedItems = player.inventory.addItem(itemStack)
-        if (notFittedItems.isEmpty()) return Result.Success(-amount)
+        if (notFittedItems.isEmpty()) {
+            Logger.log("${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice", consolePrint = false,tag="BuyUseCase")
+            return Result.Success(-amount)
+        }
         player.sendMessage("Некоторые предметы не вместились. Они лежат на полу")
         player.location.world.dropItemNaturally(player.location, itemStack.copy(notFittedItems.size))
+        Logger.log("${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice", consolePrint = false,tag="BuyUseCase")
         return Result.Success(-amount)
     }
 

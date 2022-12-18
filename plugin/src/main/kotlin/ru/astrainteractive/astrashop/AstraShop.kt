@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop
 
+import org.bukkit.Bukkit
 import ru.astrainteractive.astrashop.commands.CommandManager
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import org.bukkit.event.HandlerList
@@ -36,6 +37,9 @@ class AstraShop : JavaPlugin() {
     override fun onDisable() {
         HandlerList.unregisterAll(this)
         GlobalEventManager.onDisable()
+        Bukkit.getOnlinePlayers().forEach {
+            it.closeInventory()
+        }
     }
 
     /**
@@ -44,6 +48,9 @@ class AstraShop : JavaPlugin() {
     fun reloadPlugin() {
         Files.configFile.reload()
         TranslationModule.reload()
+        Bukkit.getOnlinePlayers().forEach {
+            it.closeInventory()
+        }
     }
 
 }

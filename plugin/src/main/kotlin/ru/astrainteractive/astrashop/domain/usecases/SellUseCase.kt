@@ -2,6 +2,7 @@ package ru.astrainteractive.astrashop.domain.usecases
 
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.domain.IUseCase
 import ru.astrainteractive.astralibs.utils.economy.IEconomyProvider
 import ru.astrainteractive.astrashop.asState
@@ -59,6 +60,7 @@ class SellUseCase(private val economy: IEconomyProvider) : IUseCase<SellUseCase.
         val money =  item.calculateSellPrice(sellAmount)
         economy.addMoney(player.uniqueId, money)
         player.sendMessage("Вы получили $money\$")
+        Logger.log("${player.name} sold ${sellAmount} of ${itemStack.type.name} for $money", consolePrint = false,tag="BuyUseCase")
         return Result.Success(sellAmount)
     }
 

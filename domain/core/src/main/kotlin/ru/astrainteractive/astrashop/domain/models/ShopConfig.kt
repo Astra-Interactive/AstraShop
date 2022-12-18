@@ -21,8 +21,8 @@ data class ShopConfig(
         val itemIndex: Int
         val median: Double
         var stock: Int
-        val buyPrice: Double
-        val sellPrice: Double
+        var buyPrice: Double
+        var sellPrice: Double
         val priceMax: Double
         val priceMin: Double
 
