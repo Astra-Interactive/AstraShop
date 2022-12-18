@@ -30,7 +30,7 @@ class SellUseCase(private val economy: IEconomyProvider) : IUseCase<SellUseCase.
         val item = params.shopItem
         val player = params.player
         val amount = params.amount
-        if (item.getSellPrice() <= 0) {
+        if (item.calculateSellPrice(amount) <= 0) {
             player.sendMessage("Предмет не закупается")
             return Result.Failure
         }
@@ -55,7 +55,8 @@ class SellUseCase(private val economy: IEconomyProvider) : IUseCase<SellUseCase.
         }
         val couldNotRemoveAmount = player.inventory.removeItem(itemStack.copy(amount)).map { it.value.amount }.sum()
         val sellAmount = amount - couldNotRemoveAmount
-        val money = sellAmount * item.getSellPrice()
+
+        val money =  item.calculateSellPrice(sellAmount)
         economy.addMoney(player.uniqueId, money)
         player.sendMessage("Вы получили $money\$")
         return Result.Success(sellAmount)

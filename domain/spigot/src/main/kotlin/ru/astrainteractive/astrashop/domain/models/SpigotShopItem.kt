@@ -7,9 +7,10 @@ data class ShopItemStack(
     override val itemIndex: Int,
     override val median: Double = -1.0,
     override var stock: Int = -1,
-    override val price: Double = -1.0,
-    override val priceMax: Double = -1.0,
-    override val priceMin: Double = -1.0,
+    override val buyPrice: Double = -1.0,
+    override val sellPrice: Double = -1.0,
+    override val priceMax: Double = Double.MAX_VALUE,
+    override val priceMin: Double = 0.0,
     val itemStack: ItemStack,
 ) : ShopConfig.ShopItem
 
@@ -17,9 +18,10 @@ data class ShopMaterial(
     override val itemIndex: Int,
     override val median: Double = -1.0,
     override var stock: Int = -1,
-    override val price: Double = -1.0,
-    override val priceMax: Double = -1.0,
-    override val priceMin: Double = -1.0,
+    override val buyPrice: Double = -1.0,
+    override val sellPrice: Double = -1.0,
+    override val priceMax: Double = Double.MAX_VALUE,
+    override val priceMin: Double = 0.0,
     val material: Material
 ) : ShopConfig.ShopItem
 

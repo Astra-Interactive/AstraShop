@@ -7,6 +7,7 @@ import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.ShopItemStack
 import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
+import kotlin.math.max
 
 object ShopItemParser {
     class ShopParseException(message: String) : Exception(message)
@@ -40,7 +41,8 @@ object ShopItemParser {
             }
             itemSection?.set("median", item.median)
             itemSection?.set("stock", item.stock)
-            itemSection?.set("price", item.price)
+            itemSection?.set("buyPrice", item.buyPrice)
+            itemSection?.set("sellPrice", item.sellPrice)
             itemSection?.set("priceMax", item.priceMax)
             itemSection?.set("priceMin", item.priceMin)
         }
@@ -98,15 +100,18 @@ object ShopItemParser {
         val itemIndex = s.name.toIntOrNull() ?: throw ShopParseException("Item in items.<item> should be number!")
         val median = s.getDouble("median", 0.0)
         val stock = s.getInt("stock", -1)
-        val price = s.getDouble("price", 0.0)
-        val minPrice = s.getDouble("priceMin", price).coerceAtMost(price)
-        val maxPrice = s.getDouble("priceMax", price).coerceAtLeast(price)
+        val buyPrice = s.getDouble("buyPrice", 0.0)
+        val sellPrice = s.getDouble("sellPrice", 0.0)
+        val buySellMaxPrice = max(buyPrice,sellPrice)
+        val minPrice = s.getDouble("priceMin", 0.0).coerceAtMost(buySellMaxPrice)
+        val maxPrice = s.getDouble("priceMax", Double.MAX_VALUE).coerceAtLeast(buySellMaxPrice)
         if (itemStack != null)
             return ShopItemStack(
                 itemIndex = itemIndex,
                 median = median,
                 stock = stock,
-                price = price,
+                buyPrice = buyPrice,
+                sellPrice = sellPrice,
                 priceMax = maxPrice,
                 priceMin = minPrice,
                 itemStack = itemStack
@@ -116,7 +121,8 @@ object ShopItemParser {
                 itemIndex = itemIndex,
                 median = median,
                 stock = stock,
-                price = price,
+                buyPrice = buyPrice,
+                sellPrice = sellPrice,
                 priceMax = maxPrice,
                 priceMin = minPrice,
                 material = material

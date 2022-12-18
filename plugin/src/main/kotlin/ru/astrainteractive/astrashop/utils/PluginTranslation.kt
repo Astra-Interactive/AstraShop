@@ -40,10 +40,10 @@ class PluginTranslation : BaseTranslation() {
     fun shopInfoStock(stock: Int) = shopInfoStock.replace("{stock}", if (stock==-1) "∞" else stock.toString())
 
     private val shopInfoPrice = translationValue("buttons.information_price", "#18dbd1Покупка: {price}")
-    fun shopInfoPrice(price: Number) = shopInfoPrice.replace("{price}", if (price.toInt()<=0) "-" else price.toString())
+    fun shopInfoPrice(price: Number) = shopInfoPrice.replace("{price}", if (price.toDouble()<=0) "-" else price.toString())
 
     private val shopInfoSellPrice = translationValue("buttons.information_price_sell", "#18dbd1Продажа: {price}")
-    fun shopInfoSellPrice(price: Number) = shopInfoSellPrice.replace("{price}", if (price.toInt()<=0) "-" else price.toString())
+    fun shopInfoSellPrice(price: Number) = shopInfoSellPrice.replace("{price}", if (price.toDouble()<=0) "-" else price.toString())
 
     private val shopInfoBalance = translationValue("buttons.information_balance", "#18dbd1Баланс: {balance}")
     fun shopInfoBalance(balance: Int) = shopInfoBalance.replace("{balance}", balance.toString())
