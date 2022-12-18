@@ -26,7 +26,7 @@ object ShopItemParser {
     fun saveItem(shopConfig: ShopConfig) {
         val fileManager = shopConfig.fileManager
         val fileConfiguration = fileManager.fileConfiguration
-        fileConfiguration.set("items",null)
+        fileConfiguration.set("items", null)
         shopConfig.items.forEach { index, item ->
             val path = "items.${index}"
             if (!fileConfiguration.contains(path))
@@ -44,8 +44,8 @@ object ShopItemParser {
             itemSection?.set("priceMax", item.priceMax)
             itemSection?.set("priceMin", item.priceMin)
         }
-        fileConfiguration.save(fileManager.configFile)
-//        fileManager.save()
+//        fileConfiguration.save(fileManager.configFile)
+        fileManager.save()
     }
 
     fun parseShopFileOrNull(fileManager: FileManager): ShopConfig? =
@@ -66,7 +66,7 @@ object ShopItemParser {
         )
     }
 
-    fun parseTitleItem(s: ConfigurationSection?): SpigotTitleItem {
+    private fun parseTitleItem(s: ConfigurationSection?): SpigotTitleItem {
         return SpigotTitleItem(
             material = s?.getString("material")?.let(Material::getMaterial) ?: Material.EMERALD,
             customModelData = s?.getInt("customModelData") ?: 0,
@@ -78,7 +78,7 @@ object ShopItemParser {
     /**
      * Parse here section of options
      */
-    fun parseOption(s: ConfigurationSection): ShopConfig.Options {
+    private fun parseOption(s: ConfigurationSection): ShopConfig.Options {
         return ShopConfig.Options(
             lore = s.getStringList("lore") ?: emptyList(),
             permission = s.getString("permission") ?: "",
@@ -91,7 +91,7 @@ object ShopItemParser {
     /**
      * Parse here section of items.<item>
      */
-    fun parseItem(s: ConfigurationSection): ShopConfig.ShopItem {
+    private fun parseItem(s: ConfigurationSection): ShopConfig.ShopItem {
         val itemStack = s.getItemStack("itemStack")
         val material = s.getString("material")?.let(Material::getMaterial)
 

@@ -28,6 +28,9 @@ repositories {
 dependencies {
     // Kotlin
     implementation(Dependencies.Libraries.kotlinGradlePlugin)
+    // Coroutines
+    implementation(Dependencies.Libraries.kotlinxCoroutinesCoreJVM)
+    implementation(Dependencies.Libraries.kotlinxCoroutinesCore)
     // Serialization
     implementation(Dependencies.Libraries.kotlinxSerialization)
     implementation(Dependencies.Libraries.kotlinxSerializationJson)

@@ -16,7 +16,6 @@ fun ShopsGUI.inventoryIndex(i: Int) = i + maxItemsPerPage * page
 
 fun IEconomyProvider.hasAtLeast(amount: Number, uuid: UUID): Boolean {
     val balance = getBalance(uuid) ?: 0.0
-    println("$balance > $amount")
     return balance > amount.toDouble()
 }
 
