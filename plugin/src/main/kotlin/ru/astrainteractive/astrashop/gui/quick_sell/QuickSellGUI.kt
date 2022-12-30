@@ -41,14 +41,16 @@ class QuickSellGUI(override val playerMenuUtility: PlayerHolder) : Menu() {
     override fun onCreated() {
         backButton.set(inventory)
     }
-    val myClickDetector = DSLEvent.event(InventoryClickEvent::class.java, inventoryEventHandler) { e ->
-        if (e.whoClicked!=playerMenuUtility.player)return@event
+
+    val myClickDetector = DSLEvent.event<InventoryClickEvent>(inventoryEventHandler) { e ->
+        if (e.whoClicked != playerMenuUtility.player) return@event
         e.isCancelled = true
         controller.onItemClicked(e)
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
-        e.isCancelled = true
+        if (e.whoClicked == playerMenuUtility.player) e.isCancelled = true
+        else return
         clickListener.handle(e)
     }
 

@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.events.GlobalEventManager
+import ru.astrainteractive.astralibs.utils.setupWithSpigot
 import ru.astrainteractive.astrashop.utils.Files
 
 /**
@@ -27,7 +28,7 @@ class AstraShop : JavaPlugin() {
      */
     override fun onEnable() {
         AstraLibs.rememberPlugin(this)
-        Logger.prefix = "AstraShop"
+        Logger.setupWithSpigot("AstraShop")
         CommandManager.enable()
     }
 

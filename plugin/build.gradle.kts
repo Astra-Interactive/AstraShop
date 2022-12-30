@@ -56,8 +56,6 @@ dependencies {
     // Spigot dependencies
     compileOnly(Dependencies.Libraries.essentialsX)
     compileOnly(Dependencies.Libraries.paperMC)
-    compileOnly(Dependencies.Libraries.spigot)
-    compileOnly(Dependencies.Libraries.spigotApi)
     compileOnly(Dependencies.Libraries.protocolLib)
     compileOnly(Dependencies.Libraries.placeholderapi)
     compileOnly(Dependencies.Libraries.worldguard)

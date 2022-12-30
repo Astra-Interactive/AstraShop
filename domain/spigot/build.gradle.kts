@@ -37,8 +37,6 @@ dependencies {
     implementation(Dependencies.Libraries.kotlinxSerializationYaml)
     // Spigot
     compileOnly(Dependencies.Libraries.paperMC)
-    compileOnly(Dependencies.Libraries.spigot)
-    compileOnly(Dependencies.Libraries.spigotApi)
     implementation(project(":domain:core"))
     // AstraLibs
     implementation(Dependencies.Libraries.astraLibsKtxCore)

@@ -36,7 +36,7 @@ data class ShopConfig(
         }
 
         fun Number.round() = (this.toDouble() * 100.0).roundToInt() / 100.0
-        fun calculateBuyPrice(amount: Int): Double = (amount downTo 0).sumOf { f(buyPrice, amount) }.round()
-        fun calculateSellPrice(amount: Int): Double = ((amount downTo 0).sumOf { f(sellPrice, amount) } ).round()
+        fun calculateBuyPrice(amount: Int): Double = (amount downTo 1).sumOf { f(buyPrice, amount).coerceAtLeast(sellPrice) }.round()
+        fun calculateSellPrice(amount: Int): Double = ((amount downTo 1).sumOf { f(sellPrice, amount).coerceAtMost(priceMin) } ).round()
     }
 }

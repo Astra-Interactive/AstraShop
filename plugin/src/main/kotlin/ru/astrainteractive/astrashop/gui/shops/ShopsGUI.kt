@@ -45,7 +45,8 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         super.onInventoryClicked(e)
-        e.isCancelled = true
+        if (e.whoClicked == playerMenuUtility.player) e.isCancelled = true
+        else return
         clickListener.handle(e)
     }
 
@@ -66,7 +67,7 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
             val item = state.shops.getOrNull(index) ?: continue
             button(i, item.options.titleItem.toItemStack()) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    ShopGUI(item, playerMenuUtility).open()
+                    ShopGUI(item, playerMenuUtility.copy(shopPage = 0)).open()
                 }
             }.also(clickListener::remember).set(inventory)
         }
