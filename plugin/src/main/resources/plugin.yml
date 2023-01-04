@@ -1,5 +1,5 @@
 main: ru.astrainteractive.astrashop.AstraShop
-prefix: AstraTemplate
+prefix: '${name}'
 description: '${description}'
 version: '${version}'
 name: '${name}'
@@ -12,19 +12,4 @@ depend: [ ]
 loadbefore: [ ]
 commands:
   ashop:
-  add:
-  rickandmorty:
-  atempreload:
-    description: Reload plugin
-    permission: astra_template.reload
-    permission-message: You do not have permission!
     usage: /<command>
-  adamage:
-    description: Damage player
-    permission: astra_template.damage
-    permission-message: You do not have permission!
-    usage: /<command> <player> amount
-  atempgui:
-    description: Shows template gui
-    usage: /<command>
-  translation:

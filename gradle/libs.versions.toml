@@ -1,6 +1,6 @@
 [versions]
-plugin = "1.0.0"
-name = "AstraLibs"
+plugin = "2.0.0"
+name = "AstraShop"
 group =  "com.astrainteractive"
 description = "Shop plugin for EmpireSMP"
 wear-gms = "18.0.0"
