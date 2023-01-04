@@ -1,44 +1,25 @@
 plugins {
     java
-    kotlin("jvm") version Dependencies.Kotlin.version
-    kotlin("plugin.serialization") version Dependencies.Kotlin.version
-}
-java {
-    java.sourceCompatibility = JavaVersion.VERSION_1_8
-    java.targetCompatibility = JavaVersion.VERSION_17
-}
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven(Dependencies.Repositories.extendedclip)
-    maven(Dependencies.Repositories.maven2Apache)
-    maven(Dependencies.Repositories.essentialsx)
-    maven(Dependencies.Repositories.enginehub)
-    maven(Dependencies.Repositories.spigotmc)
-    maven(Dependencies.Repositories.dmulloy2)
-    maven(Dependencies.Repositories.papermc)
-    maven(Dependencies.Repositories.dv8tion)
-    maven(Dependencies.Repositories.playpro)
-    maven(Dependencies.Repositories.jitpack)
-    maven(Dependencies.Repositories.scarsz)
-    maven(Dependencies.Repositories.maven2)
-    modelEngige(project)
-    paperMC(project)
+    kotlin("jvm")
+    kotlin("plugin.serialization")
+    id("basic-plugin")
 }
 dependencies {
     // Kotlin
-    implementation(Dependencies.Libraries.kotlinGradlePlugin)
+    implementation(libs.kotlinGradlePlugin)
     // Coroutines
-    implementation(Dependencies.Libraries.kotlinxCoroutinesCoreJVM)
-    implementation(Dependencies.Libraries.kotlinxCoroutinesCore)
+    implementation(libs.coroutines.coreJvm)
+    implementation(libs.coroutines.core)
     // Serialization
-    implementation(Dependencies.Libraries.kotlinxSerialization)
-    implementation(Dependencies.Libraries.kotlinxSerializationJson)
-    implementation(Dependencies.Libraries.kotlinxSerializationYaml)
-    // Spigot
-    compileOnly(Dependencies.Libraries.paperMC)
-    implementation(project(":domain:core"))
+    implementation(libs.kotlin.serialization)
+    implementation(libs.kotlin.serializationJson)
+    implementation(libs.kotlin.serializationKaml)
     // AstraLibs
-    implementation(Dependencies.Libraries.astraLibsKtxCore)
-    implementation(Dependencies.Libraries.astraLibsSpigotCore)
+    implementation(libs.astralibs.ktxCore)
+    implementation(libs.astralibs.spigotCore)
+    // Spigot
+    compileOnly(libs.paperApi)
+    compileOnly(libs.spigotApi)
+    compileOnly(libs.spigot)
+    implementation(project(":domain:core"))
 }
