@@ -50,12 +50,12 @@ class BuyUseCase(private val economy: IEconomyProvider) : IUseCase<BuyUseCase.Re
         val itemStack = item.toItemStack().copy(amount)
         val notFittedItems = player.inventory.addItem(itemStack)
         if (notFittedItems.isEmpty()) {
-            Logger.log("${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice", consolePrint = false,tag="BuyUseCase")
+            Logger.log("BuyUseCase","${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice", consolePrint = false)
             return Result.Success(-amount)
         }
         player.sendMessage("Некоторые предметы не вместились. Они лежат на полу")
         player.location.world.dropItemNaturally(player.location, itemStack.copy(notFittedItems.size))
-        Logger.log("${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice", consolePrint = false,tag="BuyUseCase")
+        Logger.log("BuyUseCase","${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice", consolePrint = false)
         return Result.Success(-amount)
     }
 

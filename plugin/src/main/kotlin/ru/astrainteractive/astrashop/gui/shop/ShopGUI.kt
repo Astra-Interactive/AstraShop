@@ -16,7 +16,6 @@ import ru.astrainteractive.astrashop.utils.Permission
 import ru.astrainteractive.astrashop.utils.toItemStack
 import ru.astrainteractive.astrashop.utils.withMeta
 
-
 class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility: PlayerHolder) : PaginatedMenu(), PagingProvider {
 
     private val translation by TranslationModule
@@ -40,24 +39,17 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
         viewModel.onIntent(ShopIntent.OpenShops(playerMenuUtility))
     }
 
-
-    val myClickDetector = DSLEvent.event<InventoryClickEvent>(inventoryEventHandler) { e ->
-        if (e.whoClicked!=playerMenuUtility.player)return@event
+    override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
+        handleChangePageClick(e.slot)
+        clickListener.handle(e)
+        if (Permission.EditShop.hasPermission(playerMenuUtility.player))
+            viewModel.onIntent(ShopIntent.DeleteItem(e, e.isRightClick, e.isShiftClick))
         if (!listOf(prevPageButton.index + 1,backPageButton.index,prevPageButton.index,nextPageButton.index).contains(e.slot))
             ShopIntent.InventoryClick(e).also(viewModel::onIntent)
     }
 
-    override fun onInventoryClicked(e: InventoryClickEvent) {
-        super.onInventoryClicked(e)
-        if (e.whoClicked == playerMenuUtility.player) e.isCancelled = true
-        else return
-        clickListener.handle(e)
-        if (Permission.EditShop.hasPermission(playerMenuUtility.player))
-            viewModel.onIntent(ShopIntent.DeleteItem(e, e.isRightClick, e.isShiftClick))
-    }
-
-    override fun onInventoryClose(it: InventoryCloseEvent) {
+    override fun onInventoryClose(it: InventoryCloseEvent){
         viewModel.clear()
     }
 

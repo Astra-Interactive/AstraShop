@@ -60,7 +60,7 @@ class SellUseCase(private val economy: IEconomyProvider) : IUseCase<SellUseCase.
         val money =  item.calculateSellPrice(sellAmount)
         economy.addMoney(player.uniqueId, money)
         player.sendMessage("Вы получили $money\$")
-        Logger.log("${player.name} sold ${sellAmount} of ${itemStack.type.name} for $money", consolePrint = false,tag="BuyUseCase")
+        Logger.log("BuyUseCase","${player.name} sold ${sellAmount} of ${itemStack.type.name} for $money", consolePrint = false)
         return Result.Success(sellAmount)
     }
 

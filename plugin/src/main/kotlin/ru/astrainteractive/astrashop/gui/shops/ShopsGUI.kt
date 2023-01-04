@@ -44,9 +44,8 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
 
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
-        super.onInventoryClicked(e)
-        if (e.whoClicked == playerMenuUtility.player) e.isCancelled = true
-        else return
+        e.isCancelled = true
+        handleChangePageClick(e.slot)
         clickListener.handle(e)
     }
 

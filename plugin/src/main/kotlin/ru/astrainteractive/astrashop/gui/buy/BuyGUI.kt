@@ -41,8 +41,7 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
 
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
-        if (e.whoClicked == playerMenuUtility.player) e.isCancelled = true
-        else return
+        e.isCancelled = true
         clickListener.handle(e)
     }
 
