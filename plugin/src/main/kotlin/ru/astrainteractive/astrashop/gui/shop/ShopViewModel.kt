@@ -84,10 +84,12 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
     }
 
     fun onIntent(intent: ShopIntent) = viewModelScope.launch(Dispatchers.IO) {
+        println("OnIntent: $intent")
         when (intent) {
             is ShopIntent.OpenShops -> ShopsGUI(intent.playerHolder).open()
 
             is ShopIntent.OpenBuyGui -> {
+                println("IsIntentValid: ${intent.isValid()}")
                 if (!intent.isValid()) return@launch
                 BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder).open()
             }

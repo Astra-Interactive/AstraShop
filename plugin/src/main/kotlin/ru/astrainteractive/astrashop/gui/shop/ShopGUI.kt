@@ -97,10 +97,11 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
                 )
             }
             button(i, itemStack) {
+                println("Clicked openBuyGui")
                 ShopIntent.OpenBuyGui(
                     shopConfig, item, playerMenuUtility,
                     it.isLeftClick, it.isShiftClick, viewModel.state.value
-                ).let(viewModel::onIntent)
+                ).also(viewModel::onIntent)
             }.also(clickListener::remember).set(inventory)
         }
     }
