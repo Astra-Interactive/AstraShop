@@ -37,7 +37,7 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
         get() = BalanceButton(viewModel.state.value.asState<BuyState.Loaded>())
 
     override fun onCreated() {
-        viewModel.state.collectOn(block = ::render)
+        viewModel.state.collectOn(Dispatchers.IO,block = ::render)
     }
 
 
@@ -47,8 +47,8 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
+        super.onInventoryClose(it)
         viewModel.close()
-        close()
     }
 
 

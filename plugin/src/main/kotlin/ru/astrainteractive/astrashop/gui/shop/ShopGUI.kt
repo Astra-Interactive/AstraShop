@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop.gui.shop
 
+import kotlinx.coroutines.Dispatchers
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -51,8 +52,8 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent){
+        super.onInventoryClose(it)
         viewModel.close()
-        close()
     }
 
     override fun onPageChanged() {
@@ -60,7 +61,7 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
     }
 
     override fun onCreated() {
-        viewModel.state.collectOn(block = ::render)
+        viewModel.state.collectOn(Dispatchers.IO,block = ::render)
     }
 
 

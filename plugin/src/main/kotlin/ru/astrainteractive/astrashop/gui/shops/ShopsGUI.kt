@@ -52,14 +52,14 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
+        super.onInventoryClose(it)
         viewModel.close()
-        close()
     }
 
     override fun onPageChanged() = render()
 
     override fun onCreated() {
-        viewModel.state.collectOn(block = ::render)
+        viewModel.state.collectOn(Dispatchers.IO,block = ::render)
     }
 
 
