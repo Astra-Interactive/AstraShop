@@ -10,6 +10,7 @@ import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.gui.PlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.modules.DataSourceModule
 import ru.astrainteractive.astrashop.modules.TranslationModule
@@ -25,11 +26,11 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
     private val translation by TranslationModule
     private val clickListener = ClickListener()
 
-    override val menuSize: AstraMenuSize = AstraMenuSize.XS
+    override val menuSize: MenuSize = MenuSize.XS
     override var menuTitle: String = item.toItemStack().itemMeta.displayName.ifEmpty { item.toItemStack().type.name }
 
 
-    private val backButton = BackToShopButton(shopConfig, playerMenuUtility, lifecycleScope)
+    private val backButton = BackToShopButton(shopConfig, playerMenuUtility, componentScope)
     private val buyInfoButton = BuyInfoButton
     private val sellInfoButton = SellInfoButton
     private val balanceButton: IInventoryButton
@@ -46,7 +47,8 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
-        viewModel.clear()
+        viewModel.close()
+        close()
     }
 
 

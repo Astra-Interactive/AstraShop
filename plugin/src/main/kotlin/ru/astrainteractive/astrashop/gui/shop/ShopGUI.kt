@@ -9,6 +9,7 @@ import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.gui.PlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.modules.TranslationModule
@@ -22,14 +23,14 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
     private val viewModel = ShopViewModel(shopConfig.configName, this)
     private val clickListener = ClickListener()
 
-    override val menuSize: AstraMenuSize = AstraMenuSize.XL
+    override val menuSize: MenuSize = MenuSize.XL
     override var menuTitle: String = shopConfig.options.title
     override var page: Int
         get() = playerMenuUtility.shopPage
         set(value){
             playerMenuUtility.shopPage = value
         }
-    override val maxItemsPerPage: Int = menuSize.size - AstraMenuSize.XXS.size
+    override val maxItemsPerPage: Int = menuSize.size - MenuSize.XXS.size
     override val maxItemsAmount: Int
         get() = viewModel.maxItemsAmount
 
@@ -50,7 +51,8 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent){
-        viewModel.clear()
+        viewModel.close()
+        close()
     }
 
     override fun onPageChanged() {
@@ -97,7 +99,6 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
                 )
             }
             button(i, itemStack) {
-                println("Clicked openBuyGui")
                 ShopIntent.OpenBuyGui(
                     shopConfig, item, playerMenuUtility,
                     it.isLeftClick, it.isShiftClick, viewModel.state.value

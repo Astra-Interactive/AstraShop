@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
-import ru.astrainteractive.astralibs.architecture.ViewModel
+import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.gui.buy.BuyGUI
@@ -15,14 +15,14 @@ import ru.astrainteractive.astrashop.modules.DataSourceModule
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.asShopItem
 
-class ShopViewModel(private val configName: String, private val pagingProvider: PagingProvider) : ViewModel() {
+class ShopViewModel(private val configName: String, private val pagingProvider: PagingProvider) : AsyncComponent() {
     val state = MutableStateFlow<ShopListState>(ShopListState.Loading)
     val maxItemsAmount: Int
         get() = state.value.items.keys.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 0
     private val dataSource by DataSourceModule
     private val translation by TranslationModule
 
-    private fun load() = viewModelScope.launch(Dispatchers.IO) {
+    private fun load() = componentScope.launch(Dispatchers.IO) {
         val oldState = state.value
         state.value = ShopListState.Loading
         val config = dataSource.fetchShop(configName)
@@ -36,7 +36,7 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
         if (!intent.isValid()) return
         val state = state.value.asState<ShopListState.List>() ?: return
         state.config.items.remove(pagingProvider.index(intent.e.slot).toString())
-        viewModelScope.launch(Dispatchers.IO) {
+        componentScope.launch(Dispatchers.IO) {
             dataSource.updateShop(state.config)
             load()
         }
@@ -66,7 +66,7 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
             else
                 state.config.items[clickedShopItemIndex.toString()] = shopItem
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        componentScope.launch(Dispatchers.IO) {
             dataSource.updateShop(state.config)
             load()
         }
@@ -83,13 +83,11 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
         this.state.value = ShopListState.List(state.config)
     }
 
-    fun onIntent(intent: ShopIntent) = viewModelScope.launch(Dispatchers.IO) {
-        println("OnIntent: $intent")
+    fun onIntent(intent: ShopIntent) = componentScope.launch(Dispatchers.IO) {
         when (intent) {
             is ShopIntent.OpenShops -> ShopsGUI(intent.playerHolder).open()
 
             is ShopIntent.OpenBuyGui -> {
-                println("IsIntentValid: ${intent.isValid()}")
                 if (!intent.isValid()) return@launch
                 BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder).open()
             }

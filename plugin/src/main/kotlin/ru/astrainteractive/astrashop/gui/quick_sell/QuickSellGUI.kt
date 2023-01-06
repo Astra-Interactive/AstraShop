@@ -10,6 +10,7 @@ import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.gui.PlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.copy
@@ -24,7 +25,7 @@ class QuickSellGUI(override val playerMenuUtility: PlayerHolder) : Menu() {
     private val translation by TranslationModule
     private val clickListener = ClickListener()
 
-    override val menuSize: AstraMenuSize = AstraMenuSize.XXS
+    override val menuSize: MenuSize = MenuSize.XXS
     override var menuTitle: String = translation.quickSellTitle
 
 
@@ -49,7 +50,8 @@ class QuickSellGUI(override val playerMenuUtility: PlayerHolder) : Menu() {
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
-        controller.clear()
+        controller.close()
+        close()
     }
 
 }

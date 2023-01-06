@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.architecture.Controller
+import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
@@ -13,7 +13,7 @@ import ru.astrainteractive.astrashop.domain.models.ShopItemStack
 import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.modules.*
 
-class QuickSellController : Controller() {
+class QuickSellController : AsyncComponent() {
     private val economy by EconomyModule
     private val dataSource by DataSourceModule
     private val buyInteractor by BuyInteractorModule
@@ -22,7 +22,7 @@ class QuickSellController : Controller() {
     fun onItemClicked(e: InventoryClickEvent) {
         val itemStack = e.currentItem ?: return
         val player = e.whoClicked as Player
-        controllerScope.launch(Dispatchers.IO) {
+        componentScope.launch(Dispatchers.IO) {
             val item = dataSource.fetchShopList().map {
                 it.items.values.firstOrNull {
                     isSimilar(it, itemStack)

@@ -1,6 +1,7 @@
 package ru.astrainteractive.astrashop.gui.shops
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
@@ -12,6 +13,7 @@ import ru.astrainteractive.astrashop.State
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.gui.PlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.inventoryIndex
@@ -24,14 +26,14 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
     private val viewModel = ShopsViewModel()
     private val clickListener = ClickListener()
 
-    override val menuSize: AstraMenuSize = AstraMenuSize.XL
+    override val menuSize: MenuSize = MenuSize.XL
     override var menuTitle: String = translation.menuTitle
     override var page: Int
         get() = playerMenuUtility.shopsPage
         set(value){
             playerMenuUtility.shopsPage = value
         }
-    override val maxItemsPerPage: Int = menuSize.size - AstraMenuSize.XXS.size
+    override val maxItemsPerPage: Int = menuSize.size - MenuSize.XXS.size
     override val maxItemsAmount: Int
         get() = viewModel.maxItemsAmount
 
@@ -50,7 +52,8 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
-        viewModel.clear()
+        viewModel.close()
+        close()
     }
 
     override fun onPageChanged() = render()
@@ -65,7 +68,7 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
             val index = inventoryIndex(i)
             val item = state.shops.getOrNull(index) ?: continue
             button(i, item.options.titleItem.toItemStack()) {
-                lifecycleScope.launch(Dispatchers.IO) {
+                componentScope.launch(Dispatchers.IO) {
                     ShopGUI(item, playerMenuUtility.copy(shopPage = 0)).open()
                 }
             }.also(clickListener::remember).set(inventory)

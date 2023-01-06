@@ -17,6 +17,9 @@ dependencies {
     // AstraLibs
     implementation(libs.astralibs.ktxCore)
     implementation(libs.astralibs.spigotCore)
+    implementation(libs.astralibs.spigotGui)
+    implementation(libs.astralibs.orm)
+    implementation(libs.bstats.bukkit)
     // Spigot
     compileOnly(libs.paperApi)
     compileOnly(libs.spigotApi)

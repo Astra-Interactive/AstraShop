@@ -20,6 +20,9 @@ dependencies {
     // AstraLibs
     implementation(libs.astralibs.ktxCore)
     implementation(libs.astralibs.spigotCore)
+    implementation(libs.astralibs.spigotGui)
+    implementation(libs.astralibs.orm)
+    implementation(libs.bstats.bukkit)
     implementation(libs.bstats.bukkit)
     // Test-Core
     testImplementation(kotlin("test-junit5"))
