@@ -52,7 +52,6 @@ class ShopsGUI(override val playerMenuUtility: PlayerHolder) : PaginatedMenu() {
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
-        super.onInventoryClose(it)
         viewModel.close()
     }
 

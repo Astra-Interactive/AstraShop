@@ -52,7 +52,6 @@ class ShopGUI(private val shopConfig: ShopConfig, override val playerMenuUtility
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent){
-        super.onInventoryClose(it)
         viewModel.close()
     }
 

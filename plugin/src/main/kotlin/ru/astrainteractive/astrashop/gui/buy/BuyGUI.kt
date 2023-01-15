@@ -47,7 +47,6 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
-        super.onInventoryClose(it)
         viewModel.close()
     }
 
