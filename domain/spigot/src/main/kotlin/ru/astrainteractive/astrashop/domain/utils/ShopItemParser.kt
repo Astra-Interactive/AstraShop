@@ -2,6 +2,7 @@ package ru.astrainteractive.astrashop.domain.utils
 
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.ShopItemStack
@@ -9,11 +10,11 @@ import ru.astrainteractive.astrashop.domain.models.ShopMaterial
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import kotlin.math.max
 
-object ShopItemParser {
+class ShopItemParser(private val plugin: Plugin) {
     class ShopParseException(message: String) : Exception(message)
 
     fun saveOptions(shopConfig: ShopConfig) {
-        val fileManager = shopConfig.fileManager
+        val fileManager = shopConfig.getFileManager(plugin)
         val fileConfiguration = fileManager.fileConfiguration
         val optionsSection = fileConfiguration.getConfigurationSection("options")
 
@@ -25,7 +26,7 @@ object ShopItemParser {
     }
 
     fun saveItem(shopConfig: ShopConfig) {
-        val fileManager = shopConfig.fileManager
+        val fileManager = shopConfig.getFileManager(plugin)
         val fileConfiguration = fileManager.fileConfiguration
         fileConfiguration.set("items", null)
         shopConfig.items.forEach { index, item ->

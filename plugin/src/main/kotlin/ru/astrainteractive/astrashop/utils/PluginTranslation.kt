@@ -1,7 +1,10 @@
 package ru.astrainteractive.astrashop.utils
 
+import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import ru.astrainteractive.astralibs.utils.BaseTranslation
+import ru.astrainteractive.astralibs.utils.Singleton
+import ru.astrainteractive.astrashop.AstraShop
 
 /**
  * All translation stored here
@@ -10,7 +13,7 @@ class PluginTranslation : BaseTranslation() {
     /**
      * This is a default translation file. Don't forget to create translation.yml in resources of the plugin
      */
-    protected override val translationFile: FileManager = FileManager("translations.yml")
+    protected override val translationFile: FileManager = FileManager(AstraShop.instance,"translations.yml")
 
 
     //General

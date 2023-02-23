@@ -9,21 +9,19 @@ plugins {
 
 dependencies {
     // Kotlin
-    implementation(libs.kotlinGradlePlugin)
+//    compileOnly(libs.kotlinGradlePlugin)
     // Coroutines
-    implementation(libs.coroutines.coreJvm)
-    implementation(libs.coroutines.core)
+    compileOnly(libs.coroutines.coreJvm)
+    compileOnly(libs.coroutines.core)
     // Serialization
-    implementation(libs.kotlin.serialization)
-    implementation(libs.kotlin.serializationJson)
-    implementation(libs.kotlin.serializationKaml)
+    compileOnly(libs.kotlin.serialization)
+    compileOnly(libs.kotlin.serializationJson)
+    compileOnly(libs.kotlin.serializationKaml)
     // AstraLibs
-    implementation(libs.astralibs.ktxCore)
-    implementation(libs.astralibs.spigotCore)
-    implementation(libs.astralibs.spigotGui)
-    implementation(libs.astralibs.orm)
-    implementation(libs.bstats.bukkit)
-    implementation(libs.bstats.bukkit)
+    compileOnly(libs.astralibs.ktxCore)
+    compileOnly(libs.astralibs.spigotCore)
+    compileOnly(libs.astralibs.spigotGui)
+    compileOnly(libs.astralibs.orm)
     // Test-Core
     testImplementation(kotlin("test-junit5"))
     testImplementation(platform(libs.junit.bom))

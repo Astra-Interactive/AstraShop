@@ -8,14 +8,14 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 tasks.shadowJar {
-    isReproducibleFileOrder = true
-    mergeServiceFiles()
-    dependsOn(configurations)
+//    isReproducibleFileOrder = true
+//    mergeServiceFiles()
+//    dependsOn(configurations)
     archiveClassifier.set(null as String?)
-    from(sourceSets.main.get().output)
-    from(project.configurations.runtimeClasspath)
+//    from(sourceSets.main.get().output)
+//    from(project.configurations.runtimeClasspath)
     relocate("org.bstats", "${libs.versions.group.get()}.astrashop")
-    minimize()
+//    minimize()
     archiveBaseName.set(libs.versions.name.get())
     destinationDirectory.set(File(libs.versions.destinationDirectoryPath.get()))
 }

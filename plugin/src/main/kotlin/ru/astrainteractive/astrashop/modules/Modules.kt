@@ -6,6 +6,7 @@ import ru.astrainteractive.astralibs.di.reloadable
 import ru.astrainteractive.astralibs.di.value
 import ru.astrainteractive.astralibs.utils.economy.IEconomyProvider
 import ru.astrainteractive.astralibs.utils.economy.VaultEconomyProvider
+import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.domain.SpigotDataSource
 import ru.astrainteractive.astrashop.domain.interactors.BuyInteractor
 import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
@@ -18,7 +19,7 @@ import java.util.*
 
 
 val DataSourceModule = module {
-    SpigotDataSource()
+    SpigotDataSource(AstraShop.instance)
 }
 val TranslationModule = reloadable {
     PluginTranslation()

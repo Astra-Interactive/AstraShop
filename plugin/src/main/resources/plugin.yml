@@ -8,7 +8,7 @@ author: MakeevRoman
 website: AstraInteractive.ru
 api-version: 1.18
 softdepend: [ ]
-depend: [ ]
+depend: [ AstraLibs ]
 loadbefore: [ ]
 commands:
   ashop:

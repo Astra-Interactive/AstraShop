@@ -1,7 +1,7 @@
 package ru.astrainteractive.astrashop.domain.utils
 
 import org.bukkit.configuration.ConfigurationSection
-import ru.astrainteractive.astralibs.AstraLibs
+import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.file_manager.FileManager
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import java.io.File
@@ -33,15 +33,14 @@ public inline fun <T, K> ConfigurationSection.associate(
     }.associate { it }
 }
 
-fun getFilesList() = AstraLibs.instance.dataFolder.listFiles().map {
+fun getFilesList(plugin: Plugin) = plugin.dataFolder.listFiles().map {
     it
 }
 
 fun File.isYml() = extension.equals("yml", ignoreCase = true)
 
-fun getYmlFiles() = getFilesList()?.filter { it.isYml() }?.map {
-    FileManager(it.name)
+fun getYmlFiles(plugin: Plugin) = getFilesList(plugin)?.filter { it.isYml() }?.map {
+    FileManager(plugin,it.name)
 }
 
-val ShopConfig.fileManager: FileManager
-    get() = FileManager(configName)
+fun ShopConfig.getFileManager(plugin: Plugin): FileManager = FileManager(plugin,configName)
