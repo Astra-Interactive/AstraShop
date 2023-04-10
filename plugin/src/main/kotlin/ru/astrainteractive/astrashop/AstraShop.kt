@@ -3,6 +3,7 @@ package ru.astrainteractive.astrashop
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
+import ru.astrainteractive.astralibs.AstraLibs
 import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.menu.event.SharedInventoryClickEvent
@@ -20,13 +21,14 @@ class AstraShop : JavaPlugin() {
 
     init {
         instance = this
+        AstraLibs.rememberPlugin(this)
+        Logger.setupWithSpigot("AstraShop", this)
     }
 
     /**
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        Logger.setupWithSpigot("AstraShop", this)
         CommandManager.enable()
         SharedInventoryClickEvent.onEnable(this)
     }
@@ -37,6 +39,7 @@ class AstraShop : JavaPlugin() {
     override fun onDisable() {
         HandlerList.unregisterAll(this)
         PluginScope.close()
+        SharedInventoryClickEvent.onDisable()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }

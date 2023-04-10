@@ -6,12 +6,12 @@ plugins {
 }
 dependencies {
     // Kotlin
-    compileOnly(libs.kotlinGradlePlugin)
+    implementation(libs.kotlinGradlePlugin)
     // Coroutines
-    compileOnly(libs.coroutines.coreJvm)
-    compileOnly(libs.coroutines.core)
+    implementation(libs.coroutines.coreJvm)
+    implementation(libs.coroutines.core)
     // Serialization
-    compileOnly(libs.kotlin.serialization)
-    compileOnly(libs.kotlin.serializationJson)
-    compileOnly(libs.kotlin.serializationKaml)
+    implementation(libs.kotlin.serialization)
+    implementation(libs.kotlin.serializationJson)
+    implementation(libs.kotlin.serializationKaml)
 }

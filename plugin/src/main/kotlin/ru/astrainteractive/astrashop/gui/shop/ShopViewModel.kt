@@ -3,8 +3,10 @@ package ru.astrainteractive.astrashop.gui.shop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.async.AsyncComponent
+import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.gui.buy.BuyGUI
@@ -14,6 +16,7 @@ import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import ru.astrainteractive.astrashop.modules.DataSourceModule
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.asShopItem
+import ru.astrainteractive.astrashop.utils.openOnMainThread
 
 class ShopViewModel(private val configName: String, private val pagingProvider: PagingProvider) : AsyncComponent() {
     val state = MutableStateFlow<ShopListState>(ShopListState.Loading)
@@ -85,11 +88,13 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
 
     fun onIntent(intent: ShopIntent) = componentScope.launch(Dispatchers.IO) {
         when (intent) {
-            is ShopIntent.OpenShops -> ShopsGUI(intent.playerHolder).open()
+            is ShopIntent.OpenShops -> {
+                ShopsGUI(intent.playerHolder).openOnMainThread()
+            }
 
             is ShopIntent.OpenBuyGui -> {
                 if (!intent.isValid()) return@launch
-                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder).open()
+                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder).openOnMainThread()
             }
 
             is ShopIntent.ToggleEditModeClick -> {

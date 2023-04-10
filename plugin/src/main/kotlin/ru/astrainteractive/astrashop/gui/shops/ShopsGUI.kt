@@ -2,8 +2,10 @@ package ru.astrainteractive.astrashop.gui.shops
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.menu.*
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
@@ -15,6 +17,7 @@ import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.inventoryIndex
+import ru.astrainteractive.astrashop.utils.openOnMainThread
 import ru.astrainteractive.astrashop.utils.toItemStack
 
 
@@ -65,7 +68,7 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
             val item = state.shops.getOrNull(index) ?: continue
             button(i, item.options.titleItem.toItemStack()) {
                 componentScope.launch(Dispatchers.IO) {
-                    ShopGUI(item, playerHolder.copy(shopPage = 0)).open()
+                    ShopGUI(item, playerHolder.copy(shopPage = 0)).openOnMainThread()
                 }
             }.also(clickListener::remember).setInventoryButton()
         }

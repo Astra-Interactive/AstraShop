@@ -1,13 +1,21 @@
 package ru.astrainteractive.astrashop.utils
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.utils.economy.EconomyProvider
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import java.util.*
+
+suspend inline fun Menu.openOnMainThread() = withContext(Dispatchers.BukkitMain) {
+    open()
+}
 
 fun ShopsGUI.inventoryIndex(i: Int) = i + maxItemsPerPage * page
 

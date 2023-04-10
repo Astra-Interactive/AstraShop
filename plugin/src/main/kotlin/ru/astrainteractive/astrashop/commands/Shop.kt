@@ -2,8 +2,10 @@ package ru.astrainteractive.astrashop.commands
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.async.BukkitAsync
+import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.di.getValue
@@ -13,6 +15,7 @@ import ru.astrainteractive.astrashop.gui.quick_sell.QuickSellGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.PluginPermission
+import ru.astrainteractive.astrashop.utils.openOnMainThread
 
 fun CommandManager.shop() = AstraShop.instance.registerCommand("ashop") {
     val translation by TranslationModule
@@ -22,7 +25,7 @@ fun CommandManager.shop() = AstraShop.instance.registerCommand("ashop") {
             return@registerCommand
         }
         PluginScope.launch(Dispatchers.BukkitAsync) {
-            ShopsGUI(ShopPlayerHolder(it)).open()
+            ShopsGUI(ShopPlayerHolder(it)).openOnMainThread()
         }
     }
     argument(0){it}.onSuccess {
@@ -38,7 +41,7 @@ fun CommandManager.shop() = AstraShop.instance.registerCommand("ashop") {
             }
             PluginScope.launch(Dispatchers.BukkitAsync) {
                 if (sender !is Player) return@launch
-                QuickSellGUI(ShopPlayerHolder(sender as Player)).open()
+                QuickSellGUI(ShopPlayerHolder(sender as Player)).openOnMainThread()
             }
         } else sender.sendMessage("Открытие по названию еще не сделано :(")
 

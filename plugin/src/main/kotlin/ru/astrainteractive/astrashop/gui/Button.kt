@@ -3,9 +3,11 @@ package ru.astrainteractive.astrashop.gui
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.async.BukkitMain
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.menu.utils.InventoryButton
 import ru.astrainteractive.astralibs.menu.utils.ItemStackButtonBuilder
@@ -16,6 +18,7 @@ import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.buy.BuyState
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.modules.TranslationModule
+import ru.astrainteractive.astrashop.utils.openOnMainThread
 import ru.astrainteractive.astrashop.utils.withMeta
 
 fun button(
@@ -99,7 +102,7 @@ fun BackToShopButton(
         }
         this.onClick = {
             lifecycleScope.launch(Dispatchers.IO) {
-                ShopGUI(shopConfig, playerHolder).open()
+                ShopGUI(shopConfig, playerHolder).openOnMainThread()
             }
         }
     }
