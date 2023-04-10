@@ -15,7 +15,7 @@ tasks.shadowJar {
 //    from(sourceSets.main.get().output)
 //    from(project.configurations.runtimeClasspath)
     relocate("org.bstats", "${libs.versions.group.get()}.astrashop")
-//    minimize()
+    minimize()
     archiveBaseName.set(libs.versions.name.get())
     destinationDirectory.set(File(libs.versions.destinationDirectoryPath.get()))
 }

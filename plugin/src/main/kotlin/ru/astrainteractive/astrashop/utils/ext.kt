@@ -38,8 +38,8 @@ fun SpigotTitleItem.toItemStack(): ItemStack {
         editMeta {
             it.setDisplayName(name)
             it.setCustomModelData(customModelData)
-            it.lore = lore
         }
+        lore = this@toItemStack.lore
     }
 }
 

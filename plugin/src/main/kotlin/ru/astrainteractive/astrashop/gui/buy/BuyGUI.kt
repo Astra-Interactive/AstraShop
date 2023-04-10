@@ -76,8 +76,8 @@ class BuyGUI(
         val itemStack = state.item.toItemStack().copy(amount).apply {
             editMeta {
                 it.setDisplayName(title)
-                lore = listOf(priceDescription)
             }
+            lore = listOf(priceDescription)
         }
         button(type.startIndex + i, itemStack) {
             when (type) {

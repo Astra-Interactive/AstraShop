@@ -83,15 +83,15 @@ class ShopGUI(
             is ShopListState.Loading, is ShopListState.List -> ItemStack(Material.LIGHT).apply {
                 editMeta {
                     it.setDisplayName(translation.buttonEditModeDisabled)
-                    it.lore = listOf(translation.buttonEditModeEnter)
                 }
+                lore = listOf(translation.buttonEditModeEnter)
             }
 
             is ShopListState.ListEditMode -> ItemStack(Material.BARRIER).apply {
                 editMeta {
                     it.setDisplayName(translation.buttonEditModeEnabled)
-                    it.lore = listOf(translation.buttonEditModeExit)
                 }
+                lore = listOf(translation.buttonEditModeExit)
             }
         }
 
@@ -107,15 +107,13 @@ class ShopGUI(
             val index = maxItemsPerPage * page + i
             val item = items[index.toString()] ?: continue
             val itemStack = item.toItemStack().apply {
-                editMeta {
-                    it.lore = listOf(
-                        translation.shopInfoStock(item.stock),
-                        translation.shopInfoPrice(PriceCalculator.calculateBuyPrice(item,1)),
-                        translation.shopInfoSellPrice(PriceCalculator.calculateSellPrice(item,1)),
-                        translation.menuDeleteItem,
-                        if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
-                    )
-                }
+                lore = listOf(
+                    translation.shopInfoStock(item.stock),
+                    translation.shopInfoPrice(PriceCalculator.calculateBuyPrice(item,1)),
+                    translation.shopInfoSellPrice(PriceCalculator.calculateSellPrice(item,1)),
+                    translation.menuDeleteItem,
+                    if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
+                )
             }
             button(i, itemStack) {
                 ShopIntent.OpenBuyGui(

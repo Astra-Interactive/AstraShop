@@ -82,15 +82,14 @@ fun BalanceButton(state: BuyState.Loaded? = null): InventoryButton {
         this.itemStack = ItemStack(Material.EMERALD).apply {
             editMeta {
                 it.setDisplayName(translation.buttonInformation)
-                val stock = state?.item?.stock ?: -1
-
-                it.lore = listOf(
-                    translation.shopInfoStock(stock),
-                    translation.shopInfoPrice(state?.item?.let { PriceCalculator.calculateBuyPrice(it, 1) } ?: 0),
-                    translation.shopInfoSellPrice(state?.item?.let { PriceCalculator.calculateSellPrice(it, 1) } ?: 0),
-                    translation.shopInfoBalance(state?.playerBalance ?: 0)
-                )
             }
+            val stock = state?.item?.stock ?: -1
+            lore = listOf(
+                translation.shopInfoStock(stock),
+                translation.shopInfoPrice(state?.item?.let { PriceCalculator.calculateBuyPrice(it, 1) } ?: 0),
+                translation.shopInfoSellPrice(state?.item?.let { PriceCalculator.calculateSellPrice(it, 1) } ?: 0),
+                translation.shopInfoBalance(state?.playerBalance ?: 0)
+            )
         }
     }
 }
