@@ -29,8 +29,8 @@ dependencies {
     // Spigot dependencies
     compileOnly(libs.essentialsx)
     compileOnly(libs.paperApi)
-    compileOnly(libs.spigotApi)
-    compileOnly(libs.spigot)
+//    compileOnly(libs.spigotApi)
+//    compileOnly(libs.spigot)
     compileOnly(libs.protocollib)
     compileOnly(libs.placeholderapi)
     compileOnly(libs.worldguard.bukkit)

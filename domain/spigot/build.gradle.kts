@@ -22,7 +22,7 @@ dependencies {
     implementation(libs.bstats.bukkit)
     // Spigot
     compileOnly(libs.paperApi)
-    compileOnly(libs.spigotApi)
-    compileOnly(libs.spigot)
+//    compileOnly(libs.spigotApi)
+//    compileOnly(libs.spigot)
     implementation(project(":domain:core"))
 }

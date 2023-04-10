@@ -19,7 +19,6 @@ import ru.astrainteractive.astrashop.gui.buy.BuyState
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.openOnMainThread
-import ru.astrainteractive.astrashop.utils.withMeta
 
 fun button(
     index: Int,
@@ -60,45 +59,53 @@ val PrevButton: InventoryButton
 val BuyInfoButton: InventoryButton
     get() = ItemStackButtonBuilder {
         this.index = 1
-        this.itemStack = ItemStack(Material.GREEN_STAINED_GLASS).withMeta {
-            setDisplayName(translation.buttonBuy)
+        this.itemStack = ItemStack(Material.GREEN_STAINED_GLASS).apply {
+            editMeta {
+                it.setDisplayName(translation.buttonBuy)
+            }
         }
     }
 
 val SellInfoButton: InventoryButton
     get() = ItemStackButtonBuilder {
         this.index = 10
-        this.itemStack = ItemStack(Material.RED_STAINED_GLASS).withMeta {
-            setDisplayName(translation.buttonSell)
+        this.itemStack = ItemStack(Material.RED_STAINED_GLASS).apply {
+            editMeta {
+                it.setDisplayName(translation.buttonSell)
+            }
         }
     }
 
 fun BalanceButton(state: BuyState.Loaded? = null): InventoryButton {
     return ItemStackButtonBuilder {
         this.index = 0
-        this.itemStack = ItemStack(Material.EMERALD).withMeta {
-            setDisplayName(translation.buttonInformation)
-            val stock = state?.item?.stock ?: -1
+        this.itemStack = ItemStack(Material.EMERALD).apply {
+            editMeta {
+                it.setDisplayName(translation.buttonInformation)
+                val stock = state?.item?.stock ?: -1
 
-            lore = listOf(
-                translation.shopInfoStock(stock),
-                translation.shopInfoPrice(state?.item?.let{ PriceCalculator.calculateBuyPrice(it,1) }?:0),
-                translation.shopInfoSellPrice(state?.item?.let{ PriceCalculator.calculateSellPrice(it,1) }?:0),
-                translation.shopInfoBalance(state?.playerBalance ?: 0)
-            )
+                it.lore = listOf(
+                    translation.shopInfoStock(stock),
+                    translation.shopInfoPrice(state?.item?.let { PriceCalculator.calculateBuyPrice(it, 1) } ?: 0),
+                    translation.shopInfoSellPrice(state?.item?.let { PriceCalculator.calculateSellPrice(it, 1) } ?: 0),
+                    translation.shopInfoBalance(state?.playerBalance ?: 0)
+                )
+            }
         }
     }
 }
 
 fun BackToShopButton(
-    shopConfig: ShopConfig<SpigotTitleItem,SpigotShopItem>,
+    shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
     playerHolder: ShopPlayerHolder,
     lifecycleScope: CoroutineScope
 ): InventoryButton {
-    return ItemStackButtonBuilder{
+    return ItemStackButtonBuilder {
         this.index = 9
-        this.itemStack = ItemStack(Material.BARRIER).withMeta {
-            setDisplayName(translation.buttonBack)
+        this.itemStack = ItemStack(Material.BARRIER).apply {
+            editMeta {
+                it.setDisplayName(translation.buttonBack)
+            }
         }
         this.onClick = {
             lifecycleScope.launch(Dispatchers.IO) {

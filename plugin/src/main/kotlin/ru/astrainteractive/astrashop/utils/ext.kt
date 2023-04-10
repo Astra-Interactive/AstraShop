@@ -33,15 +33,13 @@ fun ItemStack.copy(amount: Int = this.amount) = clone().apply {
     this.amount = amount
 }
 
-fun ItemStack.withMeta(block: ItemMeta.() -> Unit): ItemStack = this.apply {
-    this.itemMeta = this.itemMeta?.apply(block)
-}
-
 fun SpigotTitleItem.toItemStack(): ItemStack {
-    return ItemStack(material).withMeta {
-        setDisplayName(name)
-        setCustomModelData(customModelData)
-        this.lore = lore
+    return ItemStack(material).apply {
+        editMeta {
+            it.setDisplayName(name)
+            it.setCustomModelData(customModelData)
+            it.lore = lore
+        }
     }
 }
 

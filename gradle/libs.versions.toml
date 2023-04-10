@@ -1,5 +1,5 @@
 [versions]
-plugin = "3.0.0"
+plugin = "3.0.1-RC1"
 name = "AstraShop"
 group =  "com.astrainteractive"
 description = "Shop plugin for EmpireSMP"

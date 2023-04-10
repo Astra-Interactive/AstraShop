@@ -18,7 +18,6 @@ import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.copy
 import ru.astrainteractive.astrashop.utils.toItemStack
-import ru.astrainteractive.astrashop.utils.withMeta
 import kotlin.math.pow
 
 
@@ -74,9 +73,11 @@ class BuyGUI(
             BuyType.SELL -> translation.shopInfoPrice(totalPriceSell)
         }
 
-        val itemStack = state.item.toItemStack().copy(amount).withMeta {
-            setDisplayName(title)
-            lore = listOf(priceDescription)
+        val itemStack = state.item.toItemStack().copy(amount).apply {
+            editMeta {
+                it.setDisplayName(title)
+                lore = listOf(priceDescription)
+            }
         }
         button(type.startIndex + i, itemStack) {
             when (type) {

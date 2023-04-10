@@ -33,7 +33,7 @@ class ShopItemParser(private val plugin: Plugin) {
 
             val itemSection = fileConfiguration.getConfigurationSection(path)
 
-            when (val item = item as SpigotShopItem) {
+            when (val item = item.shopItem) {
                 is SpigotShopItem.ItemStack -> itemSection?.set("itemStack", item.itemStack)
                 is SpigotShopItem.Material -> itemSection?.set("material", item.material.name)
             }

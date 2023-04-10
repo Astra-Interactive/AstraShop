@@ -22,7 +22,6 @@ import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.PluginPermission
 import ru.astrainteractive.astrashop.utils.toItemStack
-import ru.astrainteractive.astrashop.utils.withMeta
 
 class ShopGUI(
     private val shopConfig: SpigotShopConfigAlias,
@@ -81,14 +80,18 @@ class ShopGUI(
     private fun renderEditModeButton() {
         if (!PluginPermission.EditShop.hasPermission(playerHolder.player)) return
         val itemStack = when (viewModel.state.value) {
-            is ShopListState.Loading, is ShopListState.List -> ItemStack(Material.LIGHT).withMeta {
-                setDisplayName(translation.buttonEditModeDisabled)
-                lore = listOf(translation.buttonEditModeEnter)
+            is ShopListState.Loading, is ShopListState.List -> ItemStack(Material.LIGHT).apply {
+                editMeta {
+                    it.setDisplayName(translation.buttonEditModeDisabled)
+                    it.lore = listOf(translation.buttonEditModeEnter)
+                }
             }
 
-            is ShopListState.ListEditMode -> ItemStack(Material.BARRIER).withMeta {
-                setDisplayName(translation.buttonEditModeEnabled)
-                lore = listOf(translation.buttonEditModeExit)
+            is ShopListState.ListEditMode -> ItemStack(Material.BARRIER).apply {
+                editMeta {
+                    it.setDisplayName(translation.buttonEditModeEnabled)
+                    it.lore = listOf(translation.buttonEditModeExit)
+                }
             }
         }
 
@@ -103,14 +106,16 @@ class ShopGUI(
         for (i in 0 until maxItemsPerPage) {
             val index = maxItemsPerPage * page + i
             val item = items[index.toString()] ?: continue
-            val itemStack = item.toItemStack().withMeta {
-                lore = listOf(
-                    translation.shopInfoStock(item.stock),
-                    translation.shopInfoPrice(PriceCalculator.calculateBuyPrice(item,1)),
-                    translation.shopInfoSellPrice(PriceCalculator.calculateSellPrice(item,1)),
-                    translation.menuDeleteItem,
-                    if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
-                )
+            val itemStack = item.toItemStack().apply {
+                editMeta {
+                    it.lore = listOf(
+                        translation.shopInfoStock(item.stock),
+                        translation.shopInfoPrice(PriceCalculator.calculateBuyPrice(item,1)),
+                        translation.shopInfoSellPrice(PriceCalculator.calculateSellPrice(item,1)),
+                        translation.menuDeleteItem,
+                        if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
+                    )
+                }
             }
             button(i, itemStack) {
                 ShopIntent.OpenBuyGui(
