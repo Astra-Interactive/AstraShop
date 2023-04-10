@@ -1,19 +1,21 @@
 package ru.astrainteractive.astrashop.domain.interactors
 
 import org.bukkit.entity.Player
-import ru.astrainteractive.astralibs.domain.IUseCase
+import ru.astrainteractive.astralibs.domain.UseCase
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
+import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
+import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.domain.usecases.BuyUseCase
 import ru.astrainteractive.astrashop.domain.usecases.ChangeStockAmountUseCase
 
 class BuyInteractor(
     private val buyUseCase: BuyUseCase,
     private val changeStockAmountUseCase: ChangeStockAmountUseCase
-) : IUseCase<Boolean, BuyInteractor.Param> {
+) : UseCase<Boolean, BuyInteractor.Param> {
     class Param(
         val buyAmount: Int,
-        val shopItem: ShopConfig.ShopItem,
-        val shopConfig: ShopConfig,
+        val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
+        val shopConfig: ShopConfig<SpigotTitleItem,SpigotShopItem>,
         val player: Player
     )
 

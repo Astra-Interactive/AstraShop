@@ -1,22 +1,17 @@
 package ru.astrainteractive.astrashop.domain.usecases
 
-import org.bukkit.entity.Player
-import ru.astrainteractive.astralibs.domain.IUseCase
-import ru.astrainteractive.astralibs.utils.economy.IEconomyProvider
-import ru.astrainteractive.astrashop.asState
-import ru.astrainteractive.astrashop.domain.IDataSource
-import ru.astrainteractive.astrashop.domain.SpigotDataSource
+import ru.astrainteractive.astralibs.domain.UseCase
+import ru.astrainteractive.astrashop.domain.ShopApi
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.gui.buy.BuyState
-import ru.astrainteractive.astrashop.utils.copy
-import ru.astrainteractive.astrashop.utils.hasAtLeast
-import ru.astrainteractive.astrashop.utils.toItemStack
+import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
+import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 
-class ChangeStockAmountUseCase(private val dataSource: IDataSource) : IUseCase<Unit, ChangeStockAmountUseCase.Param> {
+class ChangeStockAmountUseCase(private val dataSource: ShopApi<SpigotTitleItem, SpigotShopItem>) :
+    UseCase<Unit, ChangeStockAmountUseCase.Param> {
     class Param(
-        val shopItem: ShopConfig.ShopItem,
+        val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
         val increaseAmount: Int,
-        val shopConfig: ShopConfig
+        val shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>
     )
 
     override suspend fun run(params: Param) {

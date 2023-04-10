@@ -8,9 +8,8 @@ import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.ShopItemStack
-import ru.astrainteractive.astrashop.domain.models.ShopMaterial
+import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
+import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.modules.*
 
 class QuickSellController : AsyncComponent() {
@@ -36,11 +35,8 @@ class QuickSellController : AsyncComponent() {
         }
     }
 
-    fun isSimilar(shopItem: ShopConfig.ShopItem, itemStack: ItemStack) = when (shopItem) {
-        is ShopMaterial -> itemStack.isSimilar(ItemStack(shopItem.material))
-
-        is ShopItemStack -> itemStack.isSimilar(shopItem.itemStack)
-
-        else -> throw NotImplementedError()
+    fun isSimilar(shopItem: SpigotShopItemAlias, itemStack: ItemStack) = when (val shopItem = shopItem.shopItem) {
+        is SpigotShopItem.ItemStack -> itemStack.isSimilar(shopItem.itemStack)
+        is SpigotShopItem.Material -> itemStack.isSimilar(ItemStack(shopItem.material))
     }
 }

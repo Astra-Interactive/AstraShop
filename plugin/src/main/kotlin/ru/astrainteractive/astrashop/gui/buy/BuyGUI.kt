@@ -1,18 +1,20 @@
 package ru.astrainteractive.astrashop.gui.buy
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astralibs.menu.*
+import ru.astrainteractive.astralibs.menu.menu.Menu
+import ru.astrainteractive.astralibs.menu.utils.InventoryButton
+import ru.astrainteractive.astralibs.menu.utils.MenuSize
+import ru.astrainteractive.astralibs.menu.utils.click.MenuClickListener
 import ru.astrainteractive.astrashop.asState
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
+import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
+import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
+import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.gui.*
-import ru.astrainteractive.astrashop.gui.PlayerHolder
-import ru.astrainteractive.astrashop.gui.shop.ShopGUI
-import ru.astrainteractive.astrashop.modules.DataSourceModule
+import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.copy
 import ru.astrainteractive.astrashop.utils.toItemStack
@@ -20,30 +22,34 @@ import ru.astrainteractive.astrashop.utils.withMeta
 import kotlin.math.pow
 
 
-class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val playerMenuUtility: PlayerHolder) : Menu() {
+class BuyGUI(
+    shopConfig: SpigotShopConfigAlias,
+    item: SpigotShopItemAlias,
+    override val playerHolder: ShopPlayerHolder
+) : Menu() {
 
-    private val viewModel = BuyViewModel(shopConfig.configName, item.itemIndex, playerMenuUtility.player)
+    private val viewModel = BuyViewModel(shopConfig.configName, item.itemIndex, playerHolder.player)
     private val translation by TranslationModule
-    private val clickListener = ClickListener()
+    private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XS
     override var menuTitle: String = item.toItemStack().itemMeta.displayName.ifEmpty { item.toItemStack().type.name }
 
 
-    private val backButton = BackToShopButton(shopConfig, playerMenuUtility, componentScope)
+    private val backButton = BackToShopButton(shopConfig, playerHolder, componentScope)
     private val buyInfoButton = BuyInfoButton
     private val sellInfoButton = SellInfoButton
-    private val balanceButton: IInventoryButton
+    private val balanceButton: InventoryButton
         get() = BalanceButton(viewModel.state.value.asState<BuyState.Loaded>())
 
     override fun onCreated() {
-        viewModel.state.collectOn(Dispatchers.IO,block = ::render)
+        viewModel.state.collectOn(Dispatchers.IO, block = ::render)
     }
 
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
-        clickListener.handle(e)
+        clickListener.onClick(e)
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
@@ -54,8 +60,9 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
     private fun setActionButton(type: BuyType, i: Int, state: BuyState.Loaded) {
         val amount = 2.0.pow(i).toInt()
         if (type == BuyType.BUY && state.item.stock != -1 && state.item.stock < amount) return
-        val totalPriceBuy  = state.item.calculateBuyPrice(amount).coerceAtLeast(0.0)
-        val totalPriceSell  = state.item.calculateSellPrice(amount).coerceAtLeast(0.0)
+
+        val totalPriceBuy = PriceCalculator.calculateBuyPrice(state.item, amount).coerceAtLeast(0.0)
+        val totalPriceSell = PriceCalculator.calculateSellPrice(state.item, amount).coerceAtLeast(0.0)
 
         val title = when (type) {
             BuyType.BUY -> translation.buttonBuyAmount(amount)
@@ -76,22 +83,22 @@ class BuyGUI(shopConfig: ShopConfig, item: ShopConfig.ShopItem, override val pla
                 BuyType.BUY -> viewModel.onBuyClicked(amount)
                 BuyType.SELL -> viewModel.onSellClicked(amount)
             }
-        }.also(clickListener::remember).set(inventory)
+        }.also(clickListener::remember).setInventoryButton()
     }
 
     private fun render(buyState: BuyState) {
         inventory.clear()
-        clickListener.clear()
+        clickListener.clearClickListener()
 
         when (buyState) {
             is BuyState.Loaded -> {
                 clickListener.remember(balanceButton)
                 clickListener.remember(backButton)
 
-                balanceButton.set(inventory)
-                backButton.set(inventory)
-                buyInfoButton.set(inventory)
-                sellInfoButton.set(inventory)
+                balanceButton.setInventoryButton()
+                backButton.setInventoryButton()
+                buyInfoButton.setInventoryButton()
+                sellInfoButton.setInventoryButton()
 
                 for (i in 0 until 7) {
                     setActionButton(BuyType.SELL, i, buyState)

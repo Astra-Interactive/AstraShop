@@ -4,17 +4,14 @@ import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.file_manager.FileManager
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.ShopItemStack
-import ru.astrainteractive.astrashop.domain.models.ShopMaterial
-import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
+import ru.astrainteractive.astrashop.domain.models.*
 import kotlin.math.max
 
 class ShopItemParser(private val plugin: Plugin) {
     class ShopParseException(message: String) : Exception(message)
 
-    fun saveOptions(shopConfig: ShopConfig) {
-        val fileManager = shopConfig.getFileManager(plugin)
+    fun saveOptions(shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>) {
+        val fileManager = shopConfig.getFileManager()
         val fileConfiguration = fileManager.fileConfiguration
         val optionsSection = fileConfiguration.getConfigurationSection("options")
 
@@ -25,8 +22,8 @@ class ShopItemParser(private val plugin: Plugin) {
         fileManager.save()
     }
 
-    fun saveItem(shopConfig: ShopConfig) {
-        val fileManager = shopConfig.getFileManager(plugin)
+    fun saveItem(shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>) {
+        val fileManager = shopConfig.getFileManager()
         val fileConfiguration = fileManager.fileConfiguration
         fileConfiguration.set("items", null)
         shopConfig.items.forEach { index, item ->
@@ -36,9 +33,9 @@ class ShopItemParser(private val plugin: Plugin) {
 
             val itemSection = fileConfiguration.getConfigurationSection(path)
 
-            when (item) {
-                is ShopItemStack -> itemSection?.set("itemStack", item.itemStack)
-                is ShopMaterial -> itemSection?.set("material", item.material.name)
+            when (val item = item as SpigotShopItem) {
+                is SpigotShopItem.ItemStack -> itemSection?.set("itemStack", item.itemStack)
+                is SpigotShopItem.Material -> itemSection?.set("material", item.material.name)
             }
             itemSection?.set("median", item.median)
             itemSection?.set("stock", item.stock)
@@ -51,10 +48,13 @@ class ShopItemParser(private val plugin: Plugin) {
         fileManager.save()
     }
 
-    fun parseShopFileOrNull(fileManager: FileManager): ShopConfig? =
-        kotlin.runCatching { parseShopFile(fileManager) }.getOrNull()
+    fun parseShopFileOrNull(
+        fileManager: FileManager
+    ): ShopConfig<SpigotTitleItem, SpigotShopItem>? = kotlin.runCatching {
+        parseShopFile(fileManager)
+    }.getOrNull()
 
-    fun parseShopFile(fileManager: FileManager): ShopConfig {
+    fun parseShopFile(fileManager: FileManager): ShopConfig<SpigotTitleItem, SpigotShopItem> {
         val fileConfiguration = fileManager.fileConfiguration
         val optionsSections = fileConfiguration.getConfigurationSection("options")
             ?: throw ShopParseException("No options section in ${fileConfiguration.name}")
@@ -81,7 +81,7 @@ class ShopItemParser(private val plugin: Plugin) {
     /**
      * Parse here section of options
      */
-    private fun parseOption(s: ConfigurationSection): ShopConfig.Options {
+    private fun parseOption(s: ConfigurationSection): ShopConfig.Options<SpigotTitleItem> {
         return ShopConfig.Options(
             lore = s.getStringList("lore") ?: emptyList(),
             permission = s.getString("permission") ?: "",
@@ -94,7 +94,7 @@ class ShopItemParser(private val plugin: Plugin) {
     /**
      * Parse here section of items.<item>
      */
-    private fun parseItem(s: ConfigurationSection): ShopConfig.ShopItem {
+    private fun parseItem(s: ConfigurationSection): ShopConfig.ShopItem<SpigotShopItem> {
         val itemStack = s.getItemStack("itemStack")
         val material = s.getString("material")?.let(Material::getMaterial)
 
@@ -103,11 +103,11 @@ class ShopItemParser(private val plugin: Plugin) {
         val stock = s.getInt("stock", -1)
         val buyPrice = s.getDouble("buyPrice", 0.0)
         val sellPrice = s.getDouble("sellPrice", 0.0)
-        val buySellMaxPrice = max(buyPrice,sellPrice)
+        val buySellMaxPrice = max(buyPrice, sellPrice)
         val minPrice = s.getDouble("priceMin", 0.0).coerceAtMost(buySellMaxPrice)
         val maxPrice = s.getDouble("priceMax", Double.MAX_VALUE).coerceAtLeast(buySellMaxPrice)
         if (itemStack != null)
-            return ShopItemStack(
+            return ShopConfig.ShopItem(
                 itemIndex = itemIndex,
                 median = median,
                 stock = stock,
@@ -115,10 +115,10 @@ class ShopItemParser(private val plugin: Plugin) {
                 sellPrice = sellPrice,
                 priceMax = maxPrice,
                 priceMin = minPrice,
-                itemStack = itemStack
+                shopItem = SpigotShopItem.ItemStack(itemStack)
             )
         else if (material != null)
-            return ShopMaterial(
+            return ShopConfig.ShopItem(
                 itemIndex = itemIndex,
                 median = median,
                 stock = stock,
@@ -126,7 +126,7 @@ class ShopItemParser(private val plugin: Plugin) {
                 sellPrice = sellPrice,
                 priceMax = maxPrice,
                 priceMin = minPrice,
-                material = material
+                shopItem = SpigotShopItem.Material(material)
             )
         else throw ShopParseException("Shop item should contain either itemStack or material")
     }

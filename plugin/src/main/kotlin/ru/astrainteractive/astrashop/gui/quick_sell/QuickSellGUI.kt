@@ -5,25 +5,20 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.events.DSLEvent
 import ru.astrainteractive.astralibs.menu.*
-import ru.astrainteractive.astrashop.asState
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
+import ru.astrainteractive.astralibs.menu.menu.Menu
+import ru.astrainteractive.astralibs.menu.utils.MenuSize
+import ru.astrainteractive.astralibs.menu.utils.click.MenuClickListener
 import ru.astrainteractive.astrashop.gui.*
-import ru.astrainteractive.astrashop.gui.PlayerHolder
-import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
+import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.modules.TranslationModule
-import ru.astrainteractive.astrashop.utils.copy
-import ru.astrainteractive.astrashop.utils.toItemStack
-import ru.astrainteractive.astrashop.utils.withMeta
-import kotlin.math.pow
 
 
-class QuickSellGUI(override val playerMenuUtility: PlayerHolder) : Menu() {
+class QuickSellGUI(override val playerHolder: ShopPlayerHolder) : Menu() {
 
     private val controller = QuickSellController()
     private val translation by TranslationModule
-    private val clickListener = ClickListener()
+    private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XXS
     override var menuTitle: String = translation.quickSellTitle
@@ -40,12 +35,12 @@ class QuickSellGUI(override val playerMenuUtility: PlayerHolder) : Menu() {
 
 
     override fun onCreated() {
-        backButton.set(inventory)
+        backButton.setInventoryButton()
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
-        clickListener.handle(e)
+        clickListener.onClick(e)
         controller.onItemClicked(e)
     }
 

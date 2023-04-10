@@ -2,11 +2,13 @@ package ru.astrainteractive.astrashop.gui.shop.state
 
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.gui.PlayerHolder
+import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
+import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
+import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 
 sealed interface ShopIntent {
-    class OpenShops(val playerHolder: PlayerHolder) : ShopIntent
+    class OpenShops(val playerHolder: ShopPlayerHolder) : ShopIntent
     class InventoryClick(val e: InventoryClickEvent) :ShopIntent{
         fun isShopGUI() = e.clickedInventory?.holder is ShopGUI
         fun isPlayerInventory() = e.clickedInventory?.holder == e.whoClicked.inventory.holder
@@ -22,9 +24,9 @@ sealed interface ShopIntent {
     }
 
     class OpenBuyGui(
-        val shopConfig: ShopConfig,
-        val shopItem: ShopConfig.ShopItem,
-        val playerHolder: PlayerHolder,
+        val shopConfig: ShopConfig<SpigotTitleItem,SpigotShopItem>,
+        val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
+        val playerHolder: ShopPlayerHolder,
         private val isLeftClick: Boolean,
         private val isShiftClick: Boolean,
         private val currentState: ShopListState

@@ -40,7 +40,7 @@ fun getFilesList(plugin: Plugin) = plugin.dataFolder.listFiles().map {
 fun File.isYml() = extension.equals("yml", ignoreCase = true)
 
 fun getYmlFiles(plugin: Plugin) = getFilesList(plugin)?.filter { it.isYml() }?.map {
-    FileManager(plugin,it.name)
+    FileManager(it.name)
 }
 
-fun ShopConfig.getFileManager(plugin: Plugin): FileManager = FileManager(plugin,configName)
+fun ShopConfig<*, *>.getFileManager(): FileManager = FileManager(configName)

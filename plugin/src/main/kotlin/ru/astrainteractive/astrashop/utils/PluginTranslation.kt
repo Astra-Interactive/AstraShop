@@ -13,7 +13,7 @@ class PluginTranslation : BaseTranslation() {
     /**
      * This is a default translation file. Don't forget to create translation.yml in resources of the plugin
      */
-    protected override val translationFile: FileManager = FileManager(AstraShop.instance,"translations.yml")
+    protected override val translationFile: FileManager = FileManager("translations.yml")
 
 
     //General

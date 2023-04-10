@@ -3,46 +3,44 @@ package ru.astrainteractive.astrashop.commands
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
+import ru.astrainteractive.astralibs.async.BukkitAsync
+import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.di.getValue
 import ru.astrainteractive.astrashop.AstraShop
-import ru.astrainteractive.astrashop.gui.PlayerHolder
+import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.quick_sell.QuickSellGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import ru.astrainteractive.astrashop.modules.TranslationModule
-import ru.astrainteractive.astrashop.utils.Permission
+import ru.astrainteractive.astrashop.utils.PluginPermission
 
 fun CommandManager.shop() = AstraShop.instance.registerCommand("ashop") {
     val translation by TranslationModule
     if (args.isEmpty()) (sender as? Player)?.let {
-        if (!Permission.UseShop.hasPermission(sender)){
+        if (!PluginPermission.UseShop.hasPermission(sender)){
             sender.sendMessage(translation.noPermission)
             return@registerCommand
         }
-        AstraShop.launch(Dispatchers.IO) {
-            ShopsGUI(PlayerHolder(it)).open()
+        PluginScope.launch(Dispatchers.BukkitAsync) {
+            ShopsGUI(ShopPlayerHolder(it)).open()
         }
     }
-    argument(
-        index = 0,
-        parser = { it },
-        onResult = {
-            if (!Permission.UseShop.hasPermission(sender)){
-                sender.sendMessage(translation.noPermission)
-                return@argument
-            }
-
-            if (it.value == "qs") {
-                if (!Permission.QuickSell.hasPermission(sender)){
-                    sender.sendMessage(translation.noPermission)
-                    return@argument
-                }
-                AstraShop.launch(Dispatchers.IO) {
-                    if (sender !is Player) return@launch
-                    QuickSellGUI(PlayerHolder(sender as Player)).open()
-                }
-            } else sender.sendMessage("Открытие по названию еще не сделано :(")
+    argument(0){it}.onSuccess {
+        if (!PluginPermission.UseShop.hasPermission(sender)){
+            sender.sendMessage(translation.noPermission)
+            return@onSuccess
         }
-    )
 
+        if (it.value == "qs") {
+            if (!PluginPermission.QuickSell.hasPermission(sender)){
+                sender.sendMessage(translation.noPermission)
+                return@onSuccess
+            }
+            PluginScope.launch(Dispatchers.BukkitAsync) {
+                if (sender !is Player) return@launch
+                QuickSellGUI(ShopPlayerHolder(sender as Player)).open()
+            }
+        } else sender.sendMessage("Открытие по названию еще не сделано :(")
+
+    }
 }

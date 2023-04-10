@@ -4,8 +4,9 @@ import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
 import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.menu.SharedInventoryClickEvent
-import ru.astrainteractive.astralibs.utils.KotlinPlugin
+import ru.astrainteractive.astralibs.async.PluginScope
+import ru.astrainteractive.astralibs.menu.event.SharedInventoryClickEvent
+import ru.astrainteractive.astralibs.utils.Singleton
 import ru.astrainteractive.astralibs.utils.setupWithSpigot
 import ru.astrainteractive.astrashop.commands.CommandManager
 import ru.astrainteractive.astrashop.modules.TranslationModule
@@ -15,7 +16,7 @@ import ru.astrainteractive.astrashop.utils.Files
  * Initial class for your plugin
  */
 class AstraShop : JavaPlugin() {
-    companion object: KotlinPlugin<AstraShop>()
+    companion object : Singleton<AstraShop>()
 
     init {
         instance = this
@@ -25,7 +26,7 @@ class AstraShop : JavaPlugin() {
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        Logger.setupWithSpigot(this,"AstraShop")
+        Logger.setupWithSpigot("AstraShop", this)
         CommandManager.enable()
         SharedInventoryClickEvent.onEnable(this)
     }
@@ -35,8 +36,7 @@ class AstraShop : JavaPlugin() {
      */
     override fun onDisable() {
         HandlerList.unregisterAll(this)
-        AstraShop.onDisable()
-        AstraShop.close()
+        PluginScope.close()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }
