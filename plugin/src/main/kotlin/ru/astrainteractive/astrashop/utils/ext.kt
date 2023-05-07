@@ -1,19 +1,17 @@
 package ru.astrainteractive.astrashop.utils
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
-import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.menu.menu.Menu
-import ru.astrainteractive.astralibs.utils.economy.EconomyProvider
+import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import java.util.*
 
-suspend inline fun Menu.openOnMainThread() = withContext(Dispatchers.BukkitMain) {
+suspend inline fun Menu.openOnMainThread() = withContext(RootModuleImpl.dispatchers.value.BukkitMain) {
     open()
 }
 
@@ -43,15 +41,16 @@ fun SpigotTitleItem.toItemStack(): ItemStack {
     }
 }
 
-
 fun ItemStack.isSimple(): Boolean {
     val itemMeta = itemMeta ?: return true
     return !hasItemMeta() ||
-            (!itemMeta.hasDisplayName()
-                    && !itemMeta.hasEnchants()
-                    && !itemMeta.hasAttributeModifiers()
-                    && !itemMeta.hasCustomModelData()
-                    && !itemMeta.hasLore())
+        (
+            !itemMeta.hasDisplayName() &&
+                !itemMeta.hasEnchants() &&
+                !itemMeta.hasAttributeModifiers() &&
+                !itemMeta.hasCustomModelData() &&
+                !itemMeta.hasLore()
+            )
 }
 
 fun ItemStack.asShopItem(index: Int): ShopConfig.ShopItem<SpigotShopItem> {
@@ -66,5 +65,4 @@ fun ItemStack.asShopItem(index: Int): ShopConfig.ShopItem<SpigotShopItem> {
         priceMax = 0.0,
         priceMin = 0.0,
     )
-
 }

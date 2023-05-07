@@ -1,17 +1,12 @@
 plugins {
-    java
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("basic-plugin")
+    id("basic-java")
 }
 dependencies {
     // Kotlin
-    implementation(libs.kotlinGradlePlugin)
-    // Coroutines
-    implementation(libs.coroutines.coreJvm)
-    implementation(libs.coroutines.core)
-    // Serialization
-    implementation(libs.kotlin.serialization)
-    implementation(libs.kotlin.serializationJson)
-    implementation(libs.kotlin.serializationKaml)
+    implementation(libs.bundles.kotlin)
+    // Test
+    testImplementation(libs.bundles.testing.kotlin)
+    testImplementation(libs.tests.kotlin.test)
 }

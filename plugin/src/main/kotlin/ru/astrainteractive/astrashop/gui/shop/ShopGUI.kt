@@ -5,21 +5,22 @@ import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.menu.*
+import ru.astrainteractive.astralibs.getValue
+import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
+import ru.astrainteractive.astralibs.menu.menu.InventoryButton
+import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
-import ru.astrainteractive.astralibs.menu.utils.InventoryButton
-import ru.astrainteractive.astralibs.menu.utils.MenuSize
-import ru.astrainteractive.astralibs.menu.utils.click.MenuClickListener
+import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
-import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.gui.BackButton
+import ru.astrainteractive.astrashop.gui.NextButton
+import ru.astrainteractive.astrashop.gui.PrevButton
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.button
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
-import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.PluginPermission
 import ru.astrainteractive.astrashop.utils.toItemStack
 
@@ -27,8 +28,8 @@ class ShopGUI(
     private val shopConfig: SpigotShopConfigAlias,
     override val playerHolder: ShopPlayerHolder
 ) : PaginatedMenu(), PagingProvider {
+    private val translation by RootModuleImpl.translation
 
-    private val translation by TranslationModule
     private val viewModel = ShopViewModel(shopConfig.configName, this)
     private val clickListener = MenuClickListener()
 
@@ -52,16 +53,18 @@ class ShopGUI(
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
         clickListener.onClick(e)
-        if (PluginPermission.EditShop.hasPermission(playerHolder.player))
+        if (PluginPermission.EditShop.hasPermission(playerHolder.player)) {
             viewModel.onIntent(ShopIntent.DeleteItem(e, e.isRightClick, e.isShiftClick))
+        }
         if (!listOf(
                 prevPageButton.index + 1,
                 backPageButton.index,
                 prevPageButton.index,
                 nextPageButton.index
             ).contains(e.slot)
-        )
+        ) {
             ShopIntent.InventoryClick(e).also(viewModel::onIntent)
+        }
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
@@ -75,7 +78,6 @@ class ShopGUI(
     override fun onCreated() {
         viewModel.state.collectOn(Dispatchers.IO, block = ::render)
     }
-
 
     private fun renderEditModeButton() {
         if (!PluginPermission.EditShop.hasPermission(playerHolder.player)) return
@@ -95,10 +97,10 @@ class ShopGUI(
             }
         }
 
-
         button(prevPageButton.index + 1, itemStack) {
-            if (PluginPermission.EditShop.hasPermission(playerHolder.player))
+            if (PluginPermission.EditShop.hasPermission(playerHolder.player)) {
                 viewModel.onIntent(ShopIntent.ToggleEditModeClick)
+            }
         }.also(clickListener::remember).setInventoryButton()
     }
 
@@ -109,16 +111,20 @@ class ShopGUI(
             val itemStack = item.toItemStack().apply {
                 lore = listOf(
                     translation.shopInfoStock(item.stock),
-                    translation.shopInfoPrice(PriceCalculator.calculateBuyPrice(item,1)),
-                    translation.shopInfoSellPrice(PriceCalculator.calculateSellPrice(item,1)),
+                    translation.shopInfoPrice(PriceCalculator.calculateBuyPrice(item, 1)),
+                    translation.shopInfoSellPrice(PriceCalculator.calculateSellPrice(item, 1)),
                     translation.menuDeleteItem,
                     if (viewModel.state.value !is ShopListState.ListEditMode) translation.menuEdit else "",
                 )
             }
             button(i, itemStack) {
                 ShopIntent.OpenBuyGui(
-                    shopConfig, item, playerHolder,
-                    it.isLeftClick, it.isShiftClick, viewModel.state.value
+                    shopConfig,
+                    item,
+                    playerHolder,
+                    it.isLeftClick,
+                    it.isShiftClick,
+                    viewModel.state.value
                 ).also(viewModel::onIntent)
             }.also(clickListener::remember).setInventoryButton()
         }
@@ -143,6 +149,4 @@ class ShopGUI(
             ShopListState.Loading -> {}
         }
     }
-
 }
-

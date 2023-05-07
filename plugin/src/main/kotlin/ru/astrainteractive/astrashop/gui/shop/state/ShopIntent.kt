@@ -9,10 +9,9 @@ import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 
 sealed interface ShopIntent {
     class OpenShops(val playerHolder: ShopPlayerHolder) : ShopIntent
-    class InventoryClick(val e: InventoryClickEvent) :ShopIntent{
+    class InventoryClick(val e: InventoryClickEvent) : ShopIntent {
         fun isShopGUI() = e.clickedInventory?.holder is ShopGUI
         fun isPlayerInventory() = e.clickedInventory?.holder == e.whoClicked.inventory.holder
-
     }
 
     class DeleteItem(
@@ -24,7 +23,7 @@ sealed interface ShopIntent {
     }
 
     class OpenBuyGui(
-        val shopConfig: ShopConfig<SpigotTitleItem,SpigotShopItem>,
+        val shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
         val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
         val playerHolder: ShopPlayerHolder,
         private val isLeftClick: Boolean,

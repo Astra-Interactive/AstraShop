@@ -3,27 +3,28 @@ package ru.astrainteractive.astrashop.gui.shop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astrashop.asState
+import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.gui.buy.BuyGUI
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
-import ru.astrainteractive.astrashop.modules.DataSourceModule
-import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.asShopItem
 import ru.astrainteractive.astrashop.utils.openOnMainThread
 
-class ShopViewModel(private val configName: String, private val pagingProvider: PagingProvider) : AsyncComponent() {
+class ShopViewModel(
+    private val configName: String,
+    private val pagingProvider: PagingProvider
+) : AsyncComponent() {
+    private val dataSource by RootModuleImpl.spigotShopApi
+    private val translation by RootModuleImpl.translation
+
     val state = MutableStateFlow<ShopListState>(ShopListState.Loading)
     val maxItemsAmount: Int
         get() = state.value.items.keys.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 0
-    private val dataSource by DataSourceModule
-    private val translation by TranslationModule
 
     private fun load() = componentScope.launch(Dispatchers.IO) {
         val oldState = state.value
@@ -59,22 +60,23 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
             val clickedShopItemIndex = pagingProvider.index(newEvent.slot)
             val clickedItem = state.config.items[clickedShopItemIndex.toString()]
 
-            if (clickedItem == null)
+            if (clickedItem == null) {
                 state.config.items.remove(shopItemIndex.toString())
-            else
+            } else {
                 state.config.items[shopItemIndex.toString()] = clickedItem
+            }
 
-            if (shopItem == null)
+            if (shopItem == null) {
                 state.config.items.remove(clickedShopItemIndex.toString())
-            else
+            } else {
                 state.config.items[clickedShopItemIndex.toString()] = shopItem
+            }
         }
         componentScope.launch(Dispatchers.IO) {
             dataSource.updateShop(state.config)
             load()
         }
     }
-
 
     private fun enterEditMode() {
         val state = state.value.asState<ShopListState.List>() ?: return
@@ -98,8 +100,11 @@ class ShopViewModel(private val configName: String, private val pagingProvider: 
             }
 
             is ShopIntent.ToggleEditModeClick -> {
-                if (state.value is ShopListState.ListEditMode) exitEditMode()
-                else enterEditMode()
+                if (state.value is ShopListState.ListEditMode) {
+                    exitEditMode()
+                } else {
+                    enterEditMode()
+                }
             }
 
             is ShopIntent.DeleteItem -> onRemoveItemClicked(intent)

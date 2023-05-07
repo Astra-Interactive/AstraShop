@@ -1,28 +1,23 @@
 plugins {
-    java
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("basic-plugin")
+    id("basic-java")
 }
 dependencies {
     // Kotlin
-//    compileOnly(libs.kotlinGradlePlugin)
-    // Coroutines
-    implementation(libs.coroutines.coreJvm)
-    implementation(libs.coroutines.core)
-    // Serialization
-    implementation(libs.kotlin.serialization)
-    implementation(libs.kotlin.serializationJson)
-    implementation(libs.kotlin.serializationKaml)
+    implementation(libs.bundles.kotlin)
     // AstraLibs
-    implementation(libs.astralibs.ktxCore)
-    implementation(libs.astralibs.spigotCore)
-    implementation(libs.astralibs.spigotGui)
-    implementation(libs.astralibs.orm)
-    implementation(libs.bstats.bukkit)
-    // Spigot
-    compileOnly(libs.paperApi)
-//    compileOnly(libs.spigotApi)
-//    compileOnly(libs.spigot)
-    implementation(project(":domain:core"))
+    implementation(libs.minecraft.astralibs.ktxcore)
+    implementation(libs.minecraft.astralibs.orm)
+    implementation(libs.minecraft.astralibs.di)
+    implementation(libs.minecraft.astralibs.spigot.gui)
+    implementation(libs.minecraft.astralibs.spigot.core)
+    // Spigot dependencies
+    compileOnly(libs.minecraft.paper.api)
+    implementation(libs.minecraft.bstats)
+    // Test
+    testImplementation(libs.bundles.testing.kotlin)
+    testImplementation(libs.tests.kotlin.test)
+    // Local
+    implementation(projects.domain.core)
 }

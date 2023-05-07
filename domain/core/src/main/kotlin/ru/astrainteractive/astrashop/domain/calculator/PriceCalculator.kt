@@ -19,9 +19,7 @@ object PriceCalculator {
         return (amount downTo 1).sumOf { f(item, item.buyPrice, amount).coerceAtLeast(item.sellPrice) }.round()
     }
 
-
     fun calculateSellPrice(item: ShopConfig.ShopItem<*>, amount: Int): Double {
         return ((amount downTo 1).sumOf { f(item, item.sellPrice, amount).coerceAtMost(item.priceMin) }).round()
     }
-
 }

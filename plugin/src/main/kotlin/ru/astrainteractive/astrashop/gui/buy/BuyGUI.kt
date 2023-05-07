@@ -3,23 +3,25 @@ package ru.astrainteractive.astrashop.gui.buy
 import kotlinx.coroutines.Dispatchers
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.menu.*
+import ru.astrainteractive.astralibs.getValue
+import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
+import ru.astrainteractive.astralibs.menu.menu.InventoryButton
 import ru.astrainteractive.astralibs.menu.menu.Menu
-import ru.astrainteractive.astralibs.menu.utils.InventoryButton
-import ru.astrainteractive.astralibs.menu.utils.MenuSize
-import ru.astrainteractive.astralibs.menu.utils.click.MenuClickListener
+import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astrashop.asState
+import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
-import ru.astrainteractive.astrashop.gui.*
+import ru.astrainteractive.astrashop.gui.BackToShopButton
+import ru.astrainteractive.astrashop.gui.BalanceButton
+import ru.astrainteractive.astrashop.gui.BuyInfoButton
+import ru.astrainteractive.astrashop.gui.SellInfoButton
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
-import ru.astrainteractive.astrashop.modules.TranslationModule
+import ru.astrainteractive.astrashop.gui.button
 import ru.astrainteractive.astrashop.utils.copy
 import ru.astrainteractive.astrashop.utils.toItemStack
 import kotlin.math.pow
-
 
 class BuyGUI(
     shopConfig: SpigotShopConfigAlias,
@@ -28,12 +30,11 @@ class BuyGUI(
 ) : Menu() {
 
     private val viewModel = BuyViewModel(shopConfig.configName, item.itemIndex, playerHolder.player)
-    private val translation by TranslationModule
+    private val translation by RootModuleImpl.translation
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XS
     override var menuTitle: String = item.toItemStack().itemMeta.displayName.ifEmpty { item.toItemStack().type.name }
-
 
     private val backButton = BackToShopButton(shopConfig, playerHolder, componentScope)
     private val buyInfoButton = BuyInfoButton
@@ -45,7 +46,6 @@ class BuyGUI(
         viewModel.state.collectOn(Dispatchers.IO, block = ::render)
     }
 
-
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
         clickListener.onClick(e)
@@ -54,7 +54,6 @@ class BuyGUI(
     override fun onInventoryClose(it: InventoryCloseEvent) {
         viewModel.close()
     }
-
 
     private fun setActionButton(type: BuyType, i: Int, state: BuyState.Loaded) {
         val amount = 2.0.pow(i).toInt()
@@ -109,8 +108,5 @@ class BuyGUI(
 
             BuyState.Loading -> {}
         }
-
     }
-
-
 }

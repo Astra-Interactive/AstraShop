@@ -3,21 +3,19 @@ package ru.astrainteractive.astrashop.gui
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.async.BukkitMain
-import ru.astrainteractive.astralibs.di.getValue
-import ru.astrainteractive.astralibs.menu.utils.InventoryButton
+import ru.astrainteractive.astralibs.getValue
+import ru.astrainteractive.astralibs.menu.menu.InventoryButton
 import ru.astrainteractive.astralibs.menu.utils.ItemStackButtonBuilder
+import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.buy.BuyState
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
-import ru.astrainteractive.astrashop.modules.TranslationModule
 import ru.astrainteractive.astrashop.utils.openOnMainThread
 
 fun button(
@@ -30,8 +28,9 @@ fun button(
     this.onClick = onClick
 }
 
-private val translation by TranslationModule
+private val translation by RootModuleImpl.translation
 
+@Suppress("FunctionNaming")
 fun BackButton(onClick: (e: InventoryClickEvent) -> Unit) = ItemStackButtonBuilder {
     this.index = 49
     this.itemStack = ItemStack(Material.PAPER).apply {
@@ -76,6 +75,7 @@ val SellInfoButton: InventoryButton
         }
     }
 
+@Suppress("FunctionNaming")
 fun BalanceButton(state: BuyState.Loaded? = null): InventoryButton {
     return ItemStackButtonBuilder {
         this.index = 0
@@ -94,6 +94,7 @@ fun BalanceButton(state: BuyState.Loaded? = null): InventoryButton {
     }
 }
 
+@Suppress("FunctionNaming")
 fun BackToShopButton(
     shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
     playerHolder: ShopPlayerHolder,

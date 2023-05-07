@@ -5,25 +5,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.di.getValue
+import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astrashop.asState
+import ru.astrainteractive.astrashop.di.impl.InteractorsFactoryModuleImpl
+import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.interactors.BuyInteractor
 import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
-import ru.astrainteractive.astrashop.modules.BuyInteractorModule
-import ru.astrainteractive.astrashop.modules.DataSourceModule
-import ru.astrainteractive.astrashop.modules.EconomyModule
-import ru.astrainteractive.astrashop.modules.SellInteractorModule
-
 
 class BuyViewModel(
     private val configName: String,
     private val itemIndex: Int,
     private val player: Player
 ) : AsyncComponent() {
-    private val economy by EconomyModule
-    private val dataSource by DataSourceModule
-    private val buyInteractor by BuyInteractorModule
-    private val sellInteractor by SellInteractorModule
+    private val economy by RootModuleImpl.economyProvider
+    private val dataSource by RootModuleImpl.spigotShopApi
+    private val buyInteractor = InteractorsFactoryModuleImpl.buyInteractor.build()
+    private val sellInteractor = InteractorsFactoryModuleImpl.sellInteractor.build()
+
     val state = MutableStateFlow<BuyState>(BuyState.Loading)
 
     private suspend fun loadItems() {
@@ -38,13 +36,15 @@ class BuyViewModel(
         )
     }
 
-
     fun onBuyClicked(amount: Int) {
         val state = state.value.asState<BuyState.Loaded>() ?: return
         componentScope.launch(Dispatchers.IO) {
             buyInteractor.invoke(
                 BuyInteractor.Param(
-                    amount, state.item, state.instance, player
+                    amount,
+                    state.item,
+                    state.instance,
+                    player
                 )
             )
             loadItems()
@@ -56,13 +56,15 @@ class BuyViewModel(
         componentScope.launch(Dispatchers.IO) {
             sellInteractor.invoke(
                 SellInteractor.Param(
-                    amount, state.item, state.instance, player
+                    amount,
+                    state.item,
+                    state.instance,
+                    player
                 )
             )
             loadItems()
         }
     }
-
 
     init {
         componentScope.launch(Dispatchers.IO) { loadItems() }
