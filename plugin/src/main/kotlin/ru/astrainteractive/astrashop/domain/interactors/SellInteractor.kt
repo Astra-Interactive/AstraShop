@@ -15,7 +15,7 @@ class SellInteractor(
     class Param(
         val sellAmount: Int,
         val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
-        val shopConfig: ShopConfig<SpigotTitleItem,SpigotShopItem>,
+        val shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
         val player: Player
     )
 
@@ -37,5 +37,4 @@ class SellInteractor(
         )
         return true
     }
-
 }

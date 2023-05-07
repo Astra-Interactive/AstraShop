@@ -1,12 +1,11 @@
 package ru.astrainteractive.astrashop.domain.usecases
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
-import ru.astrainteractive.astralibs.Logger
-import ru.astrainteractive.astralibs.async.BukkitMain
+import ru.astrainteractive.astralibs.async.BukkitDispatchers
 import ru.astrainteractive.astralibs.domain.UseCase
-import ru.astrainteractive.astralibs.utils.economy.EconomyProvider
+import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
@@ -14,7 +13,11 @@ import ru.astrainteractive.astrashop.utils.copy
 import ru.astrainteractive.astrashop.utils.hasAtLeast
 import ru.astrainteractive.astrashop.utils.toItemStack
 
-class BuyUseCase(private val economy: EconomyProvider) : UseCase<BuyUseCase.Result, BuyUseCase.Param> {
+class BuyUseCase(
+    private val economy: EconomyProvider,
+    private val logger: Logger,
+    private val dispatchers: BukkitDispatchers
+) : UseCase<BuyUseCase.Result, BuyUseCase.Param> {
 
     class Param(
         val amount: Int,
@@ -53,23 +56,22 @@ class BuyUseCase(private val economy: EconomyProvider) : UseCase<BuyUseCase.Resu
         val itemStack = item.toItemStack().copy(amount)
         val notFittedItems = player.inventory.addItem(itemStack)
         if (notFittedItems.isEmpty()) {
-            Logger.log(
+            logger.info(
                 "BuyUseCase",
-                "${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice",
-                consolePrint = false
+                "${player.name} bought $amount of ${itemStack.type.name} for $totalPrice",
+                logInFile = true
             )
             return Result.Success(-amount)
         }
         player.sendMessage("Некоторые предметы не вместились. Они лежат на полу")
-        withContext(Dispatchers.BukkitMain){
+        withContext(dispatchers.BukkitMain) {
             player.location.world.dropItemNaturally(player.location, itemStack.copy(notFittedItems.size))
         }
-        Logger.log(
+        logger.info(
             "BuyUseCase",
-            "${player.name} bought ${amount} of ${itemStack.type.name} for $totalPrice",
-            consolePrint = false
+            "${player.name} bought $amount of ${itemStack.type.name} for $totalPrice",
+            logInFile = true
         )
         return Result.Success(-amount)
     }
-
 }

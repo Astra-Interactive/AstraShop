@@ -1,11 +1,9 @@
 package ru.astrainteractive.astrashop.gui.buy
 
 import ru.astrainteractive.astrashop.State
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopOptionsAlias
-
 
 sealed interface BuyState : State {
     object Loading : BuyState
@@ -14,7 +12,6 @@ sealed interface BuyState : State {
         val item: SpigotShopItemAlias,
         val shopConfig: SpigotShopOptionsAlias,
         val instance: SpigotShopConfigAlias,
-        val playerBalance:Int
+        val playerBalance: Int
     ) : BuyState
-
 }

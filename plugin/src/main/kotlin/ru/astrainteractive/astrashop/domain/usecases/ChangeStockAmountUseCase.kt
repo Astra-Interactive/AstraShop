@@ -6,8 +6,9 @@ import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 
-class ChangeStockAmountUseCase(private val dataSource: ShopApi<SpigotTitleItem, SpigotShopItem>) :
-    UseCase<Unit, ChangeStockAmountUseCase.Param> {
+class ChangeStockAmountUseCase(
+    private val dataSource: ShopApi<SpigotTitleItem, SpigotShopItem>
+) : UseCase<Unit, ChangeStockAmountUseCase.Param> {
     class Param(
         val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
         val increaseAmount: Int,
@@ -24,5 +25,4 @@ class ChangeStockAmountUseCase(private val dataSource: ShopApi<SpigotTitleItem, 
         }
         dataSource.updateShop(shopConfig)
     }
-
 }

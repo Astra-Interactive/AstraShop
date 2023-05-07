@@ -1,7 +1,5 @@
 package ru.astrainteractive.astrashop.domain.models
 
-import kotlin.math.roundToInt
-
 data class ShopConfig<TITLE_ITEM, SHOP_ITEM>(
     val configName: String,
     val options: Options<TITLE_ITEM>,
@@ -25,5 +23,4 @@ data class ShopConfig<TITLE_ITEM, SHOP_ITEM>(
         val priceMin: Double,
         val shopItem: SHOP_ITEM
     )
-
 }

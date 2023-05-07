@@ -2,15 +2,18 @@ package ru.astrainteractive.astrashop.domain.usecases
 
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.Logger
 import ru.astrainteractive.astralibs.domain.UseCase
-import ru.astrainteractive.astralibs.utils.economy.EconomyProvider
+import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.utils.copy
 
-class SellUseCase(private val economy: EconomyProvider) : UseCase<SellUseCase.Result, SellUseCase.Param> {
+class SellUseCase(
+    private val economy: EconomyProvider,
+    private val logger: Logger,
+) : UseCase<SellUseCase.Result, SellUseCase.Param> {
 
     class Param(
         val amount: Int,
@@ -48,7 +51,7 @@ class SellUseCase(private val economy: EconomyProvider) : UseCase<SellUseCase.Re
                 ItemStack(shopItem.material)
             }
 
-            else -> throw Exception("Not spigot item")
+            else -> error("Not spigot item")
         }
         val couldNotRemoveAmount = player.inventory.removeItem(itemStack.copy(amount)).map { it.value.amount }.sum()
         val sellAmount = amount - couldNotRemoveAmount
@@ -56,12 +59,11 @@ class SellUseCase(private val economy: EconomyProvider) : UseCase<SellUseCase.Re
         val money = PriceCalculator.calculateSellPrice(item, sellAmount)
         economy.addMoney(player.uniqueId, money)
         player.sendMessage("Вы получили $money\$")
-        Logger.log(
+        logger.info(
             "BuyUseCase",
-            "${player.name} sold ${sellAmount} of ${itemStack.type.name} for $money",
-            consolePrint = false
+            "${player.name} sold $sellAmount of ${itemStack.type.name} for $money",
+            logInFile = false
         )
         return Result.Success(sellAmount)
     }
-
 }

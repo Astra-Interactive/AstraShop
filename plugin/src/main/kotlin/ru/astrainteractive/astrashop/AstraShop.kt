@@ -1,36 +1,34 @@
+@file:OptIn(UnsafeApi::class)
+
 package ru.astrainteractive.astrashop
 
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
-import ru.astrainteractive.astralibs.AstraLibs
-import ru.astrainteractive.astralibs.Logger
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.event.SharedInventoryClickEvent
-import ru.astrainteractive.astralibs.utils.Singleton
-import ru.astrainteractive.astralibs.utils.setupWithSpigot
+import ru.astrainteractive.astralibs.getValue
+import ru.astrainteractive.astralibs.menu.event.GlobalInventoryClickEvent
 import ru.astrainteractive.astrashop.commands.CommandManager
-import ru.astrainteractive.astrashop.modules.TranslationModule
-import ru.astrainteractive.astrashop.utils.Files
+import ru.astrainteractive.astrashop.di.RootModule
+import ru.astrainteractive.astrashop.di.impl.CommandsModuleImpl
+import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 
 /**
  * Initial class for your plugin
  */
 class AstraShop : JavaPlugin() {
-    companion object : Singleton<AstraShop>()
-
+    private val rootModule: RootModule by RootModuleImpl
     init {
-        instance = this
-        AstraLibs.rememberPlugin(this)
-        Logger.setupWithSpigot("AstraShop", this)
+        rootModule.plugin.initialize(this)
     }
 
     /**
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        CommandManager.enable()
-        SharedInventoryClickEvent.onEnable(this)
+        CommandManager(this, CommandsModuleImpl).build()
+        GlobalInventoryClickEvent.onEnable(this)
     }
 
     /**
@@ -39,7 +37,7 @@ class AstraShop : JavaPlugin() {
     override fun onDisable() {
         HandlerList.unregisterAll(this)
         PluginScope.close()
-        SharedInventoryClickEvent.onDisable()
+        GlobalInventoryClickEvent.onDisable()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }
@@ -49,13 +47,9 @@ class AstraShop : JavaPlugin() {
      * As it says, function for plugin reload
      */
     fun reloadPlugin() {
-        Files.configFile.reload()
-        TranslationModule.reload()
+        rootModule.translation.reload()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }
     }
-
 }
-
-
