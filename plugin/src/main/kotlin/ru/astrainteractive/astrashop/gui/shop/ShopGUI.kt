@@ -40,7 +40,6 @@ class ShopGUI(
         set(value) {
             playerHolder.shopPage = value
         }
-    override val maxItemsPerPage: Int = menuSize.size - MenuSize.XXS.size
     override val maxItemsAmount: Int
         get() = viewModel.maxItemsAmount
 

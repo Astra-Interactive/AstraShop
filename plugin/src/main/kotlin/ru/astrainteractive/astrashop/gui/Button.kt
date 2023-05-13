@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astralibs.menu.menu.InventoryButton
+import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.menu.utils.ItemStackButtonBuilder
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
@@ -39,20 +40,22 @@ fun BackButton(onClick: (e: InventoryClickEvent) -> Unit) = ItemStackButtonBuild
     this.onClick = onClick
 }
 
-val NextButton: InventoryButton
+val PaginatedMenu.NextButton: InventoryButton
     get() = ItemStackButtonBuilder {
         this.index = 53
         this.itemStack = ItemStack(Material.PAPER).apply {
             editMeta { it.setDisplayName(translation.menuNextPage) }
         }
+        this.onClick = { showPage(page + 1) }
     }
 
-val PrevButton: InventoryButton
+val PaginatedMenu.PrevButton: InventoryButton
     get() = ItemStackButtonBuilder {
         this.index = 45
         this.itemStack = ItemStack(Material.PAPER).apply {
             editMeta { it.setDisplayName(translation.menuPrevPage) }
         }
+        this.onClick = { showPage(page - 1) }
     }
 
 val BuyInfoButton: InventoryButton
