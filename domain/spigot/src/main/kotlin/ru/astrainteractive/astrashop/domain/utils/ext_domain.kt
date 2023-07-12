@@ -1,3 +1,5 @@
+@file:Suppress("Filename")
+
 package ru.astrainteractive.astrashop.domain.utils
 
 import org.bukkit.configuration.ConfigurationSection

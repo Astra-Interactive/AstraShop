@@ -16,9 +16,9 @@ import ru.astrainteractive.astrashop.gui.PrevButton
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.button
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
-import ru.astrainteractive.astrashop.utils.inventoryIndex
-import ru.astrainteractive.astrashop.utils.openOnMainThread
-import ru.astrainteractive.astrashop.utils.toItemStack
+import ru.astrainteractive.astrashop.util.inventoryIndex
+import ru.astrainteractive.astrashop.util.openOnMainThread
+import ru.astrainteractive.astrashop.util.toItemStack
 
 class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
 

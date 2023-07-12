@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.utils
+package ru.astrainteractive.astrashop.util
 
 import ru.astrainteractive.astralibs.filemanager.SpigotFileManager
 import ru.astrainteractive.astralibs.utils.BaseTranslation

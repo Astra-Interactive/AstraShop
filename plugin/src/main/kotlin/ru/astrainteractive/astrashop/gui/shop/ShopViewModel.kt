@@ -12,8 +12,8 @@ import ru.astrainteractive.astrashop.gui.buy.BuyGUI
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
-import ru.astrainteractive.astrashop.utils.asShopItem
-import ru.astrainteractive.astrashop.utils.openOnMainThread
+import ru.astrainteractive.astrashop.util.asShopItem
+import ru.astrainteractive.astrashop.util.openOnMainThread
 
 class ShopViewModel(
     private val configName: String,

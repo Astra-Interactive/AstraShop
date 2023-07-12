@@ -1,4 +1,6 @@
-package ru.astrainteractive.astrashop.utils
+@file:Suppress("Filename")
+
+package ru.astrainteractive.astrashop.util
 
 import kotlinx.coroutines.withContext
 import org.bukkit.inventory.ItemStack

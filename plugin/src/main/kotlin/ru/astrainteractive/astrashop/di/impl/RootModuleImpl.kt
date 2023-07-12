@@ -19,7 +19,7 @@ import ru.astrainteractive.astralibs.utils.buildWithSpigot
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.di.RootModule
 import ru.astrainteractive.astrashop.domain.SpigotShopApi
-import ru.astrainteractive.astrashop.utils.PluginTranslation
+import ru.astrainteractive.astrashop.util.PluginTranslation
 
 object RootModuleImpl : RootModule {
     override val plugin: Lateinit<AstraShop> = Lateinit()
