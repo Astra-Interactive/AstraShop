@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astralibs.menu.event.GlobalInventoryClickEvent
-import ru.astrainteractive.astrashop.commands.CommandManager
+import ru.astrainteractive.astrashop.command.CommandManager
 import ru.astrainteractive.astrashop.di.RootModule
-import ru.astrainteractive.astrashop.di.impl.CommandsModuleImpl
+import ru.astrainteractive.astrashop.di.impl.CommandModuleImpl
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 
 /**
@@ -27,7 +27,7 @@ class AstraShop : JavaPlugin() {
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        CommandManager(this, CommandsModuleImpl).build()
+        CommandManager(this, CommandModuleImpl).build()
         GlobalInventoryClickEvent.onEnable(this)
     }
 

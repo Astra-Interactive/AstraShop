@@ -19,8 +19,8 @@ import ru.astrainteractive.astrashop.gui.BuyInfoButton
 import ru.astrainteractive.astrashop.gui.SellInfoButton
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.button
-import ru.astrainteractive.astrashop.utils.copy
-import ru.astrainteractive.astrashop.utils.toItemStack
+import ru.astrainteractive.astrashop.util.copy
+import ru.astrainteractive.astrashop.util.toItemStack
 import kotlin.math.pow
 
 class BuyGUI(

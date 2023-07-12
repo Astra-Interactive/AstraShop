@@ -17,7 +17,7 @@ import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.buy.BuyState
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
-import ru.astrainteractive.astrashop.utils.openOnMainThread
+import ru.astrainteractive.astrashop.util.openOnMainThread
 
 fun button(
     index: Int,

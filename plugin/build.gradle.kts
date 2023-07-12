@@ -1,9 +1,9 @@
+import ru.astrainteractive.gradleplugin.setupSpigotProcessor
+import ru.astrainteractive.gradleplugin.setupSpigotShadow
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("basic-java")
-    id("spigot-shadow")
-    id("spigot-resource-processor")
 }
 
 dependencies {
@@ -28,3 +28,6 @@ dependencies {
     implementation(projects.domain.core)
     implementation(projects.domain.spigot)
 }
+
+setupSpigotShadow()
+setupSpigotProcessor()

@@ -8,7 +8,7 @@ import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.utils.copy
+import ru.astrainteractive.astrashop.util.copy
 
 class SellUseCase(
     private val economy: EconomyProvider,

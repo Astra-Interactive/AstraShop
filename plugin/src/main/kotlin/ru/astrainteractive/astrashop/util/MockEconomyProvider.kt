@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.utils
+package ru.astrainteractive.astrashop.util
 
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import java.util.*

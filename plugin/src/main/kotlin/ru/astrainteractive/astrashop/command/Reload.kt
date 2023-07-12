@@ -1,10 +1,10 @@
-package ru.astrainteractive.astrashop.commands
+package ru.astrainteractive.astrashop.command
 
 import ru.astrainteractive.astralibs.commands.registerCommand
 import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astrashop.AstraShop
-import ru.astrainteractive.astrashop.commands.di.CommandsModule
-import ru.astrainteractive.astrashop.utils.PluginPermission
+import ru.astrainteractive.astrashop.command.di.CommandModule
+import ru.astrainteractive.astrashop.util.PluginPermission
 
 /**
  * Reload command handler
@@ -17,7 +17,7 @@ import ru.astrainteractive.astrashop.utils.PluginPermission
  */
 internal fun CommandManager.reload(
     plugin: AstraShop,
-    module: CommandsModule
+    module: CommandModule
 ) = plugin.registerCommand("atempreload") {
     val translation by module.translation
     if (!PluginPermission.Reload.hasPermission(sender)) {

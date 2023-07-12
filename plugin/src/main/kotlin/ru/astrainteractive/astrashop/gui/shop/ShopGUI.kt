@@ -21,8 +21,8 @@ import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.button
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
-import ru.astrainteractive.astrashop.utils.PluginPermission
-import ru.astrainteractive.astrashop.utils.toItemStack
+import ru.astrainteractive.astrashop.util.PluginPermission
+import ru.astrainteractive.astrashop.util.toItemStack
 
 class ShopGUI(
     private val shopConfig: SpigotShopConfigAlias,
