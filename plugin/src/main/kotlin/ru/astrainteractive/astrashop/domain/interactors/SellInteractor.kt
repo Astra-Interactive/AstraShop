@@ -1,17 +1,17 @@
 package ru.astrainteractive.astrashop.domain.interactors
 
 import org.bukkit.entity.Player
-import ru.astrainteractive.astralibs.domain.UseCase
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.domain.usecases.ChangeStockAmountUseCase
 import ru.astrainteractive.astrashop.domain.usecases.SellUseCase
+import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 
 class SellInteractor(
     private val sellUseCase: SellUseCase,
     private val changeStockAmountUseCase: ChangeStockAmountUseCase
-) : UseCase<Boolean, SellInteractor.Param> {
+) : UseCase.Parametrized<SellInteractor.Param, Boolean> {
     class Param(
         val sellAmount: Int,
         val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
@@ -19,20 +19,20 @@ class SellInteractor(
         val player: Player
     )
 
-    override suspend fun run(params: Param): Boolean {
+    override suspend operator fun invoke(input: Param): Boolean {
         val buyResult = sellUseCase.invoke(
             SellUseCase.Param(
-                amount = params.sellAmount,
-                shopItem = params.shopItem,
-                player = params.player
+                amount = input.sellAmount,
+                shopItem = input.shopItem,
+                player = input.player
             )
         ) as? SellUseCase.Result.Success ?: return false
 
         changeStockAmountUseCase.invoke(
             ChangeStockAmountUseCase.Param(
-                shopItem = params.shopItem,
+                shopItem = input.shopItem,
                 increaseAmount = buyResult.soldAmount,
-                shopConfig = params.shopConfig
+                shopConfig = input.shopConfig
             )
         )
         return true

@@ -3,9 +3,8 @@ package ru.astrainteractive.astrashop.gui.buy
 import kotlinx.coroutines.Dispatchers
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
-import ru.astrainteractive.astralibs.menu.menu.InventoryButton
+import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astrashop.asState
@@ -21,6 +20,7 @@ import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.button
 import ru.astrainteractive.astrashop.util.copy
 import ru.astrainteractive.astrashop.util.toItemStack
+import ru.astrainteractive.klibs.kdi.getValue
 import kotlin.math.pow
 
 class BuyGUI(
@@ -39,7 +39,7 @@ class BuyGUI(
     private val backButton = BackToShopButton(shopConfig, playerHolder, componentScope)
     private val buyInfoButton = BuyInfoButton
     private val sellInfoButton = SellInfoButton
-    private val balanceButton: InventoryButton
+    private val balanceButton: InventorySlot
         get() = BalanceButton(viewModel.state.value.asState<BuyState.Loaded>())
 
     override fun onCreated() {

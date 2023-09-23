@@ -1,15 +1,15 @@
 package ru.astrainteractive.astrashop.command
 
-import ru.astrainteractive.astralibs.Factory
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.command.di.CommandModule
+import ru.astrainteractive.klibs.kdi.Factory
 
 class CommandManager(
     private val plugin: AstraShop,
     private val module: CommandModule
 ) : Factory<Unit> {
 
-    override fun build() {
+    override fun create() {
         reload(plugin, module)
         shop(plugin, module)
     }

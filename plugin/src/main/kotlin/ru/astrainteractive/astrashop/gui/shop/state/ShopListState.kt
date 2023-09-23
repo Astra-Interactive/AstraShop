@@ -6,7 +6,7 @@ import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
 
 sealed class ShopListState(val items: HashMap<String, SpigotShopItemAlias>) : State {
-    object Loading : ShopListState(HashMap())
+    data object Loading : ShopListState(HashMap())
     data class List(val config: SpigotShopConfigAlias) : ShopListState(config.items)
 
     data class ListEditMode(

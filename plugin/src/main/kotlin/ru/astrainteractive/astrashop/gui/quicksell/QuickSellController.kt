@@ -6,17 +6,17 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astrashop.di.impl.InteractorsFactoryModuleImpl
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
+import ru.astrainteractive.klibs.kdi.getValue
 
 class QuickSellController : AsyncComponent() {
     private val translation by RootModuleImpl.translation
     private val dataSource by RootModuleImpl.spigotShopApi
-    private val sellInteractor = InteractorsFactoryModuleImpl.sellInteractor.build()
+    private val sellInteractor = InteractorsFactoryModuleImpl.sellInteractor.create()
 
     fun onItemClicked(e: InventoryClickEvent) {
         val itemStack = e.currentItem ?: return

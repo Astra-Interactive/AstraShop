@@ -3,7 +3,6 @@ package ru.astrainteractive.astrashop.domain.usecases
 import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
-import ru.astrainteractive.astralibs.domain.UseCase
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
@@ -12,12 +11,13 @@ import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.util.copy
 import ru.astrainteractive.astrashop.util.hasAtLeast
 import ru.astrainteractive.astrashop.util.toItemStack
+import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 
 class BuyUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
     private val dispatchers: BukkitDispatchers
-) : UseCase<BuyUseCase.Result, BuyUseCase.Param> {
+) : UseCase.Parametrized<BuyUseCase.Param, BuyUseCase.Result> {
 
     class Param(
         val amount: Int,
@@ -30,10 +30,10 @@ class BuyUseCase(
         class Success(val boughtAmount: Int) : Result
     }
 
-    override suspend fun run(params: Param): Result {
-        val item = params.shopItem
-        val player = params.player
-        val amount = params.amount
+    override suspend operator fun invoke(input: Param): Result {
+        val item = input.shopItem
+        val player = input.player
+        val amount = input.amount
 
         val totalPrice = PriceCalculator.calculateBuyPrice(item, amount)
         if (totalPrice <= 0) {

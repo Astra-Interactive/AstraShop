@@ -4,9 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
-import ru.astrainteractive.astralibs.menu.menu.InventoryButton
+import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
@@ -19,6 +18,7 @@ import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.util.inventoryIndex
 import ru.astrainteractive.astrashop.util.openOnMainThread
 import ru.astrainteractive.astrashop.util.toItemStack
+import ru.astrainteractive.klibs.kdi.getValue
 
 class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
 
@@ -38,9 +38,9 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
     override val maxItemsAmount: Int
         get() = viewModel.maxItemsAmount
 
-    override val nextPageButton: InventoryButton = NextButton
-    override val prevPageButton: InventoryButton = PrevButton
-    override val backPageButton: InventoryButton = BackButton {
+    override val nextPageButton: InventorySlot = NextButton
+    override val prevPageButton: InventorySlot = PrevButton
+    override val backPageButton: InventorySlot = BackButton {
         inventory.close()
     }
 
