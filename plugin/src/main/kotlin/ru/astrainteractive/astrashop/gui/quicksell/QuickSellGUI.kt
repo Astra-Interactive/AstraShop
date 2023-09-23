@@ -4,13 +4,13 @@ import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.button
+import ru.astrainteractive.klibs.kdi.getValue
 
 class QuickSellGUI(override val playerHolder: ShopPlayerHolder) : Menu() {
 

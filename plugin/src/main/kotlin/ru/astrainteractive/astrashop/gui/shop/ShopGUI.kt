@@ -5,9 +5,8 @@ import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
-import ru.astrainteractive.astralibs.menu.menu.InventoryButton
+import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
@@ -23,6 +22,7 @@ import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.util.PluginPermission
 import ru.astrainteractive.astrashop.util.toItemStack
+import ru.astrainteractive.klibs.kdi.getValue
 
 class ShopGUI(
     private val shopConfig: SpigotShopConfigAlias,
@@ -43,9 +43,9 @@ class ShopGUI(
     override val maxItemsAmount: Int
         get() = viewModel.maxItemsAmount
 
-    override val nextPageButton: InventoryButton = NextButton
-    override val prevPageButton: InventoryButton = PrevButton
-    override val backPageButton: InventoryButton = BackButton {
+    override val nextPageButton: InventorySlot = NextButton
+    override val prevPageButton: InventorySlot = PrevButton
+    override val backPageButton: InventorySlot = BackButton {
         viewModel.onIntent(ShopIntent.OpenShops(playerHolder))
     }
 

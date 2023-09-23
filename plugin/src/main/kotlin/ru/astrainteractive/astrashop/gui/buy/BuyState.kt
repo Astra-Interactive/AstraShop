@@ -6,7 +6,7 @@ import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopOptionsAlias
 
 sealed interface BuyState : State {
-    object Loading : BuyState
+    data object Loading : BuyState
 
     data class Loaded(
         val item: SpigotShopItemAlias,

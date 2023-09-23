@@ -5,12 +5,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.InteractorsFactoryModuleImpl
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.interactors.BuyInteractor
 import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
+import ru.astrainteractive.klibs.kdi.getValue
 
 class BuyViewModel(
     private val configName: String,
@@ -19,8 +19,8 @@ class BuyViewModel(
 ) : AsyncComponent() {
     private val economy by RootModuleImpl.economyProvider
     private val dataSource by RootModuleImpl.spigotShopApi
-    private val buyInteractor = InteractorsFactoryModuleImpl.buyInteractor.build()
-    private val sellInteractor = InteractorsFactoryModuleImpl.sellInteractor.build()
+    private val buyInteractor = InteractorsFactoryModuleImpl.buyInteractor.create()
+    private val sellInteractor = InteractorsFactoryModuleImpl.sellInteractor.create()
 
     val state = MutableStateFlow<BuyState>(BuyState.Loading)
 

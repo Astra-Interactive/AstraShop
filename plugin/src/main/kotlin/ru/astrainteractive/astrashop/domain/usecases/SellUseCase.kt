@@ -2,18 +2,18 @@ package ru.astrainteractive.astrashop.domain.usecases
 
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.domain.UseCase
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.domain.models.ShopConfig
 import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
 import ru.astrainteractive.astrashop.util.copy
+import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 
 class SellUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
-) : UseCase<SellUseCase.Result, SellUseCase.Param> {
+) : UseCase.Parametrized<SellUseCase.Param, SellUseCase.Result> {
 
     class Param(
         val amount: Int,
@@ -26,10 +26,10 @@ class SellUseCase(
         class Success(val soldAmount: Int) : Result
     }
 
-    override suspend fun run(params: Param): Result {
-        val item = params.shopItem
-        val player = params.player
-        val amount = params.amount
+    override suspend operator fun invoke(input: Param): Result {
+        val item = input.shopItem
+        val player = input.player
+        val amount = input.amount
         if (PriceCalculator.calculateSellPrice(item, amount) <= 0) {
             player.sendMessage("Предмет не закупается")
             return Result.Failure

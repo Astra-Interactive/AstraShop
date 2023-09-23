@@ -2,8 +2,7 @@ package ru.astrainteractive.astrashop.command
 
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
-import ru.astrainteractive.astralibs.commands.registerCommand
-import ru.astrainteractive.astralibs.getValue
+import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.command.di.CommandModule
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
@@ -11,6 +10,7 @@ import ru.astrainteractive.astrashop.gui.quicksell.QuickSellGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import ru.astrainteractive.astrashop.util.PluginPermission
 import ru.astrainteractive.astrashop.util.openOnMainThread
+import ru.astrainteractive.klibs.kdi.getValue
 
 internal fun CommandManager.shop(
     plugin: AstraShop,

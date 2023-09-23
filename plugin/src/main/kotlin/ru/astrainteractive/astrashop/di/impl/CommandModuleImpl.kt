@@ -1,11 +1,11 @@
 package ru.astrainteractive.astrashop.di.impl
 
-import ru.astrainteractive.astralibs.Dependency
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astrashop.command.di.CommandModule
 import ru.astrainteractive.astrashop.util.PluginTranslation
+import ru.astrainteractive.klibs.kdi.Dependency
+import ru.astrainteractive.klibs.kdi.getValue
 
 object CommandModuleImpl : CommandModule {
     private val rootModule by RootModuleImpl

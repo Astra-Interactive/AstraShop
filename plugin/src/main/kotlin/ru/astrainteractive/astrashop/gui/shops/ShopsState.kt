@@ -4,6 +4,6 @@ import ru.astrainteractive.astrashop.State
 import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
 
 sealed interface ShopsState : State {
-    object Loading : ShopsState
+    data object Loading : ShopsState
     class Loaded(val shops: List<SpigotShopConfigAlias>) : ShopsState
 }

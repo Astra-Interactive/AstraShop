@@ -33,5 +33,5 @@ sealed interface ShopIntent {
         fun isValid() = isLeftClick && !isShiftClick && currentState is ShopListState.List
     }
 
-    object ToggleEditModeClick : ShopIntent
+    data object ToggleEditModeClick : ShopIntent
 }

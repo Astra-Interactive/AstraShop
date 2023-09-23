@@ -1,7 +1,7 @@
 package ru.astrainteractive.astrashop.util
 
 import ru.astrainteractive.astralibs.filemanager.SpigotFileManager
-import ru.astrainteractive.astralibs.utils.BaseTranslation
+import ru.astrainteractive.astralibs.util.BaseTranslation
 
 /**
  * All translation stored here

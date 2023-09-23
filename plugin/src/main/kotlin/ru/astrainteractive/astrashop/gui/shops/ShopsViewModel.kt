@@ -4,9 +4,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.getValue
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
+import ru.astrainteractive.klibs.kdi.getValue
 
 class ShopsViewModel : AsyncComponent() {
     private val dataSource by RootModuleImpl.spigotShopApi

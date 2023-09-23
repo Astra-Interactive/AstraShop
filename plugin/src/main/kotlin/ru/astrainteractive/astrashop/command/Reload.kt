@@ -1,10 +1,10 @@
 package ru.astrainteractive.astrashop.command
 
-import ru.astrainteractive.astralibs.commands.registerCommand
-import ru.astrainteractive.astralibs.getValue
+import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.command.di.CommandModule
 import ru.astrainteractive.astrashop.util.PluginPermission
+import ru.astrainteractive.klibs.kdi.getValue
 
 /**
  * Reload command handler
