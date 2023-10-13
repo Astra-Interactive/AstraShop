@@ -4,8 +4,8 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItem
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItem
-import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
+import ru.astrainteractive.astrashop.gui.util.ShopPlayerHolder
 
 sealed interface ShopIntent {
     class OpenShops(val playerHolder: ShopPlayerHolder) : ShopIntent

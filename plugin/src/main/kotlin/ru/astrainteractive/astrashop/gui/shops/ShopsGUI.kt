@@ -9,12 +9,12 @@ import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.gui.BackButton
-import ru.astrainteractive.astrashop.gui.NextButton
-import ru.astrainteractive.astrashop.gui.PrevButton
-import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
-import ru.astrainteractive.astrashop.gui.button
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
+import ru.astrainteractive.astrashop.gui.util.BackButton
+import ru.astrainteractive.astrashop.gui.util.NextButton
+import ru.astrainteractive.astrashop.gui.util.PrevButton
+import ru.astrainteractive.astrashop.gui.util.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.util.button
 import ru.astrainteractive.astrashop.util.inventoryIndex
 import ru.astrainteractive.astrashop.util.openOnMainThread
 import ru.astrainteractive.astrashop.util.toItemStack
@@ -24,7 +24,7 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
 
     private val translation by RootModuleImpl.translation
 
-    private val viewModel = ShopsViewModel()
+    private val shopsComponent = DefaultShopsComponent()
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
@@ -36,7 +36,7 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
         }
     override val maxItemsPerPage: Int = menuSize.size - MenuSize.XXS.size
     override val maxItemsAmount: Int
-        get() = viewModel.maxItemsAmount
+        get() = shopsComponent.model.value.maxItemsAmount
 
     override val nextPageButton: InventorySlot = NextButton
     override val prevPageButton: InventorySlot = PrevButton
@@ -50,16 +50,16 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
-        viewModel.close()
+        shopsComponent.close()
     }
 
     override fun onPageChanged() = render()
 
     override fun onCreated() {
-        viewModel.state.collectOn(Dispatchers.IO, block = ::render)
+        shopsComponent.model.collectOn(Dispatchers.IO, block = ::render)
     }
 
-    private fun renderLoadedState(state: ShopsState.Loaded) {
+    private fun renderLoadedState(state: ShopsComponent.Model.Loaded) {
         for (i in 0 until maxItemsPerPage) {
             val index = inventoryIndex(i)
             val item = state.shops.getOrNull(index) ?: continue
@@ -71,15 +71,15 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
         }
     }
 
-    private fun render(state: ShopsState = viewModel.state.value) {
+    private fun render(state: ShopsComponent.Model = shopsComponent.model.value) {
         inventory.clear()
         clickListener.clearClickListener()
         clickListener.remember(backPageButton)
         setManageButtons(clickListener)
 
         when (state) {
-            is ShopsState.Loaded -> renderLoadedState(state)
-            ShopsState.Loading -> Unit
+            is ShopsComponent.Model.Loaded -> renderLoadedState(state)
+            ShopsComponent.Model.Loading -> Unit
         }
     }
 }

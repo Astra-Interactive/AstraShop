@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.gui.shop
+package ru.astrainteractive.astrashop.gui.shop.util
 
 interface PagingProvider {
     val page: Int

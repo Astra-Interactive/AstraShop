@@ -10,6 +10,7 @@ import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.gui.buy.BuyGUI
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
+import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import ru.astrainteractive.astrashop.util.asShopItem
 import ru.astrainteractive.astrashop.util.openOnMainThread

@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.gui
+package ru.astrainteractive.astrashop.gui.util
 
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.menu.holder.PlayerHolder

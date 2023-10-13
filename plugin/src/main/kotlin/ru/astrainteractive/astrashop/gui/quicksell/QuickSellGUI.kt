@@ -8,8 +8,8 @@ import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
-import ru.astrainteractive.astrashop.gui.button
+import ru.astrainteractive.astrashop.gui.util.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.util.button
 import ru.astrainteractive.klibs.kdi.getValue
 
 class QuickSellGUI(override val playerHolder: ShopPlayerHolder) : Menu() {

@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.gui
+package ru.astrainteractive.astrashop.gui.util
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

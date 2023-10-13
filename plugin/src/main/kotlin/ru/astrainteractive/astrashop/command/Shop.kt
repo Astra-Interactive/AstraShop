@@ -5,9 +5,9 @@ import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.command.di.CommandContainer
-import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.quicksell.QuickSellGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
+import ru.astrainteractive.astrashop.gui.util.ShopPlayerHolder
 import ru.astrainteractive.astrashop.util.PluginPermission
 import ru.astrainteractive.astrashop.util.openOnMainThread
 import ru.astrainteractive.klibs.kdi.getValue
