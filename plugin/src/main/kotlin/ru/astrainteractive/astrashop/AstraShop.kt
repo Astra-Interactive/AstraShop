@@ -18,7 +18,7 @@ import ru.astrainteractive.klibs.kdi.getValue
  * Initial class for your plugin
  */
 class AstraShop : JavaPlugin() {
-    private val rootModule: RootModule by RootModuleImpl
+    private val rootModule: RootModule = RootModuleImpl
     init {
         rootModule.plugin.initialize(this)
     }
@@ -27,7 +27,7 @@ class AstraShop : JavaPlugin() {
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        CommandManager(this, CommandContainerImpl).create()
+        CommandManager(this, CommandContainerImpl(rootModule)).create()
         GlobalInventoryClickEvent.onEnable(this)
     }
 

@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.minecraft.bstats)
     // Local
     implementation(projects.modules.apiSpigot)
+    implementation(projects.modules.shared)
 }
 
 setupSpigotShadow()

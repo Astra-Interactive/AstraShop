@@ -1,37 +1,41 @@
-package ru.astrainteractive.astrashop.api.interactors
+package ru.astrainteractive.astrashop.domain.interactor
 
 import org.bukkit.entity.Player
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItem
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItem
-import ru.astrainteractive.astrashop.api.usecases.BuyUseCase
-import ru.astrainteractive.astrashop.api.usecases.ChangeStockAmountUseCase
+import ru.astrainteractive.astrashop.domain.interactor.SellInteractor.Param
+import ru.astrainteractive.astrashop.domain.usecase.ChangeStockAmountUseCase
+import ru.astrainteractive.astrashop.domain.usecase.SellUseCase
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 
-class BuyInteractor(
-    private val buyUseCase: BuyUseCase,
-    private val changeStockAmountUseCase: ChangeStockAmountUseCase
-) : UseCase.Parametrized<BuyInteractor.Param, Boolean> {
+interface SellInteractor : UseCase.Parametrized<Param, Boolean> {
     class Param(
-        val buyAmount: Int,
+        val sellAmount: Int,
         val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
         val shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
         val player: Player
     )
+}
+
+class SellInteractorImpl(
+    private val sellUseCase: SellUseCase,
+    private val changeStockAmountUseCase: ChangeStockAmountUseCase
+) : SellInteractor {
 
     override suspend operator fun invoke(input: Param): Boolean {
-        val buyResult = buyUseCase.invoke(
-            BuyUseCase.Param(
-                amount = input.buyAmount,
+        val buyResult = sellUseCase.invoke(
+            SellUseCase.Param(
+                amount = input.sellAmount,
                 shopItem = input.shopItem,
                 player = input.player
             )
-        ) as? BuyUseCase.Result.Success ?: return false
+        ) as? SellUseCase.Result.Success ?: return false
 
         changeStockAmountUseCase.invoke(
             ChangeStockAmountUseCase.Param(
                 shopItem = input.shopItem,
-                increaseAmount = buyResult.boughtAmount,
+                increaseAmount = buyResult.soldAmount,
                 shopConfig = input.shopConfig
             )
         )

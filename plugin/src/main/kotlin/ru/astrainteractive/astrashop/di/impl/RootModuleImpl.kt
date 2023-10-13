@@ -15,8 +15,10 @@ import ru.astrainteractive.astralibs.util.buildWithSpigot
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.api.impl.SpigotShopApi
 import ru.astrainteractive.astrashop.di.RootModule
+import ru.astrainteractive.astrashop.domain.di.DomainModule
 import ru.astrainteractive.astrashop.util.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
+import ru.astrainteractive.klibs.kdi.Provider
 import ru.astrainteractive.klibs.kdi.Reloadable
 import ru.astrainteractive.klibs.kdi.Single
 import ru.astrainteractive.klibs.kdi.getValue
@@ -45,5 +47,9 @@ object RootModuleImpl : RootModule {
     }
     override val scope: Single<AsyncComponent> = Single {
         PluginScope
+    }
+
+    override val domainModule: DomainModule by Provider {
+        DomainModule.Default(this)
     }
 }

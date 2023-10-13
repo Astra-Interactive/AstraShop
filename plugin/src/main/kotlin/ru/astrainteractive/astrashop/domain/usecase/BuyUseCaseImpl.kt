@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.api.usecases
+package ru.astrainteractive.astrashop.domain.usecase
 
 import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
@@ -8,17 +8,14 @@ import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItem
+import ru.astrainteractive.astrashop.domain.usecase.BuyUseCase.Param
+import ru.astrainteractive.astrashop.domain.usecase.BuyUseCase.Result
 import ru.astrainteractive.astrashop.util.copy
 import ru.astrainteractive.astrashop.util.hasAtLeast
 import ru.astrainteractive.astrashop.util.toItemStack
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 
-class BuyUseCase(
-    private val economy: EconomyProvider,
-    private val logger: Logger,
-    private val dispatchers: BukkitDispatchers
-) : UseCase.Parametrized<BuyUseCase.Param, BuyUseCase.Result> {
-
+interface BuyUseCase : UseCase.Parametrized<Param, Result> {
     class Param(
         val amount: Int,
         val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
@@ -29,6 +26,13 @@ class BuyUseCase(
         object Failure : Result
         class Success(val boughtAmount: Int) : Result
     }
+}
+
+class BuyUseCaseImpl(
+    private val economy: EconomyProvider,
+    private val logger: Logger,
+    private val dispatchers: BukkitDispatchers
+) : BuyUseCase {
 
     override suspend operator fun invoke(input: Param): Result {
         val item = input.shopItem
