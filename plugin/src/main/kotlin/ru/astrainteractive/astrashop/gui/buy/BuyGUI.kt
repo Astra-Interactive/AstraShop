@@ -7,11 +7,11 @@ import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
+import ru.astrainteractive.astrashop.api.calculator.PriceCalculator
+import ru.astrainteractive.astrashop.api.util.SpigotShopConfigAlias
+import ru.astrainteractive.astrashop.api.util.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.gui.BackToShopButton
 import ru.astrainteractive.astrashop.gui.BalanceButton
 import ru.astrainteractive.astrashop.gui.BuyInfoButton

@@ -1,11 +1,11 @@
 package ru.astrainteractive.astrashop.di.impl
 
+import ru.astrainteractive.astrashop.api.interactors.BuyInteractor
+import ru.astrainteractive.astrashop.api.interactors.SellInteractor
+import ru.astrainteractive.astrashop.api.usecases.BuyUseCase
+import ru.astrainteractive.astrashop.api.usecases.ChangeStockAmountUseCase
+import ru.astrainteractive.astrashop.api.usecases.SellUseCase
 import ru.astrainteractive.astrashop.di.InteractorsFactoryModule
-import ru.astrainteractive.astrashop.domain.interactors.BuyInteractor
-import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
-import ru.astrainteractive.astrashop.domain.usecases.BuyUseCase
-import ru.astrainteractive.astrashop.domain.usecases.ChangeStockAmountUseCase
-import ru.astrainteractive.astrashop.domain.usecases.SellUseCase
 import ru.astrainteractive.klibs.kdi.Factory
 import ru.astrainteractive.klibs.kdi.getValue
 

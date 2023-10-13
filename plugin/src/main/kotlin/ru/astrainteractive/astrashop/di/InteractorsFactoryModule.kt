@@ -1,7 +1,7 @@
 package ru.astrainteractive.astrashop.di
 
-import ru.astrainteractive.astrashop.domain.interactors.BuyInteractor
-import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
+import ru.astrainteractive.astrashop.api.interactors.BuyInteractor
+import ru.astrainteractive.astrashop.api.interactors.SellInteractor
 import ru.astrainteractive.klibs.kdi.Factory
 import ru.astrainteractive.klibs.kdi.Module
 

@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.async.AsyncComponent
+import ru.astrainteractive.astrashop.api.interactors.BuyInteractor
+import ru.astrainteractive.astrashop.api.interactors.SellInteractor
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.InteractorsFactoryModuleImpl
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.domain.interactors.BuyInteractor
-import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
 import ru.astrainteractive.klibs.kdi.getValue
 
 class BuyViewModel(

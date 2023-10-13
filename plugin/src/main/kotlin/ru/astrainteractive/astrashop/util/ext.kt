@@ -6,10 +6,10 @@ import kotlinx.coroutines.withContext
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.menu.menu.Menu
+import ru.astrainteractive.astrashop.api.model.ShopConfig
+import ru.astrainteractive.astrashop.api.model.SpigotShopItem
+import ru.astrainteractive.astrashop.api.model.SpigotTitleItem
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import java.util.*
 

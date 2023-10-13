@@ -6,11 +6,11 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.async.AsyncComponent
+import ru.astrainteractive.astrashop.api.interactors.SellInteractor
+import ru.astrainteractive.astrashop.api.model.SpigotShopItem
+import ru.astrainteractive.astrashop.api.util.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.di.impl.InteractorsFactoryModuleImpl
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
 import ru.astrainteractive.klibs.kdi.getValue
 
 class QuickSellController : AsyncComponent() {

@@ -10,7 +10,7 @@ import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.menu.event.GlobalInventoryClickEvent
 import ru.astrainteractive.astrashop.command.CommandManager
 import ru.astrainteractive.astrashop.di.RootModule
-import ru.astrainteractive.astrashop.di.impl.CommandModuleImpl
+import ru.astrainteractive.astrashop.di.impl.CommandContainerImpl
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.klibs.kdi.getValue
 
@@ -27,7 +27,7 @@ class AstraShop : JavaPlugin() {
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        CommandManager(this, CommandModuleImpl).create()
+        CommandManager(this, CommandContainerImpl).create()
         GlobalInventoryClickEvent.onEnable(this)
     }
 

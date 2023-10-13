@@ -4,7 +4,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astrashop.AstraShop
-import ru.astrainteractive.astrashop.command.di.CommandModule
+import ru.astrainteractive.astrashop.command.di.CommandContainer
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.quicksell.QuickSellGUI
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
@@ -14,7 +14,7 @@ import ru.astrainteractive.klibs.kdi.getValue
 
 internal fun CommandManager.shop(
     plugin: AstraShop,
-    module: CommandModule
+    module: CommandContainer
 ) = plugin.registerCommand("ashop") {
     val translation by module.translation
     val scope by module.scope

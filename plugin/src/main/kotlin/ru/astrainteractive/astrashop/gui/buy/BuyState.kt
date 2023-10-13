@@ -1,9 +1,9 @@
 package ru.astrainteractive.astrashop.gui.buy
 
 import ru.astrainteractive.astrashop.State
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopOptionsAlias
+import ru.astrainteractive.astrashop.api.util.SpigotShopConfigAlias
+import ru.astrainteractive.astrashop.api.util.SpigotShopItemAlias
+import ru.astrainteractive.astrashop.api.util.SpigotShopOptionsAlias
 
 sealed interface BuyState : State {
     data object Loading : BuyState

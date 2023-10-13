@@ -5,7 +5,7 @@ import ru.astrainteractive.astralibs.async.BukkitDispatchers
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.AstraShop
-import ru.astrainteractive.astrashop.domain.SpigotShopApi
+import ru.astrainteractive.astrashop.api.impl.SpigotShopApi
 import ru.astrainteractive.astrashop.util.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
 import ru.astrainteractive.klibs.kdi.Module

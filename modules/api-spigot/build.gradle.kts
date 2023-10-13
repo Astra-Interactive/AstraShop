@@ -1,11 +1,7 @@
-import ru.astrainteractive.gradleplugin.setupSpigotProcessor
-import ru.astrainteractive.gradleplugin.setupSpigotShadow
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
 }
-
 dependencies {
     // Kotlin
     implementation(libs.bundles.kotlin)
@@ -15,18 +11,12 @@ dependencies {
     implementation(libs.klibs.kdi)
     implementation(libs.minecraft.astralibs.spigot.gui)
     implementation(libs.minecraft.astralibs.spigot.core)
-    // Test
-    testImplementation(libs.bundles.testing.kotlin)
-    testImplementation(libs.tests.kotlin.test)
     // Spigot dependencies
     compileOnly(libs.minecraft.paper.api)
     implementation(libs.minecraft.bstats)
-    compileOnly(libs.minecraft.papi)
-    compileOnly(libs.minecraft.vaultapi)
-    implementation(libs.minecraft.bstats)
+    // Test
+    testImplementation(libs.bundles.testing.kotlin)
+    testImplementation(libs.tests.kotlin.test)
     // Local
-    implementation(projects.modules.apiSpigot)
+    api(projects.modules.api)
 }
-
-setupSpigotShadow()
-setupSpigotProcessor()
