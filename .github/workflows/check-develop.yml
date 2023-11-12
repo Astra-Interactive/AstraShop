@@ -1,9 +1,6 @@
 name: Check Develop
 on:
   pull_request:
-    branches:
-      - develop
-      - master
   push:
     branches:
       - develop
