@@ -12,12 +12,7 @@ import ru.astrainteractive.astrashop.api.util.SpigotShopConfigAlias
 import ru.astrainteractive.astrashop.api.util.SpigotShopItemAlias
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.gui.util.BackToShopButton
-import ru.astrainteractive.astrashop.gui.util.BalanceButton
-import ru.astrainteractive.astrashop.gui.util.BuyInfoButton
-import ru.astrainteractive.astrashop.gui.util.SellInfoButton
-import ru.astrainteractive.astrashop.gui.util.ShopPlayerHolder
-import ru.astrainteractive.astrashop.gui.util.button
+import ru.astrainteractive.astrashop.gui.util.*
 import ru.astrainteractive.astrashop.util.copy
 import ru.astrainteractive.astrashop.util.toItemStack
 import ru.astrainteractive.klibs.kdi.getValue
@@ -31,12 +26,14 @@ class BuyGUI(
 
     private val viewModel = BuyViewModel(shopConfig.configName, item.itemIndex, playerHolder.player)
     private val translation by RootModuleImpl.translation
+    private val router by RootModuleImpl.router
+
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XS
     override var menuTitle: String = item.toItemStack().itemMeta.displayName.ifEmpty { item.toItemStack().type.name }
 
-    private val backButton = BackToShopButton(shopConfig, playerHolder, componentScope)
+    private val backButton = BackToShopButton(shopConfig, playerHolder, componentScope, router)
     private val buyInfoButton = BuyInfoButton
     private val sellInfoButton = SellInfoButton
     private val balanceButton: InventorySlot

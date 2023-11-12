@@ -7,6 +7,7 @@ import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.api.impl.SpigotShopApi
 import ru.astrainteractive.astrashop.domain.di.DomainModule
+import ru.astrainteractive.astrashop.gui.router.Router
 import ru.astrainteractive.astrashop.util.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
 import ru.astrainteractive.klibs.kdi.Module
@@ -21,6 +22,7 @@ interface RootModule : Module {
     val logger: Single<Logger>
     val dispatchers: Single<BukkitDispatchers>
     val scope: Single<AsyncComponent>
+    val router: Single<Router>
 
     val domainModule: DomainModule
 }

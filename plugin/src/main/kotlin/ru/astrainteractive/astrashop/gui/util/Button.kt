@@ -14,8 +14,8 @@ import ru.astrainteractive.astrashop.api.model.SpigotShopItem
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItem
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.gui.buy.BuyState
-import ru.astrainteractive.astrashop.gui.shop.ShopGUI
-import ru.astrainteractive.astrashop.util.openOnMainThread
+import ru.astrainteractive.astrashop.gui.router.Router
+import ru.astrainteractive.astrashop.util.ShopGuiRoute
 import ru.astrainteractive.klibs.kdi.getValue
 
 fun button(
@@ -100,7 +100,8 @@ fun BalanceButton(state: BuyState.Loaded? = null): InventorySlot {
 fun BackToShopButton(
     shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
     playerHolder: ShopPlayerHolder,
-    lifecycleScope: CoroutineScope
+    lifecycleScope: CoroutineScope,
+    router: Router
 ): InventorySlot {
     return InventorySlot.Builder {
         this.index = 9
@@ -111,7 +112,7 @@ fun BackToShopButton(
         }
         this.click = Click {
             lifecycleScope.launch(Dispatchers.IO) {
-                ShopGUI(shopConfig, playerHolder).openOnMainThread()
+                router.open(ShopGuiRoute(shopConfig, playerHolder))
             }
         }
     }

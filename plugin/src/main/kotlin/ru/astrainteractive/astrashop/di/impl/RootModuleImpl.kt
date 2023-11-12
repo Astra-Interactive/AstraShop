@@ -16,6 +16,8 @@ import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.api.impl.SpigotShopApi
 import ru.astrainteractive.astrashop.di.RootModule
 import ru.astrainteractive.astrashop.domain.di.DomainModule
+import ru.astrainteractive.astrashop.gui.router.GuiRouter
+import ru.astrainteractive.astrashop.gui.router.Router
 import ru.astrainteractive.astrashop.util.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
 import ru.astrainteractive.klibs.kdi.Provider
@@ -47,6 +49,10 @@ object RootModuleImpl : RootModule {
     }
     override val scope: Single<AsyncComponent> = Single {
         PluginScope
+    }
+
+    override val router: Single<Router> = Single {
+        GuiRouter(scope = scope.value, dispatchers = dispatchers.value)
     }
 
     override val domainModule: DomainModule by Provider {

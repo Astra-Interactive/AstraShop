@@ -7,13 +7,12 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.gui.buy.BuyGUI
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
-import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
+import ru.astrainteractive.astrashop.util.BuyGuiRoute
+import ru.astrainteractive.astrashop.util.ShopsGuiRoute
 import ru.astrainteractive.astrashop.util.asShopItem
-import ru.astrainteractive.astrashop.util.openOnMainThread
 import ru.astrainteractive.klibs.kdi.getValue
 
 class ShopViewModel(
@@ -22,6 +21,7 @@ class ShopViewModel(
 ) : AsyncComponent() {
     private val dataSource by RootModuleImpl.spigotShopApi
     private val translation by RootModuleImpl.translation
+    private val router by RootModuleImpl.router
 
     val state = MutableStateFlow<ShopListState>(ShopListState.Loading)
     val maxItemsAmount: Int
@@ -92,12 +92,12 @@ class ShopViewModel(
     fun onIntent(intent: ShopIntent) = componentScope.launch(Dispatchers.IO) {
         when (intent) {
             is ShopIntent.OpenShops -> {
-                ShopsGUI(intent.playerHolder).openOnMainThread()
+                router.open(ShopsGuiRoute(intent.playerHolder))
             }
 
             is ShopIntent.OpenBuyGui -> {
                 if (!intent.isValid()) return@launch
-                BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder).openOnMainThread()
+                router.open(BuyGuiRoute(intent.shopConfig, intent.shopItem, intent.playerHolder))
             }
 
             is ShopIntent.ToggleEditModeClick -> {
