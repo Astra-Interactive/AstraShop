@@ -1,5 +1,11 @@
 name: Check Develop
 on:
+  pull_request:
+    branches:
+      - develop
+      - master
+    types:
+      - opened
   push:
     branches:
       - develop
