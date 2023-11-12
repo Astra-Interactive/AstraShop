@@ -15,7 +15,6 @@ import ru.astrainteractive.astrashop.api.model.SpigotTitleItem
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.gui.buy.BuyState
 import ru.astrainteractive.astrashop.gui.router.Router
-import ru.astrainteractive.astrashop.util.ShopGuiRoute
 import ru.astrainteractive.klibs.kdi.getValue
 
 fun button(
@@ -112,7 +111,8 @@ fun BackToShopButton(
         }
         this.click = Click {
             lifecycleScope.launch(Dispatchers.IO) {
-                router.open(ShopGuiRoute(shopConfig, playerHolder))
+                val route = Router.Route.Shop(shopConfig, playerHolder)
+                router.open(route)
             }
         }
     }

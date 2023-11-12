@@ -9,8 +9,12 @@ import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.gui.util.*
-import ru.astrainteractive.astrashop.util.ShopGuiRoute
+import ru.astrainteractive.astrashop.gui.router.Router
+import ru.astrainteractive.astrashop.gui.util.BackButton
+import ru.astrainteractive.astrashop.gui.util.NextButton
+import ru.astrainteractive.astrashop.gui.util.PrevButton
+import ru.astrainteractive.astrashop.gui.util.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.util.button
 import ru.astrainteractive.astrashop.util.inventoryIndex
 import ru.astrainteractive.astrashop.util.toItemStack
 import ru.astrainteractive.klibs.kdi.getValue
@@ -61,7 +65,8 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
             val item = state.shops.getOrNull(index) ?: continue
             button(i, item.options.titleItem.toItemStack()) {
                 componentScope.launch(Dispatchers.IO) {
-                    router.open(ShopGuiRoute(item, playerHolder.copy(shopPage = 0)))
+                    val route = Router.Route.Shop(item, playerHolder.copy(shopPage = 0))
+                    router.open(route)
                 }
             }.also(clickListener::remember).setInventoryButton()
         }

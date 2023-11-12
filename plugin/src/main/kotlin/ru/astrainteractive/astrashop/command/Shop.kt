@@ -5,10 +5,9 @@ import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.command.di.CommandContainer
+import ru.astrainteractive.astrashop.gui.router.Router
 import ru.astrainteractive.astrashop.gui.util.ShopPlayerHolder
 import ru.astrainteractive.astrashop.util.PluginPermission
-import ru.astrainteractive.astrashop.util.QuickSellGuiRoute
-import ru.astrainteractive.astrashop.util.ShopsGuiRoute
 import ru.astrainteractive.klibs.kdi.getValue
 
 internal fun CommandManager.shop(
@@ -27,7 +26,8 @@ internal fun CommandManager.shop(
                 return@registerCommand
             }
             val playerHolder = ShopPlayerHolder(player)
-            router.open(ShopsGuiRoute(playerHolder))
+            val route = Router.Route.Shops(playerHolder)
+            router.open(route)
         }
     }
     argument(0) { it }.onSuccess {
@@ -44,7 +44,8 @@ internal fun CommandManager.shop(
             scope.launch(dispatchers.BukkitAsync) {
                 if (sender !is Player) return@launch
                 val playerHolder = ShopPlayerHolder(sender as Player)
-                router.open(QuickSellGuiRoute(playerHolder))
+                val route = Router.Route.QuickSell(playerHolder)
+                router.open(route)
             }
         } else {
             sender.sendMessage("Открытие по названию еще не сделано :(")

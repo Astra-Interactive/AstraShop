@@ -7,11 +7,10 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
+import ru.astrainteractive.astrashop.gui.router.Router
 import ru.astrainteractive.astrashop.gui.shop.state.ShopIntent
 import ru.astrainteractive.astrashop.gui.shop.state.ShopListState
 import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
-import ru.astrainteractive.astrashop.util.BuyGuiRoute
-import ru.astrainteractive.astrashop.util.ShopsGuiRoute
 import ru.astrainteractive.astrashop.util.asShopItem
 import ru.astrainteractive.klibs.kdi.getValue
 
@@ -92,12 +91,14 @@ class ShopViewModel(
     fun onIntent(intent: ShopIntent) = componentScope.launch(Dispatchers.IO) {
         when (intent) {
             is ShopIntent.OpenShops -> {
-                router.open(ShopsGuiRoute(intent.playerHolder))
+                val route = Router.Route.Shops(intent.playerHolder)
+                router.open(route)
             }
 
             is ShopIntent.OpenBuyGui -> {
                 if (!intent.isValid()) return@launch
-                router.open(BuyGuiRoute(intent.shopConfig, intent.shopItem, intent.playerHolder))
+                val route = Router.Route.Buy(intent.shopConfig, intent.shopItem, intent.playerHolder)
+                router.open(route)
             }
 
             is ShopIntent.ToggleEditModeClick -> {
