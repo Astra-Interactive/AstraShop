@@ -6,8 +6,7 @@ import ru.astrainteractive.astralibs.async.BukkitDispatchers
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
 import ru.astrainteractive.astrashop.util.copy
 import ru.astrainteractive.astrashop.util.hasAtLeast
 import ru.astrainteractive.astrashop.util.toItemStack
@@ -17,11 +16,11 @@ class BuyUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
     private val dispatchers: BukkitDispatchers
-) : UseCase.Parametrized<BuyUseCase.Param, BuyUseCase.Result> {
+) : UseCase.Suspended<BuyUseCase.Param, BuyUseCase.Result> {
 
     class Param(
         val amount: Int,
-        val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
+        val shopItem: ShopConfig.ShopItem,
         val player: Player
     )
 

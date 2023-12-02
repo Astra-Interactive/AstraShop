@@ -9,8 +9,8 @@ import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astrashop.di.impl.InteractorsFactoryModuleImpl
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.interactors.SellInteractor
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
+import ru.astrainteractive.astrashop.domain.model.SpigotShopItemStack
 import ru.astrainteractive.klibs.kdi.getValue
 
 class QuickSellController : AsyncComponent() {
@@ -35,8 +35,9 @@ class QuickSellController : AsyncComponent() {
         }
     }
 
-    fun isSimilar(shopItem: SpigotShopItemAlias, itemStack: ItemStack) = when (val shopItem = shopItem.shopItem) {
-        is SpigotShopItem.ItemStack -> itemStack.isSimilar(shopItem.itemStack)
-        is SpigotShopItem.Material -> itemStack.isSimilar(ItemStack(shopItem.material))
+    fun isSimilar(shopItem: ShopConfig.ShopItem, itemStack: ItemStack) = when (val shopItem = shopItem.shopItem) {
+        is SpigotShopItemStack.ItemStackStack -> itemStack.isSimilar(shopItem.itemStack)
+        is SpigotShopItemStack.Material -> itemStack.isSimilar(ItemStack(shopItem.material))
+        else -> error("Not a spigot item")
     }
 }

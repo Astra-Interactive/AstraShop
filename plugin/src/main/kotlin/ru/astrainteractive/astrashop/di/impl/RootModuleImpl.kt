@@ -1,16 +1,14 @@
-@file:OptIn(UnsafeApi::class)
-
 package ru.astrainteractive.astrashop.di.impl
 
-import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
 import ru.astrainteractive.astralibs.async.DefaultBukkitDispatchers
-import ru.astrainteractive.astralibs.async.PluginScope
 import ru.astrainteractive.astralibs.economy.AnyEconomyProvider
 import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.event.EventListener
 import ru.astrainteractive.astralibs.filemanager.DefaultSpigotFileManager
 import ru.astrainteractive.astralibs.logging.Logger
+import ru.astrainteractive.astralibs.menu.event.DefaultInventoryClickEvent
 import ru.astrainteractive.astralibs.util.buildWithSpigot
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.di.RootModule
@@ -44,6 +42,9 @@ object RootModuleImpl : RootModule {
         DefaultBukkitDispatchers(plugin)
     }
     override val scope: Single<AsyncComponent> = Single {
-        PluginScope
+        AsyncComponent.Default()
+    }
+    override val inventoryClickEvent: Single<EventListener> = Single {
+        DefaultInventoryClickEvent()
     }
 }

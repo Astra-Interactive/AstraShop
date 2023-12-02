@@ -1,6 +1,8 @@
 package ru.astrainteractive.astrashop.gui.buy
 
+import kotlin.math.pow
 import kotlinx.coroutines.Dispatchers
+import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
@@ -10,8 +12,7 @@ import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astrashop.asState
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
 import ru.astrainteractive.astrashop.gui.BackToShopButton
 import ru.astrainteractive.astrashop.gui.BalanceButton
 import ru.astrainteractive.astrashop.gui.BuyInfoButton
@@ -21,11 +22,10 @@ import ru.astrainteractive.astrashop.gui.button
 import ru.astrainteractive.astrashop.util.copy
 import ru.astrainteractive.astrashop.util.toItemStack
 import ru.astrainteractive.klibs.kdi.getValue
-import kotlin.math.pow
 
 class BuyGUI(
-    shopConfig: SpigotShopConfigAlias,
-    item: SpigotShopItemAlias,
+    shopConfig: ShopConfig,
+    item: ShopConfig.ShopItem,
     override val playerHolder: ShopPlayerHolder
 ) : Menu() {
 
@@ -34,7 +34,7 @@ class BuyGUI(
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XS
-    override var menuTitle: String = item.toItemStack().itemMeta.displayName.ifEmpty { item.toItemStack().type.name }
+    override var menuTitle: Component = TODO()//item.toItemStack().itemMeta.displayName.ifEmpty { item.toItemStack().type.name }
 
     private val backButton = BackToShopButton(shopConfig, playerHolder, componentScope)
     private val buyInfoButton = BuyInfoButton
@@ -83,7 +83,7 @@ class BuyGUI(
                 BuyType.BUY -> viewModel.onBuyClicked(amount)
                 BuyType.SELL -> viewModel.onSellClicked(amount)
             }
-        }.also(clickListener::remember).setInventoryButton()
+        }.also(clickListener::remember).setInventorySlot()
     }
 
     private fun render(buyState: BuyState) {
@@ -95,10 +95,10 @@ class BuyGUI(
                 clickListener.remember(balanceButton)
                 clickListener.remember(backButton)
 
-                balanceButton.setInventoryButton()
-                backButton.setInventoryButton()
-                buyInfoButton.setInventoryButton()
-                sellInfoButton.setInventoryButton()
+                balanceButton.setInventorySlot()
+                backButton.setInventorySlot()
+                buyInfoButton.setInventorySlot()
+                sellInfoButton.setInventorySlot()
 
                 for (i in 0 until 7) {
                     setActionButton(BuyType.SELL, i, buyState)

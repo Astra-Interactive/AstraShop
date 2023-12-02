@@ -7,11 +7,12 @@ import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
+import ru.astrainteractive.astrashop.domain.model.SpigotShopItemStack
+import ru.astrainteractive.astrashop.domain.model.SpigotTitleItemStack
 import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
 import java.util.*
+import ru.astrainteractive.astrashop.domain.model.TitleItemStack
 
 suspend inline fun Menu.openOnMainThread() = withContext(RootModuleImpl.dispatchers.value.BukkitMain) {
     open()
@@ -24,16 +25,18 @@ fun EconomyProvider.hasAtLeast(amount: Number, uuid: UUID): Boolean {
     return balance > amount.toDouble()
 }
 
-fun ShopConfig.ShopItem<SpigotShopItem>.toItemStack(): ItemStack = when (val shopItem = this.shopItem) {
-    is SpigotShopItem.ItemStack -> shopItem.itemStack
-    is SpigotShopItem.Material -> ItemStack(shopItem.material)
+fun ShopConfig.ShopItem.toItemStack(): ItemStack = when (val shopItem = this.shopItem) {
+    is SpigotShopItemStack.ItemStackStack -> shopItem.itemStack
+    is SpigotShopItemStack.Material -> ItemStack(shopItem.material)
+    else -> error("Not a spigot item")
 }
 
 fun ItemStack.copy(amount: Int = this.amount) = clone().apply {
     this.amount = amount
 }
 
-fun SpigotTitleItem.toItemStack(): ItemStack {
+fun TitleItemStack.toItemStack(): ItemStack {
+    this as SpigotTitleItemStack
     return ItemStack(material).apply {
         editMeta {
             it.setDisplayName(name)
@@ -55,11 +58,11 @@ fun ItemStack.isSimple(): Boolean {
             )
 }
 
-fun ItemStack.asShopItem(index: Int): ShopConfig.ShopItem<SpigotShopItem> {
-    val spigotShopItem = if (isSimple()) SpigotShopItem.Material(type) else SpigotShopItem.ItemStack(this)
+fun ItemStack.asShopItem(index: Int): ShopConfig.ShopItem {
+    val spigotShopItemStack = if (isSimple()) SpigotShopItemStack.Material(type) else SpigotShopItemStack.ItemStackStack(this)
     return ShopConfig.ShopItem(
         itemIndex = index,
-        shopItem = spigotShopItem,
+        shopItem = spigotShopItemStack,
         median = 0.0,
         stock = 0,
         buyPrice = 0.0,

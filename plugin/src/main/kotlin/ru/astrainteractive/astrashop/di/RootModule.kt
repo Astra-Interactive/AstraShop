@@ -3,6 +3,7 @@ package ru.astrainteractive.astrashop.di
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
 import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.event.EventListener
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.domain.SpigotShopApi
@@ -20,4 +21,5 @@ interface RootModule : Module {
     val logger: Single<Logger>
     val dispatchers: Single<BukkitDispatchers>
     val scope: Single<AsyncComponent>
+    val inventoryClickEvent: Single<EventListener>
 }

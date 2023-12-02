@@ -5,19 +5,19 @@ import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
+import ru.astrainteractive.astrashop.domain.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.util.copy
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 
 class SellUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
-) : UseCase.Parametrized<SellUseCase.Param, SellUseCase.Result> {
+) : UseCase.Suspended<SellUseCase.Param, SellUseCase.Result> {
 
     class Param(
         val amount: Int,
-        val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
+        val shopItem: ShopConfig.ShopItem,
         val player: Player
     )
 
@@ -35,7 +35,7 @@ class SellUseCase(
             return Result.Failure
         }
         val itemStack = when (val shopItem = item.shopItem) {
-            is SpigotShopItem.ItemStack -> {
+            is SpigotShopItemStack.ItemStackStack -> {
                 if (!player.inventory.contains(shopItem.itemStack)) {
                     player.sendMessage("У вас нет такого предмета")
                     return Result.Failure
@@ -43,7 +43,7 @@ class SellUseCase(
                 shopItem.itemStack
             }
 
-            is SpigotShopItem.Material -> {
+            is SpigotShopItemStack.Material -> {
                 if (!player.inventory.contains(shopItem.material)) {
                     player.sendMessage("У вас нет такого предмета")
                     return Result.Failure

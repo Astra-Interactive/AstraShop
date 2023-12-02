@@ -1,6 +1,7 @@
 package ru.astrainteractive.astrashop.gui.shop
 
 import kotlinx.coroutines.Dispatchers
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -9,10 +10,10 @@ import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
+import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopConfigAlias
-import ru.astrainteractive.astrashop.domain.utils.SpigotShopItemAlias
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
 import ru.astrainteractive.astrashop.gui.BackButton
 import ru.astrainteractive.astrashop.gui.NextButton
 import ru.astrainteractive.astrashop.gui.PrevButton
@@ -25,7 +26,7 @@ import ru.astrainteractive.astrashop.util.toItemStack
 import ru.astrainteractive.klibs.kdi.getValue
 
 class ShopGUI(
-    private val shopConfig: SpigotShopConfigAlias,
+    private val shopConfig: ShopConfig,
     override val playerHolder: ShopPlayerHolder
 ) : PaginatedMenu(), PagingProvider {
     private val translation by RootModuleImpl.translation
@@ -34,7 +35,7 @@ class ShopGUI(
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
-    override var menuTitle: String = shopConfig.options.title
+    override var menuTitle: Component = TODO()//shopConfig.options.title
     override var page: Int
         get() = playerHolder.shopPage
         set(value) {
@@ -52,7 +53,8 @@ class ShopGUI(
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
         clickListener.onClick(e)
-        if (PluginPermission.EditShop.hasPermission(playerHolder.player)) {
+
+        if (playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) {
             viewModel.onIntent(ShopIntent.DeleteItem(e, e.isRightClick, e.isShiftClick))
         }
         if (!listOf(
@@ -79,7 +81,7 @@ class ShopGUI(
     }
 
     private fun renderEditModeButton() {
-        if (!PluginPermission.EditShop.hasPermission(playerHolder.player)) return
+        if (!playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) return
         val itemStack = when (viewModel.state.value) {
             is ShopListState.Loading, is ShopListState.List -> ItemStack(Material.LIGHT).apply {
                 editMeta {
@@ -97,13 +99,13 @@ class ShopGUI(
         }
 
         button(prevPageButton.index + 1, itemStack) {
-            if (PluginPermission.EditShop.hasPermission(playerHolder.player)) {
+            if (playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) {
                 viewModel.onIntent(ShopIntent.ToggleEditModeClick)
             }
-        }.also(clickListener::remember).setInventoryButton()
+        }.also(clickListener::remember).setInventorySlot()
     }
 
-    private fun renderItemList(items: Map<String, SpigotShopItemAlias>) {
+    private fun renderItemList(items: Map<String, ShopConfig.ShopItem>) {
         for (i in 0 until maxItemsPerPage) {
             val index = maxItemsPerPage * page + i
             val item = items[index.toString()] ?: continue
@@ -125,7 +127,7 @@ class ShopGUI(
                     it.isShiftClick,
                     viewModel.state.value
                 ).also(viewModel::onIntent)
-            }.also(clickListener::remember).setInventoryButton()
+            }.also(clickListener::remember).setInventorySlot()
         }
     }
 

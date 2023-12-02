@@ -1,13 +1,8 @@
-@file:OptIn(UnsafeApi::class)
-
 package ru.astrainteractive.astrashop
 
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
-import org.jetbrains.kotlin.tooling.core.UnsafeApi
-import ru.astrainteractive.astralibs.async.PluginScope
-import ru.astrainteractive.astralibs.menu.event.GlobalInventoryClickEvent
 import ru.astrainteractive.astrashop.command.CommandManager
 import ru.astrainteractive.astrashop.di.RootModule
 import ru.astrainteractive.astrashop.di.impl.CommandModuleImpl
@@ -28,7 +23,7 @@ class AstraShop : JavaPlugin() {
      */
     override fun onEnable() {
         CommandManager(this, CommandModuleImpl).create()
-        GlobalInventoryClickEvent.onEnable(this)
+        rootModule.inventoryClickEvent.value.onEnable(this)
     }
 
     /**
@@ -36,8 +31,8 @@ class AstraShop : JavaPlugin() {
      */
     override fun onDisable() {
         HandlerList.unregisterAll(this)
-        PluginScope.close()
-        GlobalInventoryClickEvent.onDisable()
+        rootModule.inventoryClickEvent.value.onDisable()
+        rootModule.scope.value.close()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }

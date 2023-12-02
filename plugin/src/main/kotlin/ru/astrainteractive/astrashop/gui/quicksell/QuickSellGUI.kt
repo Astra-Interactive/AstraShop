@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop.gui.quicksell
 
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -20,7 +21,7 @@ class QuickSellGUI(override val playerHolder: ShopPlayerHolder) : Menu() {
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XXS
-    override var menuTitle: String = translation.quickSellTitle
+    override var menuTitle: Component = TODO()//translation.quickSellTitle
 
     private val backButton = button(
         index = 8,
@@ -33,7 +34,7 @@ class QuickSellGUI(override val playerHolder: ShopPlayerHolder) : Menu() {
     )
 
     override fun onCreated() {
-        backButton.setInventoryButton()
+        backButton.setInventorySlot()
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {

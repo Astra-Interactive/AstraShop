@@ -1,9 +1,9 @@
 package ru.astrainteractive.astrashop.gui.shop.state
 
 import org.bukkit.event.inventory.InventoryClickEvent
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
+import ru.astrainteractive.astrashop.domain.model.SpigotShopItemStack
+import ru.astrainteractive.astrashop.domain.model.SpigotTitleItemStack
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 
@@ -23,8 +23,8 @@ sealed interface ShopIntent {
     }
 
     class OpenBuyGui(
-        val shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
-        val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
+        val shopConfig: ShopConfig,
+        val shopItem: ShopConfig.ShopItem,
         val playerHolder: ShopPlayerHolder,
         private val isLeftClick: Boolean,
         private val isShiftClick: Boolean,

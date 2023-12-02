@@ -3,6 +3,7 @@ package ru.astrainteractive.astrashop.command
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.command.registerCommand
+import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.command.di.CommandModule
 import ru.astrainteractive.astrashop.gui.ShopPlayerHolder
@@ -22,7 +23,7 @@ internal fun CommandManager.shop(
 
     if (args.isEmpty()) {
         (sender as? Player)?.let {
-            if (!PluginPermission.UseShop.hasPermission(sender)) {
+            if (!sender.toPermissible().hasPermission(PluginPermission.UseShop)) {
                 sender.sendMessage(translation.noPermission)
                 return@registerCommand
             }
@@ -32,13 +33,13 @@ internal fun CommandManager.shop(
         }
     }
     argument(0) { it }.onSuccess {
-        if (!PluginPermission.UseShop.hasPermission(sender)) {
+        if (!sender.toPermissible().hasPermission(PluginPermission.UseShop)) {
             sender.sendMessage(translation.noPermission)
             return@onSuccess
         }
 
         if (it.value == "qs") {
-            if (!PluginPermission.QuickSell.hasPermission(sender)) {
+            if (!sender.toPermissible().hasPermission(PluginPermission.QuickSell)) {
                 sender.sendMessage(translation.noPermission)
                 return@onSuccess
             }

@@ -2,6 +2,7 @@ package ru.astrainteractive.astrashop.gui.shops
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
@@ -28,7 +29,7 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
-    override var menuTitle: String = translation.menuTitle
+    override var menuTitle: Component = TODO()//translation.menuTitle
     override var page: Int
         get() = playerHolder.shopsPage
         set(value) {
@@ -67,7 +68,7 @@ class ShopsGUI(override val playerHolder: ShopPlayerHolder) : PaginatedMenu() {
                 componentScope.launch(Dispatchers.IO) {
                     ShopGUI(item, playerHolder.copy(shopPage = 0)).openOnMainThread()
                 }
-            }.also(clickListener::remember).setInventoryButton()
+            }.also(clickListener::remember).setInventorySlot()
         }
     }
 

@@ -1,9 +1,7 @@
 package ru.astrainteractive.astrashop.domain.interactors
 
 import org.bukkit.entity.Player
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
 import ru.astrainteractive.astrashop.domain.usecases.ChangeStockAmountUseCase
 import ru.astrainteractive.astrashop.domain.usecases.SellUseCase
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
@@ -11,11 +9,11 @@ import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 class SellInteractor(
     private val sellUseCase: SellUseCase,
     private val changeStockAmountUseCase: ChangeStockAmountUseCase
-) : UseCase.Parametrized<SellInteractor.Param, Boolean> {
+) : UseCase.Suspended<SellInteractor.Param, Boolean> {
     class Param(
         val sellAmount: Int,
-        val shopItem: ShopConfig.ShopItem<SpigotShopItem>,
-        val shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
+        val shopItem: ShopConfig.ShopItem,
+        val shopConfig: ShopConfig,
         val player: Player
     )
 

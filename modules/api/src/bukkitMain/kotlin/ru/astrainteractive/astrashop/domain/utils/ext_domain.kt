@@ -6,7 +6,7 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.filemanager.DefaultSpigotFileManager
 import ru.astrainteractive.astralibs.filemanager.SpigotFileManager
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
 import java.io.File
 
 public inline fun ConfigurationSection.forEach(
@@ -46,4 +46,4 @@ fun getYmlFiles(plugin: Plugin) = getFilesList(plugin)?.filter { it.isYml() }?.m
     DefaultSpigotFileManager(plugin, it.name)
 }
 
-fun ShopConfig<*, *>.getFileManager(plugin: Plugin): SpigotFileManager = DefaultSpigotFileManager(plugin, configName)
+fun ShopConfig.getFileManager(plugin: Plugin): SpigotFileManager = DefaultSpigotFileManager(plugin, configName)

@@ -1,6 +1,7 @@
 package ru.astrainteractive.astrashop.util
 
-import ru.astrainteractive.astralibs.util.Permission
+import ru.astrainteractive.astralibs.permission.Permission
+
 
 sealed class PluginPermission(override val value: String) : Permission {
     data object Reload : PluginPermission("astra_template.reload")

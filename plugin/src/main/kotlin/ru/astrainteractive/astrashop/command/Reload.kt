@@ -1,6 +1,7 @@
 package ru.astrainteractive.astrashop.command
 
 import ru.astrainteractive.astralibs.command.registerCommand
+import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.command.di.CommandModule
 import ru.astrainteractive.astrashop.util.PluginPermission
@@ -20,7 +21,7 @@ internal fun CommandManager.reload(
     module: CommandModule
 ) = plugin.registerCommand("atempreload") {
     val translation by module.translation
-    if (!PluginPermission.Reload.hasPermission(sender)) {
+    if (!sender.toPermissible().hasPermission(PluginPermission.Reload)) {
         sender.sendMessage(translation.noPermission)
         return@registerCommand
     }

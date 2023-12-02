@@ -1,19 +1,19 @@
-package ru.astrainteractive.astrashop.domain.models
+package ru.astrainteractive.astrashop.domain.model
 
-data class ShopConfig<TITLE_ITEM, SHOP_ITEM>(
+data class ShopConfig(
     val configName: String,
-    val options: Options<TITLE_ITEM>,
-    val items: HashMap<String, ShopItem<SHOP_ITEM>>
+    val options: Options,
+    val items: HashMap<String, ShopItem>
 ) {
-    data class Options<TITLE_ITEM>(
+    data class Options(
         val lore: List<String>,
         val permission: String,
         val workHours: String,
         val title: String,
-        val titleItem: TITLE_ITEM
+        val titleItem: TitleItemStack
     )
 
-    data class ShopItem<SHOP_ITEM>(
+    data class ShopItem(
         val itemIndex: Int,
         val median: Double,
         var stock: Int,
@@ -21,6 +21,6 @@ data class ShopConfig<TITLE_ITEM, SHOP_ITEM>(
         var sellPrice: Double,
         val priceMax: Double,
         val priceMin: Double,
-        val shopItem: SHOP_ITEM
+        val shopItem: ShopItemStack
     )
 }

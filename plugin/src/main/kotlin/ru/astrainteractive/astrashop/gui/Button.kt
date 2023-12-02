@@ -10,9 +10,9 @@ import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
-import ru.astrainteractive.astrashop.domain.models.ShopConfig
-import ru.astrainteractive.astrashop.domain.models.SpigotShopItem
-import ru.astrainteractive.astrashop.domain.models.SpigotTitleItem
+import ru.astrainteractive.astrashop.domain.model.ShopConfig
+import ru.astrainteractive.astrashop.domain.model.SpigotShopItemStack
+import ru.astrainteractive.astrashop.domain.model.SpigotTitleItemStack
 import ru.astrainteractive.astrashop.gui.buy.BuyState
 import ru.astrainteractive.astrashop.gui.shop.ShopGUI
 import ru.astrainteractive.astrashop.util.openOnMainThread
@@ -98,7 +98,7 @@ fun BalanceButton(state: BuyState.Loaded? = null): InventorySlot {
 
 @Suppress("FunctionNaming")
 fun BackToShopButton(
-    shopConfig: ShopConfig<SpigotTitleItem, SpigotShopItem>,
+    shopConfig: ShopConfig,
     playerHolder: ShopPlayerHolder,
     lifecycleScope: CoroutineScope
 ): InventorySlot {
