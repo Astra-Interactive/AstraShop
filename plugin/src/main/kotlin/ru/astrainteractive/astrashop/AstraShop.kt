@@ -3,27 +3,28 @@ package ru.astrainteractive.astrashop
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
-import ru.astrainteractive.astrashop.command.CommandManager
+import ru.astrainteractive.astrashop.command.di.CommandManagerElement
 import ru.astrainteractive.astrashop.di.RootModule
-import ru.astrainteractive.astrashop.di.impl.CommandModuleImpl
-import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.klibs.kdi.getValue
 
 /**
  * Initial class for your plugin
  */
 class AstraShop : JavaPlugin() {
-    private val rootModule: RootModule by RootModuleImpl
+    private val rootModule: RootModule by lazy {
+        RootModule.Default()
+    }
+
     init {
-        rootModule.plugin.initialize(this)
+        rootModule.coreModule.plugin.initialize(this)
     }
 
     /**
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        CommandManager(this, CommandModuleImpl).create()
-        rootModule.inventoryClickEvent.value.onEnable(this)
+        CommandManagerElement.Default(rootModule.coreModule).onEnable()
+
+        rootModule.coreModule.inventoryClickEvent.value.onEnable(this)
     }
 
     /**
@@ -31,8 +32,8 @@ class AstraShop : JavaPlugin() {
      */
     override fun onDisable() {
         HandlerList.unregisterAll(this)
-        rootModule.inventoryClickEvent.value.onDisable()
-        rootModule.scope.value.close()
+        rootModule.coreModule.inventoryClickEvent.value.onDisable()
+        rootModule.coreModule.scope.value.close()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }
@@ -42,7 +43,7 @@ class AstraShop : JavaPlugin() {
      * As it says, function for plugin reload
      */
     fun reloadPlugin() {
-        rootModule.translation.reload()
+        rootModule.coreModule.translation.reload()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }

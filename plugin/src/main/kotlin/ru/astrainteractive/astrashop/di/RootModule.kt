@@ -1,25 +1,29 @@
 package ru.astrainteractive.astrashop.di
 
-import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.async.BukkitDispatchers
-import ru.astrainteractive.astralibs.economy.EconomyProvider
-import ru.astrainteractive.astralibs.event.EventListener
-import ru.astrainteractive.astralibs.logging.Logger
-import ru.astrainteractive.astrashop.AstraShop
-import ru.astrainteractive.astrashop.domain.SpigotShopApi
-import ru.astrainteractive.astrashop.util.PluginTranslation
-import ru.astrainteractive.klibs.kdi.Lateinit
+import ru.astrainteractive.astrashop.api.di.ApiModule
+import ru.astrainteractive.astrashop.api.di.BukkitApiModule
+import ru.astrainteractive.astrashop.core.di.CoreModule
+import ru.astrainteractive.astrashop.domain.di.DomainModule
 import ru.astrainteractive.klibs.kdi.Module
-import ru.astrainteractive.klibs.kdi.Reloadable
-import ru.astrainteractive.klibs.kdi.Single
 
 interface RootModule : Module {
-    val plugin: Lateinit<AstraShop>
-    val translation: Reloadable<PluginTranslation>
-    val spigotShopApi: Single<SpigotShopApi>
-    val economyProvider: Single<EconomyProvider>
-    val logger: Single<Logger>
-    val dispatchers: Single<BukkitDispatchers>
-    val scope: Single<AsyncComponent>
-    val inventoryClickEvent: Single<EventListener>
+    val coreModule: CoreModule
+    val apiModule: ApiModule
+    val domainModule: DomainModule
+
+    class Default : RootModule {
+        override val coreModule: CoreModule by lazy {
+            CoreModule.Default()
+        }
+        override val apiModule: ApiModule by lazy {
+            val bukkitApiModule = BukkitApiModule.Default(coreModule.plugin.value)
+            ApiModule.Default(bukkitApiModule)
+        }
+        override val domainModule: DomainModule by lazy {
+            DomainModule.Default(
+                coreModule = coreModule,
+                apiModule = apiModule
+            )
+        }
+    }
 }

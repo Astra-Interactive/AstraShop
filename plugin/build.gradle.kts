@@ -29,7 +29,6 @@ minecraftMultiplatform {
         // Local
         implementation(projects.modules.api)
         implementation(projects.modules.api.bukkitMain)
-
     }
 }
 

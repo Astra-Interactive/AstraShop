@@ -2,21 +2,14 @@
 
 package ru.astrainteractive.astrashop.util
 
-import kotlinx.coroutines.withContext
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.economy.EconomyProvider
-import ru.astrainteractive.astralibs.menu.menu.Menu
-import ru.astrainteractive.astrashop.di.impl.RootModuleImpl
-import ru.astrainteractive.astrashop.domain.model.ShopConfig
-import ru.astrainteractive.astrashop.domain.model.SpigotShopItemStack
-import ru.astrainteractive.astrashop.domain.model.SpigotTitleItemStack
-import ru.astrainteractive.astrashop.gui.shops.ShopsGUI
-import java.util.*
-import ru.astrainteractive.astrashop.domain.model.TitleItemStack
-
-suspend inline fun Menu.openOnMainThread() = withContext(RootModuleImpl.dispatchers.value.BukkitMain) {
-    open()
-}
+import ru.astrainteractive.astrashop.api.model.ShopConfig
+import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
+import ru.astrainteractive.astrashop.api.model.SpigotTitleItemStack
+import ru.astrainteractive.astrashop.api.model.TitleItemStack
+import ru.astrainteractive.astrashop.gui.shops.ui.ShopsGUI
+import java.util.UUID
 
 fun ShopsGUI.inventoryIndex(i: Int) = i + maxItemsPerPage * page
 
@@ -59,7 +52,13 @@ fun ItemStack.isSimple(): Boolean {
 }
 
 fun ItemStack.asShopItem(index: Int): ShopConfig.ShopItem {
-    val spigotShopItemStack = if (isSimple()) SpigotShopItemStack.Material(type) else SpigotShopItemStack.ItemStackStack(this)
+    val spigotShopItemStack = if (isSimple()) {
+        SpigotShopItemStack.Material(type)
+    } else {
+        SpigotShopItemStack.ItemStackStack(
+            this
+        )
+    }
     return ShopConfig.ShopItem(
         itemIndex = index,
         shopItem = spigotShopItemStack,
