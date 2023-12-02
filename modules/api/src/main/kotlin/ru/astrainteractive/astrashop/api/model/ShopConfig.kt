@@ -1,5 +1,7 @@
 package ru.astrainteractive.astrashop.api.model
 
+import ru.astrainteractive.astralibs.string.StringDesc
+
 data class ShopConfig(
     val configName: String,
     val options: Options,
@@ -9,7 +11,7 @@ data class ShopConfig(
         val lore: List<String>,
         val permission: String,
         val workHours: String,
-        val title: String,
+        val title: StringDesc.Raw,
         val titleItem: TitleItemStack
     )
 

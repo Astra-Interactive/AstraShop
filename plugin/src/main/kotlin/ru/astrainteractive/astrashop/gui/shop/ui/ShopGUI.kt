@@ -30,9 +30,10 @@ class ShopGUI(
     private val shopConfig: ShopConfig,
     override val playerHolder: ShopPlayerHolder,
     private val translation: PluginTranslation,
-    private val shopComponent: ShopComponent,
+    private val shopComponentFactory: (PagingProvider) -> ShopComponent,
     translationContext: BukkitTranslationContext
 ) : PaginatedMenu(), PagingProvider, BukkitTranslationContext by translationContext {
+    private val shopComponent = shopComponentFactory.invoke(this)
     private val buttons = Buttons(
         lifecycleScope = this,
         translation = translation,
@@ -42,7 +43,7 @@ class ShopGUI(
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
-    override var menuTitle: Component = TODO() // shopConfig.options.title
+    override var menuTitle: Component = shopConfig.options.title.toComponent()
     override var page: Int
         get() = playerHolder.shopPage
         set(value) {

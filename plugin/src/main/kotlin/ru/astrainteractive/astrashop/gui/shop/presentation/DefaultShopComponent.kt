@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astrashop.api.ShopApi
+import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Intent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
 import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
@@ -15,6 +16,7 @@ class DefaultShopComponent(
     private val configName: String,
     private val pagingProvider: PagingProvider,
     private val dataSource: ShopApi,
+    private val router: GuiRouter
 ) : AsyncComponent(), ShopComponent {
 
     override val model = MutableStateFlow<Model>(Model.Loading)
@@ -87,14 +89,19 @@ class DefaultShopComponent(
         componentScope.launch(Dispatchers.IO) {
             when (intent) {
                 is Intent.OpenShops -> {
-                    TODO()
-//                ShopsGUI(intent.playerHolder).openOnMainThread()
+                    val route = GuiRouter.Route.Shops(intent.playerHolder)
+                    router.open(route)
                 }
 
                 is Intent.OpenBuyGui -> {
                     if (!intent.isValid()) return@launch
-                    TODO()
-//                    BuyGUI(intent.shopConfig, intent.shopItem, intent.playerHolder).openOnMainThread()
+                    val route = GuiRouter.Route.Buy(
+                        playerHolder = intent.playerHolder,
+                        item = intent.shopItem,
+                        shopConfig = intent.shopConfig,
+                        itemIndex = TODO()
+                    )
+                    router.open(route)
                 }
 
                 is Intent.ToggleEditModeClick -> {

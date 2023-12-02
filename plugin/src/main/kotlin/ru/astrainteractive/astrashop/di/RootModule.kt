@@ -4,12 +4,14 @@ import ru.astrainteractive.astrashop.api.di.ApiModule
 import ru.astrainteractive.astrashop.api.di.BukkitApiModule
 import ru.astrainteractive.astrashop.core.di.CoreModule
 import ru.astrainteractive.astrashop.domain.di.DomainModule
+import ru.astrainteractive.astrashop.gui.router.di.RouterModule
 import ru.astrainteractive.klibs.kdi.Module
 
 interface RootModule : Module {
     val coreModule: CoreModule
     val apiModule: ApiModule
     val domainModule: DomainModule
+    val routerModule: RouterModule
 
     class Default : RootModule {
         override val coreModule: CoreModule by lazy {
@@ -24,6 +26,9 @@ interface RootModule : Module {
                 coreModule = coreModule,
                 apiModule = apiModule
             )
+        }
+        override val routerModule: RouterModule by lazy {
+            RouterModule.Default(this)
         }
     }
 }

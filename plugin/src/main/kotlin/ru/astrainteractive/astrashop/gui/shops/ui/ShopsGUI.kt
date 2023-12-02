@@ -13,6 +13,7 @@ import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent.Model
 import ru.astrainteractive.astrashop.gui.util.Buttons
@@ -24,6 +25,7 @@ class ShopsGUI(
     private val shopsComponent: ShopsComponent,
     translation: PluginTranslation,
     translationContext: BukkitTranslationContext,
+    private val router: GuiRouter
 ) : PaginatedMenu(), BukkitTranslationContext by translationContext {
 
     private val buttons = Buttons(
@@ -74,8 +76,11 @@ class ShopsGUI(
             val item = state.shops.getOrNull(index) ?: continue
             buttons.button(i, item.options.titleItem.toItemStack()) {
                 componentScope.launch(Dispatchers.IO) {
-                    TODO()
-//                    ShopGUI(item, playerHolder.copy(shopPage = 0))
+                    val route = GuiRouter.Route.Shop(
+                        playerHolder = playerHolder.copy(shopPage = 0),
+                        shopConfig = item
+                    )
+                    router.open(route)
                 }
             }.also(clickListener::remember).setInventorySlot()
         }

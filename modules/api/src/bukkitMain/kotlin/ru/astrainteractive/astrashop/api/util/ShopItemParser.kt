@@ -4,6 +4,7 @@ import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.filemanager.SpigotFileManager
+import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItemStack
@@ -89,7 +90,7 @@ internal class ShopItemParser(private val plugin: Plugin) {
             lore = s.getStringList("lore") ?: emptyList(),
             permission = s.getString("permission") ?: "",
             workHours = s.getString("workHours") ?: "",
-            title = s.getString("title") ?: "",
+            title = StringDesc.Raw(s.getString("title") ?: ""),
             titleItem = s.getConfigurationSection("titleItem").let(::parseTitleItem)
         )
     }
