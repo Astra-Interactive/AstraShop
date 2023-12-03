@@ -31,6 +31,9 @@ minecraftMultiplatform {
         implementation(projects.modules.api.bukkitMain)
     }
 }
+val destination = File("D:\\Minecraft Servers\\Servers\\esmp-configuration\\smp\\plugins")
+    .takeIf(File::exists)
+    ?: File(rootDir, "jars")
 
-setupSpigotShadow()
+setupSpigotShadow(destination)
 setupSpigotProcessor()
