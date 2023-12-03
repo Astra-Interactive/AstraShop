@@ -42,5 +42,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "AstraShop"
 
 include("plugin")
-include(":domain:core")
-include(":domain:spigot")
+include(":modules:api")
