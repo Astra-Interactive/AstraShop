@@ -72,7 +72,6 @@ class ShopGUI(
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
-        clickListener.onClick(e)
 
         if (playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) {
             shopComponent.onIntent(Intent.DeleteItem(e, e.isRightClick, e.isShiftClick))

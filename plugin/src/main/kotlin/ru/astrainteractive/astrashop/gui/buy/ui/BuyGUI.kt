@@ -100,7 +100,6 @@ class BuyGUI(
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
-        clickListener.onClick(e)
     }
 
     override fun onInventoryClose(it: InventoryCloseEvent) {
@@ -146,8 +145,6 @@ class BuyGUI(
 
         when (val state = buyComponent.model.value) {
             is Model.Loaded -> {
-                clickListener.remember(balanceButton)
-
                 balanceButton.setInventorySlot()
                 backButton.setInventorySlot()
                 buyInfoButton.setInventorySlot()

@@ -51,7 +51,6 @@ class QuickSellGUI(
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         e.isCancelled = true
-        clickListener.onClick(e)
         quickSellComponent.onItemClicked(
             itemStack = e.currentItem ?: return,
             player = e.whoClicked as? Player ?: return,
