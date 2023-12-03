@@ -7,9 +7,9 @@ authors: [ "${authors}" ]
 author: "${author}"
 website: "${url}"
 api-version: 1.18
-softdepend: [ ]
+softdepend: [ Vault,Essentials ]
 #libraries: [ "${libraries}" ]
-depend: []
+depend: [ ]
 loadbefore: [ ]
 commands:
   ashop:
