@@ -1,13 +1,22 @@
 package ru.astrainteractive.astrashop.gui.buy.ui
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
+import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
+import ru.astrainteractive.astralibs.menu.menu.addLore
+import ru.astrainteractive.astralibs.menu.menu.setDisplayName
+import ru.astrainteractive.astralibs.menu.menu.setIndex
+import ru.astrainteractive.astralibs.menu.menu.setItemStack
+import ru.astrainteractive.astralibs.menu.menu.setMaterial
+import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
@@ -19,14 +28,10 @@ import ru.astrainteractive.astrashop.gui.buy.model.BuyType
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent.Model
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
-import ru.astrainteractive.astrashop.gui.util.Buttons
-import kotlin.math.pow
-import kotlinx.coroutines.launch
-import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.menu.clicker.Click
 import ru.astrainteractive.astrashop.gui.router.GuiRouter
+import kotlin.math.pow
 
+@Suppress("LongParameterList")
 class BuyGUI(
     shopConfig: ShopConfig,
     item: ShopConfig.ShopItem,
@@ -37,43 +42,60 @@ class BuyGUI(
     private val router: GuiRouter,
     translationContext: BukkitTranslationContext
 ) : Menu(), BukkitTranslationContext by translationContext {
-    private val buttons = Buttons(
-        lifecycleScope = this,
-        translation = translation,
-        translationContext = translationContext,
-        menu = this
-    )
-    private val clickListener = MenuClickListener()
-
     override val menuSize: MenuSize = MenuSize.XS
+
     override var menuTitle: Component = item.toItemStack().itemMeta
         .displayName
         .ifEmpty { item.toItemStack().type.name }
         .let(StringDesc::Raw)
         .toComponent()
 
-    private val backButton = InventorySlot.Builder {
-        this.index = 9
-        this.itemStack = ItemStack(Material.BARRIER).apply {
-            editMeta {
-                it.displayName(translation.buttons.buttonBack.toComponent())
-            }
-        }
-        this.click = Click {
+    private val backButton = InventorySlot.Builder()
+        .setIndex(9)
+        .setMaterial(Material.BARRIER)
+        .setDisplayName(translation.buttons.buttonBack.toComponent())
+        .setOnClickListener {
             val route = GuiRouter.Route.Shop(
                 playerHolder = playerHolder,
                 shopConfig = shopConfig
             )
             componentScope.launch(Dispatchers.IO) { router.open(route) }
-        }
-    }
-    private val buyInfoButton = buttons.buyInfoButton
-    private val sellInfoButton = buttons.sellInfoButton
+        }.build()
+
+    private val buyInfoButton = InventorySlot.Builder()
+        .setIndex(1)
+        .setMaterial(Material.GREEN_STAINED_GLASS)
+        .setDisplayName(translation.buttons.buttonBuy.toComponent())
+        .build()
+
+    private val sellInfoButton = InventorySlot.Builder()
+        .setIndex(10)
+        .setMaterial(Material.RED_STAINED_GLASS)
+        .setDisplayName(translation.buttons.buttonSell.toComponent())
+        .build()
+
     private val balanceButton: InventorySlot
-        get() = buttons.balanceButton(buyComponent.model.value as? Model.Loaded, calculatePriceUseCase)
+        get() {
+            val state = buyComponent.model.value as? Model.Loaded
+            val stockAmount = state?.item?.stock ?: -1
+            val buyPrice = state?.item?.let { calculatePriceUseCase.calculateBuyPrice(it, 1) } ?: 0
+            val sellPrice = state?.item?.let { calculatePriceUseCase.calculateSellPrice(it, 1) } ?: 0
+            val balance = state?.playerBalance ?: 0
+            return InventorySlot.Builder()
+                .setIndex(0)
+                .setMaterial(Material.EMERALD)
+                .setDisplayName(translation.buttons.buttonInformation.toComponent())
+                .addLore(translation.buttons.shopInfoStock(stockAmount).toComponent())
+                .addLore(translation.buttons.shopInfoBuyPrice(buyPrice).toComponent())
+                .addLore(translation.buttons.shopInfoSellPrice(sellPrice).toComponent())
+                .addLore(translation.buttons.shopInfoBalance(balance).toComponent())
+                .build()
+        }
 
     override fun onCreated() {
-        buyComponent.model.collectOn(Dispatchers.IO, block = ::render)
+        buyComponent.model
+            .onEach { render() }
+            .launchIn(componentScope)
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
@@ -98,8 +120,8 @@ class BuyGUI(
         }
 
         val priceDescription = when (type) {
-            BuyType.BUY -> translation.buttons.shopInfoPrice(totalPriceBuy)
-            BuyType.SELL -> translation.buttons.shopInfoPrice(totalPriceSell)
+            BuyType.BUY -> translation.buttons.shopInfoBuyPrice(totalPriceBuy)
+            BuyType.SELL -> translation.buttons.shopInfoBuyPrice(totalPriceSell)
         }
 
         val itemStack = state.item.toItemStack().copy(amount).apply {
@@ -108,21 +130,21 @@ class BuyGUI(
             }
             lore(listOf(priceDescription.toComponent()))
         }
-        buttons.button(type.startIndex + i, itemStack) {
-            when (type) {
-                BuyType.BUY -> buyComponent.onBuyClicked(amount)
-                BuyType.SELL -> buyComponent.onSellClicked(amount)
-            }
-        }.also(clickListener::remember).setInventorySlot()
+        InventorySlot.Builder()
+            .setIndex(type.startIndex + i)
+            .setItemStack(itemStack)
+            .setOnClickListener {
+                when (type) {
+                    BuyType.BUY -> buyComponent.onBuyClicked(amount)
+                    BuyType.SELL -> buyComponent.onSellClicked(amount)
+                }
+            }.build().setInventorySlot()
     }
 
-    private fun render(buyState: Model) {
-        inventory.clear()
-        clickListener.clearClickListener()
-        clickListener.remember(backButton)
-        backButton.setInventorySlot()
+    override fun render() {
+        super.render()
 
-        when (buyState) {
+        when (val state = buyComponent.model.value) {
             is Model.Loaded -> {
                 clickListener.remember(balanceButton)
 
@@ -132,8 +154,8 @@ class BuyGUI(
                 sellInfoButton.setInventorySlot()
 
                 for (i in 0 until 7) {
-                    setActionButton(BuyType.SELL, i, buyState)
-                    setActionButton(BuyType.BUY, i, buyState)
+                    setActionButton(BuyType.SELL, i, state)
+                    setActionButton(BuyType.BUY, i, state)
                 }
             }
 

@@ -3,7 +3,6 @@ package ru.astrainteractive.astrashop.gui.router
 import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.menu.menu.Menu
-import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.di.ApiModule
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.di.CoreModule
@@ -48,7 +47,7 @@ class GuiRouterImpl(
         playerHolder = ShopPlayerHolder(route.player),
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
-        controller = DefaultQuickSellComponent(
+        quickSellComponent = DefaultQuickSellComponent(
             translation = coreModule.translation.value,
             shopApi = apiModule.shopApi,
             sellInteractor = domainModule.sellInteractor,

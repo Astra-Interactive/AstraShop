@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astrashop.api.ShopApi
-import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Intent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
 import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
@@ -87,7 +86,6 @@ class DefaultShopComponent(
     override fun onIntent(intent: Intent) {
         componentScope.launch(Dispatchers.IO) {
             when (intent) {
-
                 is Intent.ToggleEditModeClick -> {
                     if (model.value is Model.ListEditMode) {
                         exitEditMode()

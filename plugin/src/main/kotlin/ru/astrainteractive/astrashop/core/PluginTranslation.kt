@@ -18,65 +18,65 @@ data class PluginTranslation(
     @Serializable
     data class General(
         @SerialName("reload")
-        val reload: StringDesc.Raw = StringDesc.Raw("#dbbb18Перезагрузка плагина"),
+        val reload: StringDesc.Raw = StringDesc.Raw("&#dbbb18Перезагрузка плагина"),
         @SerialName("reload_complete")
-        val reloadComplete: StringDesc.Raw = StringDesc.Raw("#42f596Перезагрузка успешно завершена"),
+        val reloadComplete: StringDesc.Raw = StringDesc.Raw("&#42f596Перезагрузка успешно завершена"),
         @SerialName("no_permission")
-        val noPermission: StringDesc.Raw = StringDesc.Raw("#db2c18У вас нет прав!"),
+        val noPermission: StringDesc.Raw = StringDesc.Raw("&#db2c18У вас нет прав!"),
         @SerialName("item_not_for_buy")
-        val itemNotBuying: StringDesc.Raw = StringDesc.Raw("#db2c18Предмет не закупается"),
+        val itemNotBuying: StringDesc.Raw = StringDesc.Raw("&#db2c18Предмет не закупается"),
     )
 
     @Serializable
     data class Menu(
         @SerialName("prev_page")
-        val menuPrevPage: StringDesc.Raw = StringDesc.Raw("#18dbd1Пред. страница"),
+        val menuPrevPage: StringDesc.Raw = StringDesc.Raw("&#18dbd1Пред. страница"),
         @SerialName("next_page")
-        val menuNextPage: StringDesc.Raw = StringDesc.Raw("#18dbd1След. страница"),
+        val menuNextPage: StringDesc.Raw = StringDesc.Raw("&#18dbd1След. страница"),
         @SerialName("title")
-        val menuTitle: StringDesc.Raw = StringDesc.Raw("#18dbd1Магазины"),
+        val menuTitle: StringDesc.Raw = StringDesc.Raw("&#18dbd1Магазины"),
         @SerialName("quick_sell")
-        val quickSellTitle: StringDesc.Raw = StringDesc.Raw("#18dbd1Быстрая продажа"),
+        val quickSellTitle: StringDesc.Raw = StringDesc.Raw("&#18dbd1Быстрая продажа"),
         @SerialName("edit")
-        val menuEdit: StringDesc.Raw = StringDesc.Raw("#18dbd1Редактировать: ПКМ"),
+        val menuEdit: StringDesc.Raw = StringDesc.Raw("&#18dbd1Редактировать: ПКМ"),
         @SerialName("delete_item")
-        val menuDeleteItem: StringDesc.Raw = StringDesc.Raw("#18dbd1Удалить: Shift+ПКМ"),
+        val menuDeleteItem: StringDesc.Raw = StringDesc.Raw("&#18dbd1Удалить: Shift+ПКМ"),
     )
 
     @Serializable
     data class Buttons(
         @SerialName("edit_mode.enabled")
-        val buttonEditModeEnabled: StringDesc.Raw = StringDesc.Raw("#db2c18Режим редактирования ВКЛ"),
+        val buttonEditModeEnabled: StringDesc.Raw = StringDesc.Raw("&#db2c18Режим редактирования ВКЛ"),
         @SerialName("edit_mode.disabled")
-        val buttonEditModeDisabled: StringDesc.Raw = StringDesc.Raw("#42f596Режим редактирования ВЫКЛ"),
+        val buttonEditModeDisabled: StringDesc.Raw = StringDesc.Raw("&#42f596Режим редактирования ВЫКЛ"),
         @SerialName("edit_mode.exit")
-        val buttonEditModeExit: StringDesc.Raw = StringDesc.Raw("#db2c18Выйти: ЛКМ"),
+        val buttonEditModeExit: StringDesc.Raw = StringDesc.Raw("&#db2c18Выйти: ЛКМ"),
         @SerialName("edit_mode.enter")
-        val buttonEditModeEnter: StringDesc.Raw = StringDesc.Raw("#42f596Войти: ЛКМ"),
+        val buttonEditModeEnter: StringDesc.Raw = StringDesc.Raw("&#42f596Войти: ЛКМ"),
         @SerialName("back")
-        val buttonBack: StringDesc.Raw = StringDesc.Raw("#db2c18Назад"),
+        val buttonBack: StringDesc.Raw = StringDesc.Raw("&#db2c18Назад"),
         @SerialName("information")
-        val buttonInformation: StringDesc.Raw = StringDesc.Raw("#18dbd1Подробнее"),
+        val buttonInformation: StringDesc.Raw = StringDesc.Raw("&#18dbd1Подробнее"),
         @SerialName("information_stock")
-        private val shopInfoStock: StringDesc.Raw = StringDesc.Raw("#18dbd1Склад: {stock}"),
+        private val shopInfoStock: StringDesc.Raw = StringDesc.Raw("&#18dbd1Склад: {stock}"),
         @SerialName("information_price")
-        private val shopInfoPrice: StringDesc.Raw = StringDesc.Raw("#18dbd1Покупка: {price}"),
+        private val shopInfoPrice: StringDesc.Raw = StringDesc.Raw("&#18dbd1Покупка: {price}"),
         @SerialName("information_price_sell")
-        private val shopInfoSellPrice: StringDesc.Raw = StringDesc.Raw("#18dbd1Продажа: {price}"),
+        private val shopInfoSellPrice: StringDesc.Raw = StringDesc.Raw("&#18dbd1Продажа: {price}"),
         @SerialName("information_balance")
-        private val shopInfoBalance: StringDesc.Raw = StringDesc.Raw("#18dbd1Баланс: {balance}"),
+        private val shopInfoBalance: StringDesc.Raw = StringDesc.Raw("&#18dbd1Баланс: {balance}"),
         @SerialName("buy")
-        val buttonBuy: StringDesc.Raw = StringDesc.Raw("#18dbd1Купить"),
+        val buttonBuy: StringDesc.Raw = StringDesc.Raw("&#18dbd1Купить"),
         @SerialName("sell")
-        val buttonSell: StringDesc.Raw = StringDesc.Raw("#db2c18Продать"),
+        val buttonSell: StringDesc.Raw = StringDesc.Raw("&#db2c18Продать"),
         @SerialName("buy_amount")
-        private val buttonBuyAmount: StringDesc.Raw = StringDesc.Raw("#18dbd1Купить x{amount}"),
+        private val buttonBuyAmount: StringDesc.Raw = StringDesc.Raw("&#18dbd1Купить x{amount}"),
         @SerialName("sell_amount")
-        private val buttonSellAmount: StringDesc.Raw = StringDesc.Raw("#db2c18Продать x{amount}"),
+        private val buttonSellAmount: StringDesc.Raw = StringDesc.Raw("&#db2c18Продать x{amount}"),
     ) {
         fun shopInfoStock(stock: Int) = shopInfoStock.replace("{stock}", if (stock == -1) "∞" else stock.toString())
 
-        fun shopInfoPrice(price: Number) = shopInfoPrice.replace(
+        fun shopInfoBuyPrice(price: Number) = shopInfoPrice.replace(
             "{price}",
             if (price.toDouble() <= 0) "-" else price.toString()
         )

@@ -2,16 +2,23 @@ package ru.astrainteractive.astrashop.gui.shop.ui
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.inventory.ItemStack
-import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
+import ru.astrainteractive.astralibs.menu.menu.addLore
+import ru.astrainteractive.astralibs.menu.menu.setDisplayName
+import ru.astrainteractive.astralibs.menu.menu.setIndex
+import ru.astrainteractive.astralibs.menu.menu.setItemStack
+import ru.astrainteractive.astralibs.menu.menu.setLore
+import ru.astrainteractive.astralibs.menu.menu.setMaterial
+import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
 import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astralibs.string.StringDesc
@@ -28,6 +35,7 @@ import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
 import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
 import ru.astrainteractive.astrashop.gui.util.Buttons
 
+@Suppress("LongParameterList")
 class ShopGUI(
     private val shopConfig: ShopConfig,
     override val playerHolder: ShopPlayerHolder,
@@ -39,12 +47,10 @@ class ShopGUI(
 ) : PaginatedMenu(), PagingProvider, BukkitTranslationContext by translationContext {
     private val shopComponent = shopComponentFactory.invoke(this)
     private val buttons = Buttons(
-        lifecycleScope = this,
         translation = translation,
         translationContext = translationContext,
         menu = this
     )
-    private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
     override var menuTitle: Component = shopConfig.options.title.toComponent()
@@ -92,74 +98,71 @@ class ShopGUI(
     }
 
     override fun onCreated() {
-        shopComponent.model.collectOn(Dispatchers.IO, block = ::render)
+        shopComponent.model
+            .onEach { render() }
+            .launchIn(componentScope)
     }
 
     private fun renderEditModeButton() {
         if (!playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) return
-        val itemStack = when (shopComponent.model.value) {
-            is Model.Loading, is Model.List -> ItemStack(Material.LIGHT).apply {
-                editMeta {
-                    it.displayName(translation.buttons.buttonEditModeDisabled.toComponent())
-                }
-                lore(listOf(translation.buttons.buttonEditModeEnter.toComponent()))
-            }
-
-            is Model.ListEditMode -> ItemStack(Material.BARRIER).apply {
-                editMeta {
-                    it.displayName(translation.buttons.buttonEditModeEnabled.toComponent())
-                }
-                lore(listOf(translation.buttons.buttonEditModeExit.toComponent()))
-            }
+        val material = when (shopComponent.model.value) {
+            is Model.Loading, is Model.List -> Material.LIGHT
+            is Model.ListEditMode -> Material.BARRIER
         }
-
-        buttons.button(prevPageButton.index + 1, itemStack) {
-            if (playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) {
-                shopComponent.onIntent(Intent.ToggleEditModeClick)
-            }
-        }.also(clickListener::remember).setInventorySlot()
+        val displayName = when (shopComponent.model.value) {
+            is Model.Loading, is Model.List -> translation.buttons.buttonEditModeDisabled.toComponent()
+            is Model.ListEditMode -> translation.buttons.buttonEditModeEnabled.toComponent()
+        }
+        val lore = when (shopComponent.model.value) {
+            is Model.Loading, is Model.List -> listOf(translation.buttons.buttonEditModeEnter.toComponent())
+            is Model.ListEditMode -> listOf(translation.buttons.buttonEditModeExit.toComponent())
+        }
+        InventorySlot.Builder()
+            .setIndex(prevPageButton.index + 1)
+            .setMaterial(material)
+            .setDisplayName(displayName)
+            .setLore(lore)
+            .setOnClickListener {
+                if (playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) {
+                    shopComponent.onIntent(Intent.ToggleEditModeClick)
+                }
+            }.build().setInventorySlot()
     }
 
     private fun renderItemList(items: Map<String, ShopConfig.ShopItem>) {
         for (i in 0 until maxItemsPerPage) {
             val index = maxItemsPerPage * page + i
             val item = items[index.toString()] ?: continue
-            val itemStack = item.toItemStack().apply {
-                lore(
-                    listOf(
-                        translation.buttons.shopInfoStock(item.stock).toComponent(),
-                        translation.buttons.shopInfoPrice(calculatePriceUseCase.calculateBuyPrice(item, 1))
-                            .toComponent(),
-                        translation.buttons.shopInfoSellPrice(calculatePriceUseCase.calculateSellPrice(item, 1))
-                            .toComponent(),
-                        translation.menu.menuDeleteItem.toComponent(),
-                        if (shopComponent.model.value !is Model.ListEditMode) {
-                            translation.menu.menuEdit.toComponent()
-                        } else {
-                            StringDesc.Raw("").toComponent()
-                        },
-                    )
-                )
+            val buyPrice = calculatePriceUseCase.calculateBuyPrice(item, 1)
+            val sellPrice = calculatePriceUseCase.calculateSellPrice(item, 1)
+            val editModeHint = when (shopComponent.model.value) {
+                !is Model.ListEditMode -> translation.menu.menuEdit.toComponent()
+                else -> StringDesc.Raw("").toComponent()
             }
-            buttons.button(i, itemStack) {
-                val isValid = it.isLeftClick && !it.isShiftClick && shopComponent.model.value is Model.List
-                if (!isValid) return@button
-                val route = GuiRouter.Route.Buy(
-                    playerHolder = playerHolder,
-                    shopConfig = shopConfig,
-                    shopItem = item
-                )
-                componentScope.launch(Dispatchers.IO) { router.open(route) }
-            }.also(clickListener::remember).setInventorySlot()
+            InventorySlot.Builder()
+                .setIndex(i)
+                .setItemStack(item.toItemStack())
+                .addLore(translation.buttons.shopInfoStock(item.stock).toComponent())
+                .addLore(translation.buttons.shopInfoBuyPrice(buyPrice).toComponent())
+                .addLore(translation.buttons.shopInfoSellPrice(sellPrice).toComponent())
+                .addLore(translation.menu.menuDeleteItem.toComponent())
+                .addLore(editModeHint)
+                .setOnClickListener {
+                    val isValid = it.isLeftClick && !it.isShiftClick && shopComponent.model.value is Model.List
+                    if (!isValid) return@setOnClickListener
+                    val route = GuiRouter.Route.Buy(
+                        playerHolder = playerHolder,
+                        shopConfig = shopConfig,
+                        shopItem = item
+                    )
+                    componentScope.launch(Dispatchers.IO) { router.open(route) }
+                }.build().setInventorySlot()
         }
     }
 
-    private fun render(state: Model = shopComponent.model.value) {
-        inventory.clear()
-        clickListener.clearClickListener()
-        setManageButtons(clickListener)
-        clickListener.remember(backPageButton)
-        when (state) {
+    override fun render() {
+        super.render()
+        when (val state = shopComponent.model.value) {
             is Model.ListEditMode -> {
                 renderEditModeButton()
                 renderItemList(state.items)
@@ -170,7 +173,7 @@ class ShopGUI(
                 renderItemList(state.items)
             }
 
-            Model.Loading -> {}
+            Model.Loading -> Unit
         }
     }
 }

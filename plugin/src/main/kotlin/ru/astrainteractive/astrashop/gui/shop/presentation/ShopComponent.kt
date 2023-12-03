@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astrashop.api.model.ShopConfig
-import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.ui.ShopGUI
 
 interface ShopComponent : CoroutineScope {

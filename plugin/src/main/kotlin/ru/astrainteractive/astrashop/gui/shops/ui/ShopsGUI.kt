@@ -2,14 +2,18 @@ package ru.astrainteractive.astrashop.gui.shops.ui
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import ru.astrainteractive.astralibs.menu.clicker.MenuClickListener
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
+import ru.astrainteractive.astralibs.menu.menu.setIndex
+import ru.astrainteractive.astralibs.menu.menu.setItemStack
+import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
@@ -27,17 +31,14 @@ class ShopsGUI(
     translationContext: BukkitTranslationContext,
     private val router: GuiRouter
 ) : PaginatedMenu() {
-
     private val buttons = Buttons(
-        lifecycleScope = this,
         translation = translation,
         translationContext = translationContext,
         menu = this
     )
 
-    private val clickListener = MenuClickListener()
-
     override val menuSize: MenuSize = MenuSize.XL
+
     override var menuTitle: Component = with(translationContext) {
         translation.menu.menuTitle.toComponent()
     }
@@ -70,32 +71,33 @@ class ShopsGUI(
 
     override fun onCreated() {
         shopsComponent.loadShops()
-        shopsComponent.model.collectOn(Dispatchers.IO, block = ::render)
+        shopsComponent.model
+            .onEach { render() }
+            .launchIn(componentScope)
     }
 
     private fun renderLoadedState(state: Model.Loaded) {
         for (i in 0 until maxItemsPerPage) {
             val index = inventoryIndex(i)
             val item = state.shops.getOrNull(index) ?: continue
-            buttons.button(i, item.options.titleItem.toItemStack()) {
-                componentScope.launch(Dispatchers.IO) {
-                    val route = GuiRouter.Route.Shop(
-                        playerHolder = playerHolder.copy(shopPage = 0),
-                        shopConfig = item
-                    )
-                    router.open(route)
-                }
-            }.also(clickListener::remember).setInventorySlot()
+            InventorySlot.Builder()
+                .setIndex(i)
+                .setItemStack(item.options.titleItem.toItemStack())
+                .setOnClickListener {
+                    componentScope.launch(Dispatchers.IO) {
+                        val route = GuiRouter.Route.Shop(
+                            playerHolder = playerHolder.copy(shopPage = 0),
+                            shopConfig = item
+                        )
+                        router.open(route)
+                    }
+                }.build().setInventorySlot()
         }
     }
 
-    private fun render(state: Model = shopsComponent.model.value) {
-        inventory.clear()
-        clickListener.clearClickListener()
-        clickListener.remember(backPageButton)
-        setManageButtons(clickListener)
-
-        when (state) {
+    override fun render() {
+        super.render()
+        when (val state: Model = shopsComponent.model.value) {
             is Model.Loaded -> renderLoadedState(state)
             Model.Loading -> Unit
         }
