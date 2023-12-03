@@ -11,7 +11,7 @@ import ru.astrainteractive.astrashop.domain.di.DomainModule
 import ru.astrainteractive.astrashop.gui.buy.presentation.DefaultBuyComponent
 import ru.astrainteractive.astrashop.gui.buy.ui.BuyGUI
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
-import ru.astrainteractive.astrashop.gui.quicksell.presentation.QuickSellController
+import ru.astrainteractive.astrashop.gui.quicksell.presentation.DefaultQuickSellComponent
 import ru.astrainteractive.astrashop.gui.quicksell.ui.QuickSellGUI
 import ru.astrainteractive.astrashop.gui.shop.presentation.DefaultShopComponent
 import ru.astrainteractive.astrashop.gui.shop.ui.ShopGUI
@@ -48,7 +48,7 @@ class GuiRouterImpl(
         playerHolder = ShopPlayerHolder(route.player),
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
-        controller = QuickSellController(
+        controller = DefaultQuickSellComponent(
             translation = coreModule.translation.value,
             shopApi = apiModule.shopApi,
             sellInteractor = domainModule.sellInteractor,
@@ -56,17 +56,17 @@ class GuiRouterImpl(
     )
 
     private fun shop(route: GuiRouter.Route.Shop) = ShopGUI(
-        shopTitle = route.shopConfig.configName.let(StringDesc::Raw),
+        shopConfig = route.shopConfig,
         playerHolder = route.playerHolder,
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
         calculatePriceUseCase = domainModule.calculatePriceUseCase,
+        router = this,
         shopComponentFactory = {
             DefaultShopComponent(
                 dataSource = apiModule.shopApi,
                 shopFileName = route.shopConfig.configName,
                 pagingProvider = it,
-                router = this
             )
         }
     )
@@ -87,6 +87,8 @@ class GuiRouterImpl(
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
         calculatePriceUseCase = domainModule.calculatePriceUseCase,
+        shopConfig = route.shopConfig,
+        router = this,
         buyComponent = DefaultBuyComponent(
             shopFileName = route.shopConfig.configName,
             shopApi = apiModule.shopApi,

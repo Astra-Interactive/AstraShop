@@ -21,13 +21,20 @@ import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent.Model
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.util.Buttons
 import kotlin.math.pow
+import kotlinx.coroutines.launch
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+import ru.astrainteractive.astralibs.menu.clicker.Click
+import ru.astrainteractive.astrashop.gui.router.GuiRouter
 
 class BuyGUI(
+    shopConfig: ShopConfig,
     item: ShopConfig.ShopItem,
     override val playerHolder: ShopPlayerHolder,
     private val translation: PluginTranslation,
     private val buyComponent: BuyComponent,
     private val calculatePriceUseCase: CalculatePriceUseCase,
+    private val router: GuiRouter,
     translationContext: BukkitTranslationContext
 ) : Menu(), BukkitTranslationContext by translationContext {
     private val buttons = Buttons(
@@ -45,7 +52,21 @@ class BuyGUI(
         .let(StringDesc::Raw)
         .toComponent()
 
-    private val backButton = buttons.backToShopButton()
+    private val backButton = InventorySlot.Builder {
+        this.index = 9
+        this.itemStack = ItemStack(Material.BARRIER).apply {
+            editMeta {
+                it.displayName(translation.buttons.buttonBack.toComponent())
+            }
+        }
+        this.click = Click {
+            val route = GuiRouter.Route.Shop(
+                playerHolder = playerHolder,
+                shopConfig = shopConfig
+            )
+            componentScope.launch(Dispatchers.IO) { router.open(route) }
+        }
+    }
     private val buyInfoButton = buttons.buyInfoButton
     private val sellInfoButton = buttons.sellInfoButton
     private val balanceButton: InventorySlot

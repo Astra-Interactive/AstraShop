@@ -16,7 +16,6 @@ class DefaultShopComponent(
     private val shopFileName: String,
     private val pagingProvider: PagingProvider,
     private val dataSource: ShopApi,
-    private val router: GuiRouter
 ) : AsyncComponent(), ShopComponent {
 
     override val model = MutableStateFlow<Model>(Model.Loading)
@@ -88,20 +87,6 @@ class DefaultShopComponent(
     override fun onIntent(intent: Intent) {
         componentScope.launch(Dispatchers.IO) {
             when (intent) {
-                is Intent.OpenShops -> {
-                    val route = GuiRouter.Route.Shops(intent.playerHolder)
-                    router.open(route)
-                }
-
-                is Intent.OpenBuyGui -> {
-                    if (!intent.isValid()) return@launch
-                    val route = GuiRouter.Route.Buy(
-                        playerHolder = intent.playerHolder,
-                        shopConfig = dataSource.fetchShop(shopFileName),
-                        shopItem = intent.shopItem
-                    )
-                    router.open(route)
-                }
 
                 is Intent.ToggleEditModeClick -> {
                     if (model.value is Model.ListEditMode) {

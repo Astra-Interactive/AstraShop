@@ -26,7 +26,6 @@ interface ShopComponent : CoroutineScope {
     }
 
     sealed interface Intent {
-        class OpenShops(val playerHolder: ShopPlayerHolder) : Intent
         class InventoryClick(val e: InventoryClickEvent) : Intent {
             fun isShopGUI() = e.clickedInventory?.holder is ShopGUI
             fun isPlayerInventory() = e.clickedInventory?.holder == e.whoClicked.inventory.holder
@@ -40,15 +39,15 @@ interface ShopComponent : CoroutineScope {
             fun isValid() = isRightClick && isShiftClick && e.clickedInventory?.holder is ShopGUI
         }
 
-        class OpenBuyGui(
-            val shopItem: ShopConfig.ShopItem,
-            val playerHolder: ShopPlayerHolder,
-            private val isLeftClick: Boolean,
-            private val isShiftClick: Boolean,
-            val currentState: Model
-        ) : Intent {
-            fun isValid() = isLeftClick && !isShiftClick && currentState is Model.List
-        }
+//        class OpenBuyGui(
+//            val shopItem: ShopConfig.ShopItem,
+//            val playerHolder: ShopPlayerHolder,
+//            private val isLeftClick: Boolean,
+//            private val isShiftClick: Boolean,
+//            val currentState: Model
+//        ) : Intent {
+//            fun isValid() = isLeftClick && !isShiftClick && currentState is Model.List
+//        }
 
         data object ToggleEditModeClick : Intent
     }

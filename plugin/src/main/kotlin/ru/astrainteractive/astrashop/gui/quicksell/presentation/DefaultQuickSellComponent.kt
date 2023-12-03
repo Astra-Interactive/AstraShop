@@ -2,29 +2,30 @@ package ru.astrainteractive.astrashop.gui.quicksell.presentation
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.ShopApi
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.domain.interactor.SellInteractor
 
-class QuickSellController(
+class DefaultQuickSellComponent(
     private val translation: PluginTranslation,
     private val shopApi: ShopApi,
     private val sellInteractor: SellInteractor
-) : AsyncComponent() {
-    val messageChannel = Channel<StringDesc>()
+) : AsyncComponent(), QuickSellComponent {
+    private val messageChannel = Channel<QuickSellComponent.Label>()
+    override val labels: Flow<QuickSellComponent.Label> = messageChannel.receiveAsFlow()
 
-    fun onItemClicked(e: InventoryClickEvent) {
-        val itemStack = e.currentItem ?: return
-        val player = e.whoClicked as Player
-        componentScope.launch(Dispatchers.IO) {
+    private val limitedDispatcher = Dispatchers.IO.limitedParallelism(1)
+
+    override fun onItemClicked(itemStack: ItemStack, player: Player, isShiftClick: Boolean) {
+        componentScope.launch(limitedDispatcher) {
             val shopItemsWithConfig = shopApi.fetchShopList().mapNotNull { shopConfig ->
                 val foundShopItem = shopConfig.items.values.firstOrNull { shopItem ->
                     isSimilar(shopItem, itemStack)
@@ -32,10 +33,11 @@ class QuickSellController(
                 foundShopItem to shopConfig
             }
             val (item, shopConfig) = shopItemsWithConfig.firstOrNull() ?: run {
-                messageChannel.send(translation.general.itemNotBuying)
+                val label = QuickSellComponent.Label.Message(translation.general.itemNotBuying)
+                messageChannel.send(label)
                 return@launch
             }
-            val amount = if (e.isShiftClick) 64 else 1
+            val amount = if (isShiftClick) 64 else 1
             sellInteractor(SellInteractor.Param(amount, item, shopConfig, player.uniqueId))
         }
     }

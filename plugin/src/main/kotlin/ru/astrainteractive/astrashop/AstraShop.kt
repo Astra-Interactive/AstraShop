@@ -22,7 +22,10 @@ class AstraShop : JavaPlugin() {
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        CommandManagerElement.Default(rootModule.coreModule).onEnable()
+        CommandManagerElement.Default(
+            rootModule.coreModule,
+            rootModule.routerModule
+        ).onEnable()
 
         rootModule.coreModule.inventoryClickEvent.value.onEnable(this)
     }

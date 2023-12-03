@@ -6,6 +6,8 @@ import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astrashop.command.CommandManager
 import ru.astrainteractive.astrashop.core.PluginPermission
+import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.router.GuiRouter
 
 internal fun CommandManager.shop() = plugin.registerCommand("ashop") {
     if (args.isEmpty()) {
@@ -15,8 +17,8 @@ internal fun CommandManager.shop() = plugin.registerCommand("ashop") {
                 return@registerCommand
             }
             scope.launch(dispatchers.BukkitAsync) {
-                TODO()
-//                ShopsGUI(ShopPlayerHolder(it)).openOnMainThread()
+                val route = GuiRouter.Route.Shops(ShopPlayerHolder(it))
+                router.open(route)
             }
         }
     }
@@ -33,8 +35,8 @@ internal fun CommandManager.shop() = plugin.registerCommand("ashop") {
             }
             scope.launch(dispatchers.BukkitAsync) {
                 if (sender !is Player) return@launch
-                TODO()
-//                QuickSellGUI(ShopPlayerHolder(sender as Player)).openOnMainThread()
+                val route = GuiRouter.Route.QuickSell(sender as Player)
+                router.open(route)
             }
         } else {
             sender.sendMessage("Открытие по названию еще не сделано :(")

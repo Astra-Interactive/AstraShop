@@ -2,6 +2,7 @@ package ru.astrainteractive.astrashop.gui.shop.ui
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -20,6 +21,7 @@ import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.domain.usecase.CalculatePriceUseCase
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Intent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
@@ -27,10 +29,11 @@ import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
 import ru.astrainteractive.astrashop.gui.util.Buttons
 
 class ShopGUI(
-    shopTitle: StringDesc.Raw,
+    private val shopConfig: ShopConfig,
     override val playerHolder: ShopPlayerHolder,
     private val translation: PluginTranslation,
     private val calculatePriceUseCase: CalculatePriceUseCase,
+    private val router: GuiRouter,
     shopComponentFactory: (PagingProvider) -> ShopComponent,
     translationContext: BukkitTranslationContext
 ) : PaginatedMenu(), PagingProvider, BukkitTranslationContext by translationContext {
@@ -44,7 +47,7 @@ class ShopGUI(
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
-    override var menuTitle: Component = shopTitle.toComponent()
+    override var menuTitle: Component = shopConfig.options.title.toComponent()
     override var page: Int
         get() = playerHolder.shopPage
         set(value) {
@@ -56,7 +59,9 @@ class ShopGUI(
     override val nextPageButton: InventorySlot = buttons.nextButton
     override val prevPageButton: InventorySlot = buttons.prevButton
     override val backPageButton: InventorySlot = buttons.backButton {
-        shopComponent.onIntent(Intent.OpenShops(playerHolder))
+        val cleanPlayerHolder = ShopPlayerHolder(playerHolder.player)
+        val route = GuiRouter.Route.Shops(cleanPlayerHolder)
+        componentScope.launch(Dispatchers.IO) { router.open(route) }
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
@@ -137,13 +142,14 @@ class ShopGUI(
                 )
             }
             buttons.button(i, itemStack) {
-                Intent.OpenBuyGui(
-                    shopItem = item,
+                val isValid = it.isLeftClick && !it.isShiftClick && shopComponent.model.value is Model.List
+                if (!isValid) return@button
+                val route = GuiRouter.Route.Buy(
                     playerHolder = playerHolder,
-                    isLeftClick = it.isLeftClick,
-                    isShiftClick = it.isShiftClick,
-                    currentState = shopComponent.model.value
-                ).also(shopComponent::onIntent)
+                    shopConfig = shopConfig,
+                    shopItem = item
+                )
+                componentScope.launch(Dispatchers.IO) { router.open(route) }
             }.also(clickListener::remember).setInventorySlot()
         }
     }

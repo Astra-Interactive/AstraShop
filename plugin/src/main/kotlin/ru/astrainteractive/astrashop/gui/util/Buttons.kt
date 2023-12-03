@@ -121,21 +121,4 @@ class Buttons(
         }
     }
 
-    @Suppress("FunctionNaming")
-    fun backToShopButton(): InventorySlot {
-        return InventorySlot.Builder {
-            this.index = 9
-            this.itemStack = ItemStack(Material.BARRIER).apply {
-                editMeta {
-                    it.displayName(translation.buttons.buttonBack.toComponent())
-                }
-            }
-            this.click = Click {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    TODO()
-//                    ShopGUI(shopConfig, playerHolder).openOnMainThread()
-                }
-            }
-        }
-    }
 }
