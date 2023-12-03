@@ -1,67 +1,66 @@
 package ru.astrainteractive.astrashop.domain.usecase
 
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.Logger
-import ru.astrainteractive.astrashop.api.calculator.PriceCalculator
+import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
-import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
-import ru.astrainteractive.astrashop.util.copy
+import ru.astrainteractive.astrashop.domain.bridge.PlayerBridge
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
+import java.util.UUID
 
 class SellUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
+    private val playerBridge: PlayerBridge,
+    private val calculatePriceUseCase: CalculatePriceUseCase
 ) : UseCase.Suspended<SellUseCase.Param, SellUseCase.Result> {
 
     class Param(
         val amount: Int,
         val shopItem: ShopConfig.ShopItem,
-        val player: Player
+        val playerUUID: UUID
     )
 
     sealed interface Result {
-        object Failure : Result
+        data object Failure : Result
         class Success(val soldAmount: Int) : Result
     }
 
     override suspend operator fun invoke(input: Param): Result {
         val item = input.shopItem
-        val player = input.player
         val amount = input.amount
-        if (PriceCalculator.calculateSellPrice(item, amount) <= 0) {
-            player.sendMessage("Предмет не закупается")
+        val playerName = playerBridge.getName(input.playerUUID)
+
+        // Is item purchasing
+        val totalSellPrice = CalculatePriceUseCase.Input(
+            item = item,
+            amount = amount,
+            type = CalculatePriceUseCase.Type.Sell
+        ).let(calculatePriceUseCase::invoke).price
+        if (totalSellPrice <= 0) {
+            playerBridge.sendMessage(input.playerUUID, "Предмет не закупается".let(StringDesc::Raw))
             return Result.Failure
         }
-        val itemStack = when (val shopItem = item.shopItem) {
-            is SpigotShopItemStack.ItemStackStack -> {
-                if (!player.inventory.contains(shopItem.itemStack)) {
-                    player.sendMessage("У вас нет такого предмета")
-                    return Result.Failure
-                }
-                shopItem.itemStack
-            }
 
-            is SpigotShopItemStack.Material -> {
-                if (!player.inventory.contains(shopItem.material)) {
-                    player.sendMessage("У вас нет такого предмета")
-                    return Result.Failure
-                }
-                ItemStack(shopItem.material)
-            }
-
-            else -> error("Not spigot item")
+        // Has item
+        val couldNotRemoveAmount = playerBridge.removeItem(input.playerUUID, item, amount)
+        if (couldNotRemoveAmount == null) {
+            playerBridge.sendMessage(input.playerUUID, "У вас нет такого предмета".let(StringDesc::Raw))
+            return Result.Failure
         }
-        val couldNotRemoveAmount = player.inventory.removeItem(itemStack.copy(amount)).map { it.value.amount }.sum()
-        val sellAmount = amount - couldNotRemoveAmount
 
-        val money = PriceCalculator.calculateSellPrice(item, sellAmount)
-        economy.addMoney(player.uniqueId, money)
-        player.sendMessage("Вы получили $money\$")
+        // Sell item
+        val sellAmount = amount - couldNotRemoveAmount
+        val money = CalculatePriceUseCase.Input(
+            item = item,
+            amount = sellAmount,
+            type = CalculatePriceUseCase.Type.Sell
+        ).let(calculatePriceUseCase::invoke).price
+        economy.addMoney(input.playerUUID, money)
+        playerBridge.sendMessage(input.playerUUID, "Вы получили $money\$".let(StringDesc::Raw))
         logger.info(
             "BuyUseCase",
-            "${player.name} sold $sellAmount of ${itemStack.type.name} for $money",
+            "$playerName sold $sellAmount of ${item.shopItem} for $money",
             logInFile = false
         )
         return Result.Success(sellAmount)

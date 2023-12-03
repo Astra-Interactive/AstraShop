@@ -5,7 +5,7 @@ import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 
 class ChangeStockAmountUseCase(
-    private val dataSource: ShopApi
+    private val shopApi: ShopApi
 ) : UseCase.Suspended<ChangeStockAmountUseCase.Param, Unit> {
     class Param(
         val shopItem: ShopConfig.ShopItem,
@@ -21,6 +21,6 @@ class ChangeStockAmountUseCase(
             val newAmount = (item.stock + i).coerceAtLeast(1)
             item.stock = newAmount
         }
-        dataSource.updateShop(shopConfig)
+        shopApi.updateShop(shopConfig)
     }
 }

@@ -13,6 +13,8 @@ interface BuyComponent {
     sealed interface Model {
         data object Loading : Model
 
+        data object Error : Model
+
         data class Loaded(
             val item: ShopConfig.ShopItem,
             val shopConfig: ShopConfig.Options,

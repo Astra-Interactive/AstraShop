@@ -12,13 +12,13 @@ import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astrashop.core.PluginTranslation
+import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent.Model
 import ru.astrainteractive.astrashop.gui.util.Buttons
-import ru.astrainteractive.astrashop.util.inventoryIndex
-import ru.astrainteractive.astrashop.util.toItemStack
+import ru.astrainteractive.astrashop.gui.util.ItemStackGuiExt.inventoryIndex
 
 class ShopsGUI(
     override val playerHolder: ShopPlayerHolder,
@@ -26,7 +26,7 @@ class ShopsGUI(
     translation: PluginTranslation,
     translationContext: BukkitTranslationContext,
     private val router: GuiRouter
-) : PaginatedMenu(), BukkitTranslationContext by translationContext {
+) : PaginatedMenu() {
 
     private val buttons = Buttons(
         lifecycleScope = this,
@@ -38,7 +38,9 @@ class ShopsGUI(
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
-    override var menuTitle: Component = translation.menu.menuTitle.toComponent()
+    override var menuTitle: Component = with(translationContext) {
+        translation.menu.menuTitle.toComponent()
+    }
     override var page: Int
         get() = playerHolder.shopsPage
         set(value) {
@@ -67,6 +69,7 @@ class ShopsGUI(
     override fun onPageChanged() = render()
 
     override fun onCreated() {
+        shopsComponent.loadShops()
         shopsComponent.model.collectOn(Dispatchers.IO, block = ::render)
     }
 

@@ -1,10 +1,10 @@
 package ru.astrainteractive.astrashop.domain.interactor
 
-import org.bukkit.entity.Player
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.domain.usecase.ChangeStockAmountUseCase
 import ru.astrainteractive.astrashop.domain.usecase.SellUseCase
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
+import java.util.UUID
 
 class SellInteractor(
     private val sellUseCase: SellUseCase,
@@ -14,7 +14,7 @@ class SellInteractor(
         val sellAmount: Int,
         val shopItem: ShopConfig.ShopItem,
         val shopConfig: ShopConfig,
-        val player: Player
+        val playerUUID: UUID
     )
 
     override suspend operator fun invoke(input: Param): Boolean {
@@ -22,7 +22,7 @@ class SellInteractor(
             SellUseCase.Param(
                 amount = input.sellAmount,
                 shopItem = input.shopItem,
-                player = input.player
+                playerUUID = input.playerUUID
             )
         ) as? SellUseCase.Result.Success ?: return false
 

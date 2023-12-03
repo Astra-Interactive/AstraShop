@@ -3,6 +3,7 @@ package ru.astrainteractive.astrashop.gui.router
 import kotlinx.coroutines.withContext
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.menu.menu.Menu
+import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.di.ApiModule
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.di.CoreModule
@@ -21,12 +22,12 @@ interface GuiRouter {
     sealed interface Route {
         class Buy(
             val playerHolder: ShopPlayerHolder,
-            val item: ShopConfig.ShopItem,
             val shopConfig: ShopConfig,
-            val itemIndex: Int,
+            val shopItem: ShopConfig.ShopItem,
         ) : Route
 
         class QuickSell(val player: Player) : Route
+
         class Shop(
             val playerHolder: ShopPlayerHolder,
             val shopConfig: ShopConfig
@@ -49,21 +50,21 @@ class GuiRouterImpl(
         translation = coreModule.translation.value,
         controller = QuickSellController(
             translation = coreModule.translation.value,
-            dataSource = apiModule.shopApi,
+            shopApi = apiModule.shopApi,
             sellInteractor = domainModule.sellInteractor,
-            translationContext = coreModule.translationContext
         )
     )
 
     private fun shop(route: GuiRouter.Route.Shop) = ShopGUI(
-        shopConfig = route.shopConfig,
+        shopTitle = route.shopConfig.configName.let(StringDesc::Raw),
         playerHolder = route.playerHolder,
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
+        calculatePriceUseCase = domainModule.calculatePriceUseCase,
         shopComponentFactory = {
             DefaultShopComponent(
                 dataSource = apiModule.shopApi,
-                configName = route.shopConfig.configName,
+                shopFileName = route.shopConfig.configName,
                 pagingProvider = it,
                 router = this
             )
@@ -81,18 +82,19 @@ class GuiRouterImpl(
     )
 
     private fun buy(route: GuiRouter.Route.Buy) = BuyGUI(
-        item = route.item,
+        item = route.shopItem,
         playerHolder = route.playerHolder,
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
+        calculatePriceUseCase = domainModule.calculatePriceUseCase,
         buyComponent = DefaultBuyComponent(
-            configName = route.shopConfig.configName,
-            dataSource = apiModule.shopApi,
+            shopFileName = route.shopConfig.configName,
+            shopApi = apiModule.shopApi,
             sellInteractor = domainModule.sellInteractor,
-            itemIndex = route.itemIndex,
-            player = route.playerHolder.player,
             economy = coreModule.economyProvider.value,
-            buyInteractor = domainModule.buyInteractor
+            buyInteractor = domainModule.buyInteractor,
+            playerUUID = route.playerHolder.player.uniqueId,
+            shopItem = route.shopItem
         )
     )
 

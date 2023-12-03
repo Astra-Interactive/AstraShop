@@ -7,6 +7,8 @@ import ru.astrainteractive.astrashop.api.model.ShopConfig
 interface ShopsComponent : CoroutineScope {
     val model: StateFlow<Model>
 
+    fun loadShops()
+
     sealed interface Model {
         val maxItemsAmount: Int
 

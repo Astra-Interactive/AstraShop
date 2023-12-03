@@ -41,12 +41,11 @@ interface ShopComponent : CoroutineScope {
         }
 
         class OpenBuyGui(
-            val shopConfig: ShopConfig,
             val shopItem: ShopConfig.ShopItem,
             val playerHolder: ShopPlayerHolder,
             private val isLeftClick: Boolean,
             private val isShiftClick: Boolean,
-            private val currentState: Model
+            val currentState: Model
         ) : Intent {
             fun isValid() = isLeftClick && !isShiftClick && currentState is Model.List
         }

@@ -14,23 +14,24 @@ import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astralibs.string.StringDesc
-import ru.astrainteractive.astrashop.api.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginPermission
 import ru.astrainteractive.astrashop.core.PluginTranslation
+import ru.astrainteractive.astrashop.domain.usecase.CalculatePriceUseCase
+import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Intent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
 import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
 import ru.astrainteractive.astrashop.gui.util.Buttons
-import ru.astrainteractive.astrashop.util.toItemStack
 
 class ShopGUI(
-    private val shopConfig: ShopConfig,
+    shopTitle: StringDesc.Raw,
     override val playerHolder: ShopPlayerHolder,
     private val translation: PluginTranslation,
-    private val shopComponentFactory: (PagingProvider) -> ShopComponent,
+    private val calculatePriceUseCase: CalculatePriceUseCase,
+    shopComponentFactory: (PagingProvider) -> ShopComponent,
     translationContext: BukkitTranslationContext
 ) : PaginatedMenu(), PagingProvider, BukkitTranslationContext by translationContext {
     private val shopComponent = shopComponentFactory.invoke(this)
@@ -43,7 +44,7 @@ class ShopGUI(
     private val clickListener = MenuClickListener()
 
     override val menuSize: MenuSize = MenuSize.XL
-    override var menuTitle: Component = shopConfig.options.title.toComponent()
+    override var menuTitle: Component = shopTitle.toComponent()
     override var page: Int
         get() = playerHolder.shopPage
         set(value) {
@@ -122,8 +123,9 @@ class ShopGUI(
                 lore(
                     listOf(
                         translation.buttons.shopInfoStock(item.stock).toComponent(),
-                        translation.buttons.shopInfoPrice(PriceCalculator.calculateBuyPrice(item, 1)).toComponent(),
-                        translation.buttons.shopInfoSellPrice(PriceCalculator.calculateSellPrice(item, 1))
+                        translation.buttons.shopInfoPrice(calculatePriceUseCase.calculateBuyPrice(item, 1))
+                            .toComponent(),
+                        translation.buttons.shopInfoSellPrice(calculatePriceUseCase.calculateSellPrice(item, 1))
                             .toComponent(),
                         translation.menu.menuDeleteItem.toComponent(),
                         if (shopComponent.model.value !is Model.ListEditMode) {
@@ -136,12 +138,11 @@ class ShopGUI(
             }
             buttons.button(i, itemStack) {
                 Intent.OpenBuyGui(
-                    shopConfig,
-                    item,
-                    playerHolder,
-                    it.isLeftClick,
-                    it.isShiftClick,
-                    shopComponent.model.value
+                    shopItem = item,
+                    playerHolder = playerHolder,
+                    isLeftClick = it.isLeftClick,
+                    isShiftClick = it.isShiftClick,
+                    currentState = shopComponent.model.value
                 ).also(shopComponent::onIntent)
             }.also(clickListener::remember).setInventorySlot()
         }

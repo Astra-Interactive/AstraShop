@@ -13,7 +13,7 @@ class DefaultShopsComponent(
 
     override val model = MutableStateFlow<Model>(Model.Loading)
 
-    init {
+    override fun loadShops() {
         componentScope.launch(Dispatchers.IO) {
             val list = api.fetchShopList()
             model.value = Model.Loaded(list)

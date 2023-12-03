@@ -10,8 +10,8 @@ import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
-import ru.astrainteractive.astrashop.api.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.core.PluginTranslation
+import ru.astrainteractive.astrashop.domain.usecase.CalculatePriceUseCase
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent
 
 class Buttons(
@@ -87,7 +87,10 @@ class Buttons(
         }
 
     @Suppress("FunctionNaming")
-    fun balanceButton(state: BuyComponent.Model.Loaded? = null): InventorySlot {
+    fun balanceButton(
+        state: BuyComponent.Model.Loaded? = null,
+        calculatePriceUseCase: CalculatePriceUseCase
+    ): InventorySlot {
         return InventorySlot.Builder {
             this.index = 0
             this.itemStack = ItemStack(Material.EMERALD).apply {
@@ -99,12 +102,12 @@ class Buttons(
                     listOf(
                         translation.buttons.shopInfoStock(stock).toComponent(),
                         translation.buttons.shopInfoPrice(
-                            state?.item?.let { PriceCalculator.calculateBuyPrice(it, 1) }
+                            state?.item?.let { calculatePriceUseCase.calculateBuyPrice(it, 1) }
                                 ?: 0
                         ).toComponent(),
                         translation.buttons.shopInfoSellPrice(
                             state?.item?.let {
-                                PriceCalculator.calculateSellPrice(
+                                calculatePriceUseCase.calculateSellPrice(
                                     it,
                                     1
                                 )

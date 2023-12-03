@@ -10,16 +10,16 @@ import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astralibs.string.StringDesc
-import ru.astrainteractive.astrashop.api.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
+import ru.astrainteractive.astrashop.domain.usecase.CalculatePriceUseCase
+import ru.astrainteractive.astrashop.domain.util.ItemStackExt.copy
+import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.buy.model.BuyType
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent.Model
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.util.Buttons
-import ru.astrainteractive.astrashop.util.copy
-import ru.astrainteractive.astrashop.util.toItemStack
 import kotlin.math.pow
 
 class BuyGUI(
@@ -27,6 +27,7 @@ class BuyGUI(
     override val playerHolder: ShopPlayerHolder,
     private val translation: PluginTranslation,
     private val buyComponent: BuyComponent,
+    private val calculatePriceUseCase: CalculatePriceUseCase,
     translationContext: BukkitTranslationContext
 ) : Menu(), BukkitTranslationContext by translationContext {
     private val buttons = Buttons(
@@ -48,7 +49,7 @@ class BuyGUI(
     private val buyInfoButton = buttons.buyInfoButton
     private val sellInfoButton = buttons.sellInfoButton
     private val balanceButton: InventorySlot
-        get() = buttons.balanceButton(buyComponent.model.value as? Model.Loaded)
+        get() = buttons.balanceButton(buyComponent.model.value as? Model.Loaded, calculatePriceUseCase)
 
     override fun onCreated() {
         buyComponent.model.collectOn(Dispatchers.IO, block = ::render)
@@ -67,8 +68,8 @@ class BuyGUI(
         val amount = 2.0.pow(i).toInt()
         if (type == BuyType.BUY && state.item.stock != -1 && state.item.stock < amount) return
 
-        val totalPriceBuy = PriceCalculator.calculateBuyPrice(state.item, amount).coerceAtLeast(0.0)
-        val totalPriceSell = PriceCalculator.calculateSellPrice(state.item, amount).coerceAtLeast(0.0)
+        val totalPriceBuy = calculatePriceUseCase.calculateBuyPrice(state.item, amount).coerceAtLeast(0.0)
+        val totalPriceSell = calculatePriceUseCase.calculateSellPrice(state.item, amount).coerceAtLeast(0.0)
 
         val title = when (type) {
             BuyType.BUY -> translation.buttons.buttonBuyAmount(amount)
@@ -97,11 +98,12 @@ class BuyGUI(
     private fun render(buyState: Model) {
         inventory.clear()
         clickListener.clearClickListener()
+        clickListener.remember(backButton)
+        backButton.setInventorySlot()
 
         when (buyState) {
             is Model.Loaded -> {
                 clickListener.remember(balanceButton)
-                clickListener.remember(backButton)
 
                 balanceButton.setInventorySlot()
                 backButton.setInventorySlot()
@@ -114,7 +116,9 @@ class BuyGUI(
                 }
             }
 
-            Model.Loading -> {}
+            Model.Loading -> Unit
+
+            Model.Error -> Unit
         }
     }
 }

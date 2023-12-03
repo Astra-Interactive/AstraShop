@@ -12,21 +12,21 @@ internal class SpigotShopApi(private val plugin: Plugin) : ShopApi {
     private val shopItemParser = ShopItemParser(plugin)
     private val readerDispatcher = Dispatchers.IO.limitedParallelism(1)
 
-    override suspend fun fetchShopList(): List<ShopConfig> = withContext(
-        readerDispatcher
-    ) {
-        getYmlFiles(plugin)?.mapNotNull(shopItemParser::parseShopFileOrNull) ?: emptyList()
+    override suspend fun fetchShopList(): List<ShopConfig> {
+        return withContext(readerDispatcher) {
+            getYmlFiles(plugin)?.mapNotNull(shopItemParser::parseShopFileOrNull) ?: emptyList()
+        }
     }
 
-    override suspend fun fetchShop(configName: String): ShopConfig = withContext(
-        readerDispatcher
-    ) {
-        DefaultSpigotFileManager(plugin, configName).let(shopItemParser::parseShopFile)
+    override suspend fun fetchShop(shopFileName: String): ShopConfig {
+        return withContext(readerDispatcher) {
+            DefaultSpigotFileManager(plugin, shopFileName).let(shopItemParser::parseShopFile)
+        }
     }
 
-    override suspend fun updateShop(shopConfig: ShopConfig) = withContext(
-        readerDispatcher
-    ) {
-        shopItemParser.saveItem(shopConfig)
+    override suspend fun updateShop(shopConfig: ShopConfig) {
+        return withContext(readerDispatcher) {
+            shopItemParser.saveItem(shopConfig)
+        }
     }
 }

@@ -3,20 +3,21 @@ package ru.astrainteractive.astrashop.gui.buy.presentation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astrashop.api.ShopApi
+import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.domain.interactor.BuyInteractor
 import ru.astrainteractive.astrashop.domain.interactor.SellInteractor
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent.Model
+import java.util.UUID
 
 @Suppress("LongParameterList")
 class DefaultBuyComponent(
-    private val configName: String,
-    private val itemIndex: Int,
-    private val player: Player,
-    private val dataSource: ShopApi,
+    private val shopFileName: String,
+    private val shopItem: ShopConfig.ShopItem,
+    private val playerUUID: UUID,
+    private val shopApi: ShopApi,
     private val economy: EconomyProvider,
     private val sellInteractor: SellInteractor,
     private val buyInteractor: BuyInteractor
@@ -26,14 +27,25 @@ class DefaultBuyComponent(
 
     private suspend fun loadItems() {
         model.value = Model.Loading
-        val instance = dataSource.fetchShop(configName)
-        val item = instance.items[itemIndex.toString()]!!
-        model.value = Model.Loaded(
-            item,
-            instance.options,
-            instance,
-            economy.getBalance(player.uniqueId)?.toInt() ?: 0
-        )
+        val shopConfig = shopApi.fetchShop(shopFileName)
+
+        val item = shopConfig.items.mapNotNull { (_, shopItem) ->
+            if (shopItem.itemIndex == this.shopItem.itemIndex) {
+                shopItem
+            } else {
+                null
+            }
+        }.firstOrNull()
+        if (item == null) {
+            model.value = Model.Error
+        } else {
+            model.value = Model.Loaded(
+                item,
+                shopConfig.options,
+                shopConfig,
+                economy.getBalance(playerUUID)?.toInt() ?: 0
+            )
+        }
     }
 
     override fun onBuyClicked(amount: Int) {
@@ -44,7 +56,7 @@ class DefaultBuyComponent(
                     amount,
                     state.item,
                     state.instance,
-                    player
+                    playerUUID
                 )
             )
             loadItems()
@@ -59,7 +71,7 @@ class DefaultBuyComponent(
                     amount,
                     state.item,
                     state.instance,
-                    player
+                    playerUUID
                 )
             )
             loadItems()

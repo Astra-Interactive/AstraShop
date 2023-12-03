@@ -10,10 +10,10 @@ import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Intent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
 import ru.astrainteractive.astrashop.gui.shop.util.PagingProvider
-import ru.astrainteractive.astrashop.util.asShopItem
+import ru.astrainteractive.astrashop.gui.util.ItemStackGuiExt.asShopItem
 
 class DefaultShopComponent(
-    private val configName: String,
+    private val shopFileName: String,
     private val pagingProvider: PagingProvider,
     private val dataSource: ShopApi,
     private val router: GuiRouter
@@ -26,7 +26,7 @@ class DefaultShopComponent(
     private fun load() = componentScope.launch(Dispatchers.IO) {
         val oldState = model.value
         model.value = Model.Loading
-        val config = dataSource.fetchShop(configName)
+        val config = dataSource.fetchShop(shopFileName)
         model.value = when (oldState) {
             is Model.List, is Model.Loading -> Model.List(config)
             is Model.ListEditMode -> Model.ListEditMode(config)
@@ -97,9 +97,8 @@ class DefaultShopComponent(
                     if (!intent.isValid()) return@launch
                     val route = GuiRouter.Route.Buy(
                         playerHolder = intent.playerHolder,
-                        item = intent.shopItem,
-                        shopConfig = intent.shopConfig,
-                        itemIndex = TODO()
+                        shopConfig = dataSource.fetchShop(shopFileName),
+                        shopItem = intent.shopItem
                     )
                     router.open(route)
                 }

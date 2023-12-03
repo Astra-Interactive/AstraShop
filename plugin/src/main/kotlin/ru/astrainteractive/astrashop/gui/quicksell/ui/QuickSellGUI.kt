@@ -1,5 +1,8 @@
 package ru.astrainteractive.astrashop.gui.quicksell.ui
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -44,6 +47,9 @@ class QuickSellGUI(
 
     override fun onCreated() {
         backButton.setInventorySlot()
+        controller.messageChannel.receiveAsFlow()
+            .onEach { playerHolder.player.sendMessage(it) }
+            .launchIn(componentScope)
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
