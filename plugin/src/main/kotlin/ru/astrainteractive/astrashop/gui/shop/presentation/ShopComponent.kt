@@ -2,52 +2,24 @@ package ru.astrainteractive.astrashop.gui.shop.presentation
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.bukkit.event.inventory.InventoryClickEvent
 import ru.astrainteractive.astrashop.api.model.ShopConfig
-import ru.astrainteractive.astrashop.gui.shop.ui.ShopGUI
 
 interface ShopComponent : CoroutineScope {
     val model: StateFlow<Model>
 
-    val maxItemsAmount: Int
+    sealed interface Model {
+        val maxItemsAmount: Int
 
-    fun onIntent(intent: Intent)
-
-    sealed class Model(val items: HashMap<String, ShopConfig.ShopItem>) {
-        data object Loading : Model(HashMap())
-        data class List(val config: ShopConfig) : Model(config.items)
-
-        data class ListEditMode(
-            val config: ShopConfig,
-            val clickEvent: InventoryClickEvent? = null,
-            val oldClickedItemPage: Int? = null
-        ) : Model(config.items)
-    }
-
-    sealed interface Intent {
-        class InventoryClick(val e: InventoryClickEvent) : Intent {
-            fun isShopGUI() = e.clickedInventory?.holder is ShopGUI
-            fun isPlayerInventory() = e.clickedInventory?.holder == e.whoClicked.inventory.holder
+        data object Loading : Model {
+            override val maxItemsAmount: Int = 0
         }
 
-        class DeleteItem(
-            val e: InventoryClickEvent,
-            private val isRightClick: Boolean,
-            private val isShiftClick: Boolean,
-        ) : Intent {
-            fun isValid() = isRightClick && isShiftClick && e.clickedInventory?.holder is ShopGUI
+        data class List(val config: ShopConfig) : Model {
+            val items: HashMap<String, ShopConfig.ShopItem> = config.items
+
+            override val maxItemsAmount: Int = items.keys
+                .mapNotNull(String::toIntOrNull)
+                .maxOrNull() ?: 0
         }
-
-//        class OpenBuyGui(
-//            val shopItem: ShopConfig.ShopItem,
-//            val playerHolder: ShopPlayerHolder,
-//            private val isLeftClick: Boolean,
-//            private val isShiftClick: Boolean,
-//            val currentState: Model
-//        ) : Intent {
-//            fun isValid() = isLeftClick && !isShiftClick && currentState is Model.List
-//        }
-
-        data object ToggleEditModeClick : Intent
     }
 }

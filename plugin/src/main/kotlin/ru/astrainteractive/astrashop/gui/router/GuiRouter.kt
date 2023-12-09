@@ -61,13 +61,10 @@ class GuiRouterImpl(
         translation = coreModule.translation.value,
         calculatePriceUseCase = domainModule.calculatePriceUseCase,
         router = this,
-        shopComponentFactory = {
-            DefaultShopComponent(
-                dataSource = apiModule.shopApi,
-                shopFileName = route.shopConfig.configName,
-                pagingProvider = it,
-            )
-        }
+        shopComponent = DefaultShopComponent(
+            shopApi = apiModule.shopApi,
+            shopFileName = route.shopConfig.configName,
+        )
     )
 
     private fun shops(route: GuiRouter.Route.Shops) = ShopsGUI(

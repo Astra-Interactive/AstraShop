@@ -42,11 +42,7 @@ class ShopsGUI(
     override var menuTitle: Component = with(translationContext) {
         translation.menu.menuTitle.toComponent()
     }
-    override var page: Int
-        get() = playerHolder.shopsPage
-        set(value) {
-            playerHolder.shopsPage = value
-        }
+    override var page: Int = playerHolder.shopsPage
     override val maxItemsPerPage: Int = menuSize.size - MenuSize.XXS.size
     override val maxItemsAmount: Int
         get() = shopsComponent.model.value.maxItemsAmount
@@ -86,7 +82,7 @@ class ShopsGUI(
                 .setOnClickListener {
                     componentScope.launch(Dispatchers.IO) {
                         val route = GuiRouter.Route.Shop(
-                            playerHolder = playerHolder.copy(shopPage = 0),
+                            playerHolder = playerHolder.copy(shopPage = 0, shopsPage = page),
                             shopConfig = item
                         )
                         router.open(route)
