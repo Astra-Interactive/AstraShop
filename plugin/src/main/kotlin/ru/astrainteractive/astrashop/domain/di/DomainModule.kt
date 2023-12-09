@@ -41,7 +41,8 @@ interface DomainModule {
                 economy = coreModule.economyProvider.value,
                 logger = coreModule.logger.value,
                 playerBridge = playerBridge,
-                calculatePriceUseCase = calculatePriceUseCase
+                calculatePriceUseCase = calculatePriceUseCase,
+                translation = coreModule.translation.value
             )
         }
         override val changeStockAmountUseCase: ChangeStockAmountUseCase by Provider {
@@ -54,7 +55,8 @@ interface DomainModule {
                 economy = coreModule.economyProvider.value,
                 logger = coreModule.logger.value,
                 playerBridge = playerBridge,
-                calculatePriceUseCase = calculatePriceUseCase
+                calculatePriceUseCase = calculatePriceUseCase,
+                translation = coreModule.translation.value
             )
         }
         override val buyInteractor: BuyInteractor by Provider {

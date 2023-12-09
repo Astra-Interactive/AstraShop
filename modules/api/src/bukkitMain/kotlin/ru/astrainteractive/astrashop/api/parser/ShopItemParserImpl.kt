@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.api.util
+package ru.astrainteractive.astrashop.api.parser
 
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
@@ -8,12 +8,14 @@ import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItemStack
+import ru.astrainteractive.astrashop.api.parser.ShopItemParser.ShopParseException
+import ru.astrainteractive.astrashop.api.parser.util.associate
+import ru.astrainteractive.astrashop.api.parser.util.getFileManager
 import kotlin.math.max
 
-internal class ShopItemParser(private val plugin: Plugin) {
-    class ShopParseException(message: String) : Exception(message)
+internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
 
-    fun saveOptions(shopConfig: ShopConfig) {
+    override fun saveOptions(shopConfig: ShopConfig) {
         val fileManager = shopConfig.getFileManager(plugin)
         val fileConfiguration = fileManager.fileConfiguration
         val optionsSection = fileConfiguration.getConfigurationSection("options")
@@ -25,7 +27,7 @@ internal class ShopItemParser(private val plugin: Plugin) {
         fileManager.save()
     }
 
-    fun saveItem(shopConfig: ShopConfig) {
+    override fun saveItems(shopConfig: ShopConfig) {
         val fileManager = shopConfig.getFileManager(plugin)
         val fileConfiguration = fileManager.fileConfiguration
         fileConfiguration.set("items", null)
@@ -52,13 +54,7 @@ internal class ShopItemParser(private val plugin: Plugin) {
         fileManager.save()
     }
 
-    fun parseShopFileOrNull(
-        fileManager: SpigotFileManager
-    ): ShopConfig? = kotlin.runCatching {
-        parseShopFile(fileManager)
-    }.getOrNull()
-
-    fun parseShopFile(fileManager: SpigotFileManager): ShopConfig {
+    override fun parseShopFile(fileManager: SpigotFileManager): ShopConfig {
         val fileConfiguration = fileManager.fileConfiguration
         val optionsSections = fileConfiguration.getConfigurationSection("options")
             ?: throw ShopParseException("No options section in ${fileConfiguration.name}")

@@ -12,9 +12,31 @@ import ru.astrainteractive.astralibs.string.replace
 data class PluginTranslation(
     val general: General = General(),
     val menu: Menu = Menu(),
-    val buttons: Buttons = Buttons()
+    val buttons: Buttons = Buttons(),
+    val shop: Shop = Shop()
 
 ) {
+    @Serializable
+    data class Shop(
+        @SerialName("item_not_purchasing")
+        val itemNotForPurchase: StringDesc.Raw = StringDesc.Raw("Предмет не продается"),
+        @SerialName("shop_not_enough_items")
+        val notEnoughItems: StringDesc.Raw = StringDesc.Raw("В магазине недостаточно предметов"),
+        @SerialName("player_not_enough_money")
+        val notEnoughMoney: StringDesc.Raw = StringDesc.Raw("Недостаточно денег"),
+        @SerialName("you_spent_amount")
+        private val youSpentAmount: StringDesc.Raw = StringDesc.Raw("Вы потратили {AMOUNT}"),
+        @SerialName("you_earned_amount")
+        private val youEarnedAmount: StringDesc.Raw = StringDesc.Raw("Вы получили {AMOUNT}"),
+        @SerialName("not_fitted")
+        val notFitted: StringDesc.Raw = StringDesc.Raw("Некоторые предметы не вместились. Они лежат на полу"),
+        @SerialName("player_not_have_item")
+        val playerNotHaveItem: StringDesc.Raw = StringDesc.Raw("У вас нет такого предмета")
+    ) {
+        fun youSpentAmount(amount: Number) = youSpentAmount.replace("{AMOUNT}", amount.toString())
+        fun youEarnedAmount(amount: Number) = youEarnedAmount.replace("{AMOUNT}", amount.toString())
+    }
+
     @Serializable
     data class General(
         @SerialName("reload")
@@ -23,6 +45,10 @@ data class PluginTranslation(
         val reloadComplete: StringDesc.Raw = StringDesc.Raw("&#42f596Перезагрузка успешно завершена"),
         @SerialName("no_permission")
         val noPermission: StringDesc.Raw = StringDesc.Raw("&#db2c18У вас нет прав!"),
+        @SerialName("not_player")
+        val notPlayer: StringDesc.Raw = StringDesc.Raw("&#db2c18Вы не игрок!"),
+        @SerialName("wrong_usage")
+        val wrongUsage: StringDesc.Raw = StringDesc.Raw("&#db2c18Неверное использование"),
         @SerialName("item_not_for_buy")
         val itemNotBuying: StringDesc.Raw = StringDesc.Raw("&#db2c18Предмет не закупается"),
     )

@@ -31,10 +31,12 @@ class CalculatePriceUseCase : UseCase.Blocking<Input, Output> {
     private fun Number.round() = (this.toDouble() * 100.0).roundToInt() / 100.0
 
     fun calculateBuyPrice(item: ShopConfig.ShopItem, amount: Int): Double {
+        if (item.buyPrice == 0.0) return 0.0
         return (amount downTo 1).sumOf { f(item, item.buyPrice, amount).coerceAtLeast(item.sellPrice) }.round()
     }
 
     fun calculateSellPrice(item: ShopConfig.ShopItem, amount: Int): Double {
+        if (item.sellPrice == 0.0) return 0.0
         return ((amount downTo 1).sumOf { f(item, item.sellPrice, amount).coerceAtMost(item.priceMin) }).round()
     }
 
