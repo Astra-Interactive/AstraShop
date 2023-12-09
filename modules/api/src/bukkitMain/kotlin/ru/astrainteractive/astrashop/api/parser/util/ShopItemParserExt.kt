@@ -18,12 +18,12 @@ internal inline fun <T, K> ConfigurationSection.associate(
     }.associate { it }
 }
 
-internal fun getFilesList(plugin: Plugin) = plugin.dataFolder.listFiles()?.filterNotNull().orEmpty()
-
-internal fun File.isYml() = extension.equals("yml", ignoreCase = true)
-
-internal fun getYmlFiles(plugin: Plugin) = getFilesList(plugin).filter { it.isYml() }.map {
-    DefaultSpigotFileManager(plugin, it.name)
-}
-
 internal fun ShopConfig.getFileManager(plugin: Plugin): SpigotFileManager = DefaultSpigotFileManager(plugin, configName)
+
+internal fun getYmlFiles(plugin: Plugin) = File(plugin.dataFolder, "shops")
+    .listFiles()
+    .orEmpty()
+    .filterNotNull()
+    .filter { it.extension.equals("yml", ignoreCase = true) }
+    .map { DefaultSpigotFileManager(plugin, "shops${File.separator}${it.name}") }
+
