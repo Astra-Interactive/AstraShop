@@ -26,4 +26,3 @@ internal fun getYmlFiles(plugin: Plugin) = File(plugin.dataFolder, "shops")
     .filterNotNull()
     .filter { it.extension.equals("yml", ignoreCase = true) }
     .map { DefaultSpigotFileManager(plugin, "shops${File.separator}${it.name}") }
-

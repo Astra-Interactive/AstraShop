@@ -58,6 +58,7 @@ class ShopsGUI(
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
+        super.onInventoryClicked(e)
         e.isCancelled = true
     }
 

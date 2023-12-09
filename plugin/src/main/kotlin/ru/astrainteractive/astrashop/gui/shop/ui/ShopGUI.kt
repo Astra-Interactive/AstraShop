@@ -71,6 +71,7 @@ class ShopGUI(
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
+        super.onInventoryClicked(e)
         e.isCancelled = true
 
         if (playerHolder.player.toPermissible().hasPermission(PluginPermission.EditShop)) {

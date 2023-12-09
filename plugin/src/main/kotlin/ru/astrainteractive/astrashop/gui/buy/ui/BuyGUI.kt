@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.jetbrains.kotlin.konan.util.visibleName
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.Menu
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
@@ -44,11 +45,12 @@ class BuyGUI(
 ) : Menu(), BukkitTranslationContext by translationContext {
     override val menuSize: MenuSize = MenuSize.XS
 
-    override var menuTitle: Component = item.toItemStack().itemMeta
-        .displayName
-        .ifEmpty { item.toItemStack().type.name }
-        .let(StringDesc::Raw)
-        .toComponent()
+    override var menuTitle: Component = item.toItemStack()
+        .itemMeta
+        .displayName()
+        ?: item.toItemStack().type.visibleName
+            .let(StringDesc::Raw)
+            .toComponent()
 
     private val backButton = InventorySlot.Builder()
         .setIndex(9)
@@ -99,6 +101,7 @@ class BuyGUI(
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
+        super.onInventoryClicked(e)
         e.isCancelled = true
     }
 
