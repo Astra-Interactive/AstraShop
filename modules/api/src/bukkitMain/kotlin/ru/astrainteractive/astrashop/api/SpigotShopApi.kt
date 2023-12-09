@@ -7,7 +7,7 @@ import ru.astrainteractive.astralibs.filemanager.DefaultSpigotFileManager
 import ru.astrainteractive.astralibs.filemanager.SpigotFileManager
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.parser.ShopItemParserImpl
-import ru.astrainteractive.astrashop.api.util.getYmlFiles
+import ru.astrainteractive.astrashop.api.parser.util.getYmlFiles
 
 internal class SpigotShopApi(
     private val plugin: Plugin,
@@ -24,7 +24,7 @@ internal class SpigotShopApi(
     override suspend fun fetchShopList(): List<ShopConfig> {
         return withContext(limitedDispatcher) {
             getYmlFiles(plugin)
-                ?.mapNotNull(::shopFileOrNull)
+                .mapNotNull(::shopFileOrNull)
                 .orEmpty()
         }
     }

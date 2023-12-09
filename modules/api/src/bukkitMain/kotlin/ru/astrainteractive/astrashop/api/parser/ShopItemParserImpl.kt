@@ -9,8 +9,8 @@ import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItemStack
 import ru.astrainteractive.astrashop.api.parser.ShopItemParser.ShopParseException
-import ru.astrainteractive.astrashop.api.util.associate
-import ru.astrainteractive.astrashop.api.util.getFileManager
+import ru.astrainteractive.astrashop.api.parser.util.associate
+import ru.astrainteractive.astrashop.api.parser.util.getFileManager
 import kotlin.math.max
 
 internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {

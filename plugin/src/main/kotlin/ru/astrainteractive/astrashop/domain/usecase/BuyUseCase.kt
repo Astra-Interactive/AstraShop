@@ -2,8 +2,8 @@ package ru.astrainteractive.astrashop.domain.usecase
 
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.Logger
-import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
+import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.domain.bridge.PlayerBridge
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 import java.util.UUID
@@ -12,7 +12,8 @@ class BuyUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
     private val playerBridge: PlayerBridge,
-    private val calculatePriceUseCase: CalculatePriceUseCase
+    private val calculatePriceUseCase: CalculatePriceUseCase,
+    private val translation: PluginTranslation
 ) : UseCase.Suspended<BuyUseCase.Param, BuyUseCase.Result> {
 
     class Param(
@@ -38,25 +39,25 @@ class BuyUseCase(
             type = CalculatePriceUseCase.Type.Buy
         ).let(calculatePriceUseCase::invoke).price
         if (totalPrice <= 0) {
-            playerBridge.sendMessage(input.playerUUID, StringDesc.Raw("Предмет не продается"))
+            playerBridge.sendMessage(input.playerUUID, translation.shop.itemNotForPurchase)
             return Result.Failure
         }
         // Is item exists in shop
         if (item.stock != -1 && item.stock <= 1) {
-            playerBridge.sendMessage(input.playerUUID, StringDesc.Raw("В магазине недостаточно предметов"))
+            playerBridge.sendMessage(input.playerUUID, translation.shop.notEnoughItems)
             return Result.Failure
         }
         // Is player has money
         if (!economy.hasAtLeast(input.playerUUID, totalPrice)) {
-            playerBridge.sendMessage(input.playerUUID, StringDesc.Raw("Недостаточно денег"))
+            playerBridge.sendMessage(input.playerUUID, translation.shop.notEnoughMoney)
             return Result.Failure
         }
 
         if (!economy.takeMoney(input.playerUUID, totalPrice)) {
-            playerBridge.sendMessage(input.playerUUID, StringDesc.Raw("Недостаточно денег"))
+            playerBridge.sendMessage(input.playerUUID, translation.shop.notEnoughMoney)
             return Result.Failure
         }
-        playerBridge.sendMessage(input.playerUUID, StringDesc.Raw("Вы потратили $totalPrice\$"))
+        playerBridge.sendMessage(input.playerUUID, translation.shop.youSpentAmount(totalPrice))
 
         // Buy item
         val notFittedAmount = playerBridge.giveOrDropItems(input.playerUUID, item, amount)
@@ -70,7 +71,7 @@ class BuyUseCase(
         }
         playerBridge.sendMessage(
             input.playerUUID,
-            StringDesc.Raw("Некоторые предметы не вместились. Они лежат на полу")
+            translation.shop.notFitted
         )
         logger.info(
             "BuyUseCase",

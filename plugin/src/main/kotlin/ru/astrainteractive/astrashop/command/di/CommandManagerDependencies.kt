@@ -2,6 +2,7 @@ package ru.astrainteractive.astrashop.command.di
 
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
+import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.core.di.CoreModule
@@ -15,6 +16,7 @@ interface CommandManagerDependencies {
     val translation: PluginTranslation
     val scope: AsyncComponent
     val dispatchers: BukkitDispatchers
+    val translationContext: BukkitTranslationContext
     val router: GuiRouter
 
     class Default(coreModule: CoreModule, routerModule: RouterModule) : CommandManagerDependencies {
@@ -22,6 +24,7 @@ interface CommandManagerDependencies {
         override val translation: PluginTranslation by coreModule.translation
         override val scope: AsyncComponent by coreModule.scope
         override val dispatchers: BukkitDispatchers by coreModule.dispatchers
+        override val translationContext: BukkitTranslationContext = coreModule.translationContext
         override val router: GuiRouter by Provider {
             routerModule.router
         }

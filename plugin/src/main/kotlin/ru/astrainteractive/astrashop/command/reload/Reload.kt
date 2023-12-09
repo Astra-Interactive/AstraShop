@@ -7,15 +7,11 @@ import ru.astrainteractive.astrashop.core.PluginPermission
 import ru.astrainteractive.klibs.kdi.getValue
 
 /**
- * Reload command handler
- */
-
-/**
- * This function called only when atempreload being called
+ * This function called only when ashopreload being called
  *
  * Here you should also check for permission
  */
-internal fun CommandManager.reload() = plugin.registerCommand("atempreload") {
+internal fun CommandManager.reload() = plugin.registerCommand("ashopreload") {
     if (!sender.toPermissible().hasPermission(PluginPermission.Reload)) {
         sender.sendMessage(translation.general.noPermission)
         return@registerCommand
