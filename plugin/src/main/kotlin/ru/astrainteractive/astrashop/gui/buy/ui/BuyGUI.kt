@@ -123,7 +123,7 @@ class BuyGUI(
 
         val priceDescription = when (type) {
             BuyType.BUY -> translation.buttons.shopInfoBuyPrice(totalPriceBuy)
-            BuyType.SELL -> translation.buttons.shopInfoBuyPrice(totalPriceSell)
+            BuyType.SELL -> translation.buttons.shopInfoSellPrice(totalPriceSell)
         }
 
         val itemStack = state.item.toItemStack().copy(amount).apply {
