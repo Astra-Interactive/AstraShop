@@ -58,6 +58,6 @@ object PriceCalculator {
         if (!item.isForSell) return 0.0
         if (item.stock == -1) return item.price
         return ((item.stock + 1)..(item.stock + amount))
-            .sumOf { stock -> f(stock, item.price * 0.7) }
+            .sumOf { stock -> f(stock, item.price * 0.7).coerceAtLeast(item.price * 0.05) }
     }
 }

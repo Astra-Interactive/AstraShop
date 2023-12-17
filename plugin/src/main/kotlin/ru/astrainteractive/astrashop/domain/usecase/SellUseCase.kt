@@ -34,7 +34,7 @@ class SellUseCase(
         // Is item purchasing
         val totalSellPrice = PriceCalculator.calculateSellPrice(item, amount)
         if (totalSellPrice <= 0) {
-            playerBridge.sendMessage(input.playerUUID, translation.shop.itemNotForPurchase)
+            playerBridge.sendMessage(input.playerUUID, translation.shop.itemNotForSelling)
             return Result.Failure
         }
 

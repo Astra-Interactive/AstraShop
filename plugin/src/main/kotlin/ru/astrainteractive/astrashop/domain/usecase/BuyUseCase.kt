@@ -39,7 +39,7 @@ class BuyUseCase(
             return Result.Failure
         }
         // Is item exists in shop
-        if (item.stock != -1 && item.stock <= 1) {
+        if (item.stock != -1 && item.stock <= 1 && !item.isPurchaseInfinite) {
             playerBridge.sendMessage(input.playerUUID, translation.shop.notEnoughItems)
             return Result.Failure
         }
