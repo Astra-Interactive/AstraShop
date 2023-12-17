@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.gui.util
+package ru.astrainteractive.astrashop.util
 
 object RoundExt {
     fun Int.round(decimals: Int = 2) = (this as Number).round(decimals)

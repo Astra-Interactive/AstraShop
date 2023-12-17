@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astralibs.string.replace
-import ru.astrainteractive.astrashop.gui.util.RoundExt.round
+import ru.astrainteractive.astrashop.util.RoundExt.round
 
 /**
  * All translation stored here

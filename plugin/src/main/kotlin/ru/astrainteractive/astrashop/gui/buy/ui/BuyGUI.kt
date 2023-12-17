@@ -30,7 +30,7 @@ import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent.Model
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.router.GuiRouter
-import ru.astrainteractive.astrashop.gui.util.RoundExt.round
+import ru.astrainteractive.astrashop.util.RoundExt.round
 import kotlin.math.pow
 
 @Suppress("LongParameterList")

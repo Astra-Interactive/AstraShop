@@ -28,6 +28,7 @@ minecraftMultiplatform {
         implementation(libs.minecraft.bstats)
         // Local
         implementation(projects.modules.api)
+        implementation(projects.modules.core)
         implementation(projects.modules.api.bukkitMain)
     }
 }

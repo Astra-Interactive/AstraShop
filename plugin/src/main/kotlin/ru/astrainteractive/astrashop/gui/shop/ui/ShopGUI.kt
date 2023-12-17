@@ -25,7 +25,7 @@ import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
 import ru.astrainteractive.astrashop.gui.util.Buttons
-import ru.astrainteractive.astrashop.gui.util.RoundExt.round
+import ru.astrainteractive.astrashop.util.RoundExt.round
 
 @Suppress("LongParameterList")
 class ShopGUI(

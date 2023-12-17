@@ -20,7 +20,9 @@ interface CommandManagerDependencies {
     val router: GuiRouter
 
     class Default(coreModule: CoreModule, routerModule: RouterModule) : CommandManagerDependencies {
-        override val plugin: AstraShop by coreModule.plugin
+        override val plugin: AstraShop by Provider {
+            coreModule.plugin.value as AstraShop
+        }
         override val translation: PluginTranslation by coreModule.translation
         override val scope: AsyncComponent by coreModule.scope
         override val dispatchers: BukkitDispatchers by coreModule.dispatchers
