@@ -20,6 +20,9 @@ minecraftMultiplatform {
         compileOnly(libs.minecraft.papi)
         compileOnly(libs.minecraft.vaultapi)
         implementation(libs.minecraft.bstats)
+        // Test
+        testImplementation(libs.bundles.testing.kotlin)
+        testImplementation(libs.tests.kotlin.test)
         // Local
         implementation(projects.modules.api)
         implementation(projects.modules.api.bukkitMain)
