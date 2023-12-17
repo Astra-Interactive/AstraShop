@@ -18,7 +18,7 @@ import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
-import ru.astrainteractive.astrashop.domain.usecase.CalculatePriceUseCase
+import ru.astrainteractive.astrashop.domain.usecase.PriceCalculator
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.router.GuiRouter
@@ -31,7 +31,6 @@ class ShopGUI(
     private val shopConfig: ShopConfig,
     override val playerHolder: ShopPlayerHolder,
     private val translation: PluginTranslation,
-    private val calculatePriceUseCase: CalculatePriceUseCase,
     private val router: GuiRouter,
     private val shopComponent: ShopComponent,
     translationContext: BukkitTranslationContext
@@ -81,8 +80,8 @@ class ShopGUI(
         for (i in 0 until maxItemsPerPage) {
             val index = maxItemsPerPage * page + i
             val item = items[index.toString()] ?: continue
-            val buyPrice = calculatePriceUseCase.calculateBuyPrice(item, 1)
-            val sellPrice = calculatePriceUseCase.calculateSellPrice(item, 1)
+            val buyPrice = PriceCalculator.calculateBuyPrice(item, 1)
+            val sellPrice = PriceCalculator.calculateSellPrice(item, 1)
             InventorySlot.Builder()
                 .setIndex(i)
                 .setItemStack(item.toItemStack())

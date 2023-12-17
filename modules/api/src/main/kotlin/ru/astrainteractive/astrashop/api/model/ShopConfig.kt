@@ -17,12 +17,10 @@ data class ShopConfig(
 
     data class ShopItem(
         val itemIndex: Int,
-        val median: Double,
+        val isForSell: Boolean,
+        val isForPurchase: Boolean,
         var stock: Int,
-        var buyPrice: Double,
-        var sellPrice: Double,
-        val priceMax: Double,
-        val priceMin: Double,
+        val price: Double,
         val shopItem: ShopItemStack
     )
 }

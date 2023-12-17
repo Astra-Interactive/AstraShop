@@ -22,7 +22,7 @@ import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
-import ru.astrainteractive.astrashop.domain.usecase.CalculatePriceUseCase
+import ru.astrainteractive.astrashop.domain.usecase.PriceCalculator
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.copy
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.buy.model.BuyType
@@ -39,7 +39,6 @@ class BuyGUI(
     override val playerHolder: ShopPlayerHolder,
     private val translation: PluginTranslation,
     private val buyComponent: BuyComponent,
-    private val calculatePriceUseCase: CalculatePriceUseCase,
     private val router: GuiRouter,
     translationContext: BukkitTranslationContext
 ) : Menu(), BukkitTranslationContext by translationContext {
@@ -80,8 +79,8 @@ class BuyGUI(
         get() {
             val state = buyComponent.model.value as? Model.Loaded
             val stockAmount = state?.item?.stock ?: -1
-            val buyPrice = state?.item?.let { calculatePriceUseCase.calculateBuyPrice(it, 1) } ?: 0
-            val sellPrice = state?.item?.let { calculatePriceUseCase.calculateSellPrice(it, 1) } ?: 0
+            val buyPrice = state?.item?.let { PriceCalculator.calculateBuyPrice(it, 1) } ?: 0
+            val sellPrice = state?.item?.let { PriceCalculator.calculateSellPrice(it, 1) } ?: 0
             val balance = state?.playerBalance ?: 0
             return InventorySlot.Builder()
                 .setIndex(0)
@@ -113,8 +112,8 @@ class BuyGUI(
         val amount = 2.0.pow(i).toInt()
         if (type == BuyType.BUY && state.item.stock != -1 && state.item.stock < amount) return
 
-        val totalPriceBuy = calculatePriceUseCase.calculateBuyPrice(state.item, amount).coerceAtLeast(0.0)
-        val totalPriceSell = calculatePriceUseCase.calculateSellPrice(state.item, amount).coerceAtLeast(0.0)
+        val totalPriceBuy = PriceCalculator.calculateBuyPrice(state.item, amount).coerceAtLeast(0.0)
+        val totalPriceSell = PriceCalculator.calculateSellPrice(state.item, amount).coerceAtLeast(0.0)
 
         val title = when (type) {
             BuyType.BUY -> translation.buttons.buttonBuyAmount(amount)

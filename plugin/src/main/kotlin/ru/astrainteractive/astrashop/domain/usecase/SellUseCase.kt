@@ -12,7 +12,6 @@ class SellUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
     private val playerBridge: PlayerBridge,
-    private val calculatePriceUseCase: CalculatePriceUseCase,
     private val translation: PluginTranslation
 ) : UseCase.Suspended<SellUseCase.Param, SellUseCase.Result> {
 
@@ -33,11 +32,7 @@ class SellUseCase(
         val playerName = playerBridge.getName(input.playerUUID)
 
         // Is item purchasing
-        val totalSellPrice = CalculatePriceUseCase.Input(
-            item = item,
-            amount = amount,
-            type = CalculatePriceUseCase.Type.Sell
-        ).let(calculatePriceUseCase::invoke).price
+        val totalSellPrice = PriceCalculator.calculateSellPrice(item, amount)
         if (totalSellPrice <= 0) {
             playerBridge.sendMessage(input.playerUUID, translation.shop.itemNotForPurchase)
             return Result.Failure
@@ -52,11 +47,7 @@ class SellUseCase(
 
         // Sell item
         val sellAmount = amount - couldNotRemoveAmount
-        val money = CalculatePriceUseCase.Input(
-            item = item,
-            amount = sellAmount,
-            type = CalculatePriceUseCase.Type.Sell
-        ).let(calculatePriceUseCase::invoke).price
+        val money = PriceCalculator.calculateSellPrice(item, sellAmount)
         economy.addMoney(input.playerUUID, money)
         playerBridge.sendMessage(input.playerUUID, translation.shop.youEarnedAmount(money))
         logger.info(
