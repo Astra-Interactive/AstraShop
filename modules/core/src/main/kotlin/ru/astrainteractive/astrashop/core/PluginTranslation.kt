@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astralibs.string.replace
+import ru.astrainteractive.astrashop.util.RoundExt.round
 
 /**
  * All translation stored here
@@ -20,6 +21,8 @@ data class PluginTranslation(
     data class Shop(
         @SerialName("item_not_purchasing")
         val itemNotForPurchase: StringDesc.Raw = StringDesc.Raw("Предмет не продается"),
+        @SerialName("item_not_selling")
+        val itemNotForSelling: StringDesc.Raw = StringDesc.Raw("Предмет не закупается"),
         @SerialName("shop_not_enough_items")
         val notEnoughItems: StringDesc.Raw = StringDesc.Raw("В магазине недостаточно предметов"),
         @SerialName("player_not_enough_money")
@@ -33,8 +36,8 @@ data class PluginTranslation(
         @SerialName("player_not_have_item")
         val playerNotHaveItem: StringDesc.Raw = StringDesc.Raw("У вас нет такого предмета")
     ) {
-        fun youSpentAmount(amount: Number) = youSpentAmount.replace("{AMOUNT}", amount.toString())
-        fun youEarnedAmount(amount: Number) = youEarnedAmount.replace("{AMOUNT}", amount.toString())
+        fun youSpentAmount(amount: Number) = youSpentAmount.replace("{AMOUNT}", amount.round().toString())
+        fun youEarnedAmount(amount: Number) = youEarnedAmount.replace("{AMOUNT}", amount.round().toString())
     }
 
     @Serializable
@@ -104,17 +107,17 @@ data class PluginTranslation(
 
         fun shopInfoBuyPrice(price: Number) = shopInfoPrice.replace(
             "{price}",
-            if (price.toDouble() <= 0) "-" else price.toString()
+            if (price.toDouble() <= 0) "-" else price.round().toString()
         )
 
         fun shopInfoSellPrice(price: Number) = shopInfoSellPrice.replace(
             "{price}",
-            if (price.toDouble() <= 0) "-" else price.toString()
+            if (price.toDouble() <= 0) "-" else price.round().toString()
         )
 
         fun shopInfoBalance(balance: Int) = shopInfoBalance.replace("{balance}", balance.toString())
 
-        fun buttonBuyAmount(amount: Int) = buttonBuyAmount.replace("{amount}", amount.toString())
-        fun buttonSellAmount(amount: Int) = buttonSellAmount.replace("{amount}", amount.toString())
+        fun buttonBuyAmount(amount: Int) = buttonBuyAmount.replace("{amount}", amount.round().toString())
+        fun buttonSellAmount(amount: Int) = buttonSellAmount.replace("{amount}", amount.round().toString())
     }
 }

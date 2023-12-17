@@ -22,7 +22,6 @@ import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent.Model
 import ru.astrainteractive.astrashop.gui.util.Buttons
-import ru.astrainteractive.astrashop.gui.util.ItemStackGuiExt.inventoryIndex
 
 class ShopsGUI(
     override val playerHolder: ShopPlayerHolder,
@@ -74,7 +73,7 @@ class ShopsGUI(
 
     private fun renderLoadedState(state: Model.Loaded) {
         for (i in 0 until maxItemsPerPage) {
-            val index = inventoryIndex(i)
+            val index = i + maxItemsPerPage * page
             val item = state.shops.getOrNull(index) ?: continue
             InventorySlot.Builder()
                 .setIndex(i)

@@ -1,3 +1,5 @@
 package ru.astrainteractive.astrashop.api.model
 
-interface ShopItemStack
+interface ShopItemStack {
+    data object Stub : ShopItemStack
+}

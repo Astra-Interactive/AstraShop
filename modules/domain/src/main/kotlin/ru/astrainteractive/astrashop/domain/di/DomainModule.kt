@@ -7,7 +7,6 @@ import ru.astrainteractive.astrashop.domain.bridge.PlayerBridge
 import ru.astrainteractive.astrashop.domain.interactor.BuyInteractor
 import ru.astrainteractive.astrashop.domain.interactor.SellInteractor
 import ru.astrainteractive.astrashop.domain.usecase.BuyUseCase
-import ru.astrainteractive.astrashop.domain.usecase.CalculatePriceUseCase
 import ru.astrainteractive.astrashop.domain.usecase.ChangeStockAmountUseCase
 import ru.astrainteractive.astrashop.domain.usecase.SellUseCase
 import ru.astrainteractive.klibs.kdi.Provider
@@ -15,7 +14,6 @@ import ru.astrainteractive.klibs.kdi.getValue
 
 interface DomainModule {
     // UseCase
-    val calculatePriceUseCase: CalculatePriceUseCase
     val buyUseCase: BuyUseCase
     val changeStockAmountUseCase: ChangeStockAmountUseCase
     val sellUseCase: SellUseCase
@@ -33,15 +31,11 @@ interface DomainModule {
                 dispatchers = coreModule.dispatchers.value
             )
         }
-        override val calculatePriceUseCase: CalculatePriceUseCase by Provider {
-            CalculatePriceUseCase()
-        }
         override val buyUseCase: BuyUseCase by Provider {
             BuyUseCase(
                 economy = coreModule.economyProvider.value,
                 logger = coreModule.logger.value,
                 playerBridge = playerBridge,
-                calculatePriceUseCase = calculatePriceUseCase,
                 translation = coreModule.translation.value
             )
         }
@@ -55,7 +49,6 @@ interface DomainModule {
                 economy = coreModule.economyProvider.value,
                 logger = coreModule.logger.value,
                 playerBridge = playerBridge,
-                calculatePriceUseCase = calculatePriceUseCase,
                 translation = coreModule.translation.value
             )
         }

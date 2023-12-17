@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop.core.di
 
+import org.bukkit.plugin.java.JavaPlugin
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
 import ru.astrainteractive.astralibs.async.DefaultBukkitDispatchers
@@ -13,7 +14,6 @@ import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.serialization.YamlSerializer
 import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astralibs.util.buildWithSpigot
-import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
 import ru.astrainteractive.klibs.kdi.Reloadable
@@ -21,7 +21,7 @@ import ru.astrainteractive.klibs.kdi.Single
 import ru.astrainteractive.klibs.kdi.getValue
 
 interface CoreModule {
-    val plugin: Lateinit<AstraShop>
+    val plugin: Lateinit<JavaPlugin>
     val translation: Reloadable<PluginTranslation>
     val economyProvider: Single<EconomyProvider>
     val logger: Single<Logger>
@@ -31,7 +31,7 @@ interface CoreModule {
     val translationContext: BukkitTranslationContext
 
     class Default : CoreModule {
-        override val plugin: Lateinit<AstraShop> = Lateinit()
+        override val plugin: Lateinit<JavaPlugin> = Lateinit()
         override val translation = Reloadable {
             val plugin by plugin
             val serializer = YamlSerializer()

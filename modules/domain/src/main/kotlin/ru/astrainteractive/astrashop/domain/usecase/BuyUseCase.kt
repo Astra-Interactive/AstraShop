@@ -12,7 +12,6 @@ class BuyUseCase(
     private val economy: EconomyProvider,
     private val logger: Logger,
     private val playerBridge: PlayerBridge,
-    private val calculatePriceUseCase: CalculatePriceUseCase,
     private val translation: PluginTranslation
 ) : UseCase.Suspended<BuyUseCase.Param, BuyUseCase.Result> {
 
@@ -33,17 +32,14 @@ class BuyUseCase(
         val playerName = playerBridge.getName(input.playerUUID)
 
         // Is item for sale
-        val totalPrice = CalculatePriceUseCase.Input(
-            item = item,
-            amount = amount,
-            type = CalculatePriceUseCase.Type.Buy
-        ).let(calculatePriceUseCase::invoke).price
+
+        val totalPrice = PriceCalculator.calculateBuyPrice(item, amount)
         if (totalPrice <= 0) {
             playerBridge.sendMessage(input.playerUUID, translation.shop.itemNotForPurchase)
             return Result.Failure
         }
         // Is item exists in shop
-        if (item.stock != -1 && item.stock <= 1) {
+        if (item.stock != -1 && item.stock <= 1 && !item.isPurchaseInfinite) {
             playerBridge.sendMessage(input.playerUUID, translation.shop.notEnoughItems)
             return Result.Failure
         }

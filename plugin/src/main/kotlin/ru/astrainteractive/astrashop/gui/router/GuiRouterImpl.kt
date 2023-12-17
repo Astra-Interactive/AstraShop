@@ -36,7 +36,6 @@ internal class GuiRouterImpl(
         playerHolder = route.playerHolder,
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
-        calculatePriceUseCase = domainModule.calculatePriceUseCase,
         router = this,
         shopComponent = DefaultShopComponent(
             shopApi = apiModule.shopApi,
@@ -59,7 +58,6 @@ internal class GuiRouterImpl(
         playerHolder = route.playerHolder,
         translationContext = coreModule.translationContext,
         translation = coreModule.translation.value,
-        calculatePriceUseCase = domainModule.calculatePriceUseCase,
         shopConfig = route.shopConfig,
         router = this,
         buyComponent = DefaultBuyComponent(
