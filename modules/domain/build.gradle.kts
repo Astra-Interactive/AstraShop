@@ -1,6 +1,3 @@
-import ru.astrainteractive.gradleplugin.setupSpigotProcessor
-import ru.astrainteractive.gradleplugin.setupSpigotShadow
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -17,9 +14,6 @@ minecraftMultiplatform {
         implementation(libs.klibs.kdi)
         implementation(libs.minecraft.astralibs.spigot.gui)
         implementation(libs.minecraft.astralibs.spigot.core)
-        // Test
-        testImplementation(libs.bundles.testing.kotlin)
-        testImplementation(libs.tests.kotlin.test)
         // Spigot dependencies
         compileOnly(libs.minecraft.paper.api)
         implementation(libs.minecraft.bstats)
@@ -28,14 +22,7 @@ minecraftMultiplatform {
         implementation(libs.minecraft.bstats)
         // Local
         implementation(projects.modules.api)
-        implementation(projects.modules.core)
-        implementation(projects.modules.domain)
         implementation(projects.modules.api.bukkitMain)
+        implementation(projects.modules.core)
     }
 }
-val destination = File("D:\\Minecraft Servers\\Servers\\esmp-configuration\\smp\\plugins")
-    .takeIf(File::exists)
-    ?: File(rootDir, "jars")
-
-setupSpigotShadow(destination)
-setupSpigotProcessor()

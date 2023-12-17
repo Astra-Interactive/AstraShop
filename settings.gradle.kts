@@ -44,3 +44,4 @@ rootProject.name = "AstraShop"
 include("plugin")
 include(":modules:api")
 include(":modules:core")
+include(":modules:domain")
