@@ -30,6 +30,7 @@ import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent.Model
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.router.GuiRouter
+import ru.astrainteractive.astrashop.gui.util.RoundExt.round
 import kotlin.math.pow
 
 @Suppress("LongParameterList")
@@ -79,8 +80,8 @@ class BuyGUI(
         get() {
             val state = buyComponent.model.value as? Model.Loaded
             val stockAmount = state?.item?.stock ?: -1
-            val buyPrice = state?.item?.let { PriceCalculator.calculateBuyPrice(it, 1) } ?: 0
-            val sellPrice = state?.item?.let { PriceCalculator.calculateSellPrice(it, 1) } ?: 0
+            val buyPrice = state?.item?.let { PriceCalculator.calculateBuyPrice(it, 1) }?.round(2) ?: 0
+            val sellPrice = state?.item?.let { PriceCalculator.calculateSellPrice(it, 1) }?.round(2) ?: 0
             val balance = state?.playerBalance ?: 0
             return InventorySlot.Builder()
                 .setIndex(0)
@@ -108,12 +109,19 @@ class BuyGUI(
         close()
     }
 
+    @Suppress("ComplexCondition")
     private fun setActionButton(type: BuyType, i: Int, state: Model.Loaded) {
         val amount = 2.0.pow(i).toInt()
-        if (type == BuyType.BUY && state.item.stock != -1 && state.item.stock < amount) return
+        if (type == BuyType.BUY &&
+            state.item.stock != -1 &&
+            state.item.stock < amount &&
+            !state.item.isPurchaseInfinite
+        ) {
+            return
+        }
 
-        val totalPriceBuy = PriceCalculator.calculateBuyPrice(state.item, amount).coerceAtLeast(0.0)
-        val totalPriceSell = PriceCalculator.calculateSellPrice(state.item, amount).coerceAtLeast(0.0)
+        val totalPriceBuy = PriceCalculator.calculateBuyPrice(state.item, amount).coerceAtLeast(0.0).round(2)
+        val totalPriceSell = PriceCalculator.calculateSellPrice(state.item, amount).coerceAtLeast(0.0).round(2)
 
         val title = when (type) {
             BuyType.BUY -> translation.buttons.buttonBuyAmount(amount)

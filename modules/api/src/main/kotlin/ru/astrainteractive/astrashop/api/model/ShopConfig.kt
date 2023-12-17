@@ -18,6 +18,7 @@ data class ShopConfig(
     data class ShopItem(
         val itemIndex: Int,
         val isForSell: Boolean,
+        val isPurchaseInfinite: Boolean,
         val isForPurchase: Boolean,
         var stock: Int,
         val price: Double,

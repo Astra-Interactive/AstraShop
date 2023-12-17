@@ -23,7 +23,8 @@ class PriceCalculatorTest {
             isForSell = true,
             stock = 4,
             price = 100.0,
-            shopItem = ShopItemStack.Stub
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false
         )
         val buyPrice = PriceCalculator.calculateBuyPrice(shopItem, 4)
         shopItem.stock = 0
@@ -43,7 +44,8 @@ class PriceCalculatorTest {
             isForSell = true,
             stock = 4,
             price = 100.0,
-            shopItem = ShopItemStack.Stub
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false
         )
         val buyPrice = PriceCalculator.calculateBuyPrice(shopItem, 4)
         shopItem.stock = 0
@@ -59,7 +61,8 @@ class PriceCalculatorTest {
             isForSell = true,
             stock = 2,
             price = 100.0,
-            shopItem = ShopItemStack.Stub
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false
         )
         val buyPrice = PriceCalculator.calculateBuyPrice(shopItem, 3)
         shopItem.stock = 0
@@ -75,7 +78,8 @@ class PriceCalculatorTest {
             isForSell = true,
             stock = 2,
             price = 100.0,
-            shopItem = ShopItemStack.Stub
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false
         )
         val buyPrice = PriceCalculator.calculateBuyPrice(shopItem, 3)
         shopItem.stock = 0
@@ -95,7 +99,8 @@ class PriceCalculatorTest {
             isForSell = true,
             stock = 10,
             price = 100.0,
-            shopItem = ShopItemStack.Stub
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false
         )
         val buyPrice = PriceCalculator.calculateBuyPrice(shopItem, 3)
         shopItem.stock = 7
@@ -111,7 +116,8 @@ class PriceCalculatorTest {
             isForSell = true,
             stock = 10,
             price = 100.0,
-            shopItem = ShopItemStack.Stub
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false
         )
         val buyPrice = PriceCalculator.calculateBuyPrice(shopItem, 3)
         shopItem.stock = 7
@@ -131,7 +137,8 @@ class PriceCalculatorTest {
             isForSell = true,
             stock = 10,
             price = 100.0,
-            shopItem = ShopItemStack.Stub
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false
         )
         (shopItem.stock downTo 2).forEach { _ ->
             val oldPrice = PriceCalculator.calculateBuyPrice(shopItem, 1)

@@ -42,7 +42,7 @@ object PriceCalculator {
      */
     fun calculateBuyPrice(item: ShopConfig.ShopItem, amount: Int): Double {
         if (!item.isForSell) return 0.0
-        if (item.stock == 0) return 0.0
+        if (item.stock == 0 && !item.isPurchaseInfinite) return 0.0
         if (item.stock == -1) return item.price
         val coercedAmount = amount.coerceIn(0, item.stock)
         return ((item.stock - coercedAmount + 1)..item.stock)

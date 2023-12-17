@@ -25,6 +25,7 @@ import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent
 import ru.astrainteractive.astrashop.gui.shop.presentation.ShopComponent.Model
 import ru.astrainteractive.astrashop.gui.util.Buttons
+import ru.astrainteractive.astrashop.gui.util.RoundExt.round
 
 @Suppress("LongParameterList")
 class ShopGUI(
@@ -80,8 +81,8 @@ class ShopGUI(
         for (i in 0 until maxItemsPerPage) {
             val index = maxItemsPerPage * page + i
             val item = items[index.toString()] ?: continue
-            val buyPrice = PriceCalculator.calculateBuyPrice(item, 1)
-            val sellPrice = PriceCalculator.calculateSellPrice(item, 1)
+            val buyPrice = PriceCalculator.calculateBuyPrice(item, 1).round(2)
+            val sellPrice = PriceCalculator.calculateSellPrice(item, 1).round(2)
             InventorySlot.Builder()
                 .setIndex(i)
                 .setItemStack(item.toItemStack())

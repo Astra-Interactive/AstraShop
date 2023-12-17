@@ -44,6 +44,7 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
             }
             itemSection?.set("stock", item.stock)
             itemSection?.set("price", item.price)
+            itemSection?.set("is_purchase_infinite", item.isPurchaseInfinite)
         }
         fileManager.save()
     }
@@ -105,7 +106,8 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
             },
             price = price,
             isForSell = s.getBoolean("is_for_sell", true),
-            isForPurchase = s.getBoolean("is_for_purchase", true)
+            isForPurchase = s.getBoolean("is_for_purchase", true),
+            isPurchaseInfinite = s.getBoolean("is_purchase_infinite", false)
         )
     }
 }
