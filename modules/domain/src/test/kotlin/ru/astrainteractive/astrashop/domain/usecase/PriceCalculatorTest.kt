@@ -147,4 +147,22 @@ class PriceCalculatorTest {
             assertLess(oldPrice, newPrice)
         }
     }
+
+    @Test
+    fun `test stack costs more than one`() {
+        IntRange(1, 2).map { i ->
+            val shopItem = ShopConfig.ShopItem(
+                itemIndex = 0,
+                isForPurchase = true,
+                isForSell = true,
+                stock = i,
+                price = 1.04,
+                shopItem = ShopItemStack.Stub,
+                isPurchaseInfinite = true
+            )
+            val stackPrice = PriceCalculator.calculateBuyPrice(shopItem, 64)
+            val onePrice = PriceCalculator.calculateBuyPrice(shopItem, 1)
+            assertGreater(stackPrice, onePrice)
+        }
+    }
 }

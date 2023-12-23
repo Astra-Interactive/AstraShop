@@ -41,11 +41,12 @@ object PriceCalculator {
      * aka player buy from shop for this price
      */
     fun calculateBuyPrice(item: ShopConfig.ShopItem, amount: Int): Double {
-        if (!item.isForSell) return 0.0
+        if (!item.isForPurchase) return 0.0
         if (item.stock == 0 && !item.isPurchaseInfinite) return 0.0
         if (item.stock == -1) return item.price
-        val coercedAmount = amount.coerceIn(0, item.stock)
-        return ((item.stock - coercedAmount + 1)..item.stock)
+        val maxAmount = if (item.isPurchaseInfinite) amount else item.stock
+        val coercedAmount = amount.coerceIn(0, maxAmount)
+        return ((maxAmount - coercedAmount + 1)..maxAmount)
             .sumOf { stock -> f(stock, item.price * 1.6).coerceAtLeast(item.price) }
     }
 
