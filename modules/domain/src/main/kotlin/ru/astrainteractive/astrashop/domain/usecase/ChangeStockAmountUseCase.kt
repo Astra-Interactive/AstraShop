@@ -18,7 +18,7 @@ class ChangeStockAmountUseCase(
         val i = input.increaseAmount
         val shopConfig = input.shopConfig
         if (item.stock != -1) {
-            val newAmount = (item.stock + i).coerceAtLeast(1)
+            val newAmount = (item.stock + i)
             item.stock = newAmount
         }
         shopApi.updateShop(shopConfig)
