@@ -8,4 +8,6 @@ sealed interface SpigotShopItemStack : ShopItemStack {
     data class Material(
         val material: org.bukkit.Material
     ) : SpigotShopItemStack
+
+    data class ItemsAdder(val namespaceId: String) : SpigotShopItemStack
 }

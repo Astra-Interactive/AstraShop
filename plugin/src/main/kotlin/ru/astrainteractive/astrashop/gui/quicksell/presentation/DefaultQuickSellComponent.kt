@@ -10,9 +10,9 @@ import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astrashop.api.ShopApi
 import ru.astrainteractive.astrashop.api.model.ShopConfig
-import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.domain.interactor.SellInteractor
+import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 
 class DefaultQuickSellComponent(
     private val translation: PluginTranslation,
@@ -43,10 +43,6 @@ class DefaultQuickSellComponent(
     }
 
     private fun isSimilar(shopItem: ShopConfig.ShopItem, itemStack: ItemStack): Boolean {
-        return when (val shopItem = shopItem.shopItem) {
-            is SpigotShopItemStack.ItemStackStack -> itemStack.isSimilar(shopItem.itemStack)
-            is SpigotShopItemStack.Material -> itemStack.isSimilar(ItemStack(shopItem.material))
-            else -> error("Not a spigot item")
-        }
+        return itemStack.isSimilar(shopItem.toItemStack())
     }
 }

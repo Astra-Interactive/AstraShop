@@ -41,6 +41,7 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
             when (val shopItemStack = item.shopItem) {
                 is SpigotShopItemStack.ItemStackStack -> itemSection?.set("itemStack", shopItemStack.itemStack)
                 is SpigotShopItemStack.Material -> itemSection?.set("material", shopItemStack.material.name)
+                is SpigotShopItemStack.ItemsAdder -> itemSection?.set("items_adder", shopItemStack.namespaceId)
             }
             itemSection?.set("stock", item.stock)
             itemSection?.set("price", item.price)
@@ -92,6 +93,7 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
     private fun parseItem(s: ConfigurationSection): ShopConfig.ShopItem {
         val itemStack = s.getItemStack("itemStack")
         val material = s.getString("material")?.let(Material::getMaterial)
+        val itemsAdder = s.getString("items_adder")
 
         val itemIndex = s.name.toIntOrNull() ?: throw ShopParseException("Item in items.<item> should be number!")
         val stock = s.getInt("stock", -1)
@@ -102,6 +104,7 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
             shopItem = when {
                 itemStack != null -> SpigotShopItemStack.ItemStackStack(itemStack)
                 material != null -> SpigotShopItemStack.Material(material)
+                itemsAdder != null -> SpigotShopItemStack.ItemsAdder(itemsAdder)
                 else -> throw ShopParseException("Shop item should contain either itemStack or material")
             },
             price = price,

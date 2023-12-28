@@ -20,6 +20,7 @@ minecraftMultiplatform {
         compileOnly(libs.minecraft.papi)
         compileOnly(libs.minecraft.vaultapi)
         implementation(libs.minecraft.bstats)
+        compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
         // Test
         testImplementation(libs.bundles.testing.kotlin)
         testImplementation(libs.tests.kotlin.test)
