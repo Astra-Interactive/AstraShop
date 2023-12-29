@@ -150,7 +150,7 @@ class PriceCalculatorTest {
 
     @Test
     fun `test stack costs more than one`() {
-        IntRange(1, 2).map { i ->
+        listOf(-1, 1, 2).map { i ->
             val shopItem = ShopConfig.ShopItem(
                 itemIndex = 0,
                 isForPurchase = true,
