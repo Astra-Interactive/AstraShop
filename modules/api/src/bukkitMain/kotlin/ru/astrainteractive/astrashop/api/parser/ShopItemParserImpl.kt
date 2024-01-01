@@ -46,6 +46,8 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
             itemSection?.set("stock", item.stock)
             itemSection?.set("price", item.price)
             itemSection?.set("is_purchase_infinite", item.isPurchaseInfinite)
+            itemSection?.set("is_for_purchase", item.isForPurchase)
+            itemSection?.set("is_for_sell", item.isForSell)
         }
         fileManager.save()
     }
