@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop.domain.bridge
 
+import dev.lone.itemsadder.api.CustomStack
 import kotlinx.coroutines.withContext
 import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
@@ -56,6 +57,15 @@ class BukkitPlayerBridge(
                     return null
                 }
                 ItemStack(shopItem.material)
+            }
+
+            is SpigotShopItemStack.ItemsAdder -> {
+                val itemStack = CustomStack.getInstance(shopItem.namespaceId)?.itemStack
+                itemStack ?: error("Could not find item ${shopItem.namespaceId}")
+                if (!player.inventory.contains(itemStack)) {
+                    return null
+                }
+                itemStack
             }
 
             else -> error("Not spigot item")
