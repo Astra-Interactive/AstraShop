@@ -4,20 +4,21 @@ import org.bukkit.plugin.java.JavaPlugin
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
 import ru.astrainteractive.astralibs.async.DefaultBukkitDispatchers
-import ru.astrainteractive.astralibs.economy.AnyEconomyProvider
 import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.economy.EconomyProviderFactory
 import ru.astrainteractive.astralibs.event.EventListener
 import ru.astrainteractive.astralibs.filemanager.DefaultSpigotFileManager
+import ru.astrainteractive.astralibs.logging.JUtilFileLogger
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astralibs.menu.event.DefaultInventoryClickEvent
 import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.serialization.YamlSerializer
-import ru.astrainteractive.astralibs.util.buildWithSpigot
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
 import ru.astrainteractive.klibs.kdi.Reloadable
 import ru.astrainteractive.klibs.kdi.Single
 import ru.astrainteractive.klibs.kdi.getValue
+import java.io.File
 
 interface CoreModule {
     val plugin: Lateinit<JavaPlugin>
@@ -41,11 +42,14 @@ interface CoreModule {
                 .also { serializer.writeIntoFile(it, fileManager.configFile) }
         }
         override val economyProvider: Single<EconomyProvider> = Single {
-            AnyEconomyProvider(plugin.value)
+            EconomyProviderFactory(plugin.value).create()
         }
         override val logger: Single<Logger> = Single {
-            val plugin by plugin
-            Logger.buildWithSpigot("AstraShop", plugin)
+            JUtilFileLogger(
+                tag = "AstraShop",
+                folder = File(plugin.value.dataFolder, "logs"),
+                logger = plugin.value.logger
+            )
         }
         override val dispatchers: Single<BukkitDispatchers> = Single {
             val plugin by plugin

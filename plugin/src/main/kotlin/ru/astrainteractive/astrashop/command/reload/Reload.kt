@@ -1,6 +1,5 @@
 package ru.astrainteractive.astrashop.command.reload
 
-import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astrashop.command.CommandManager
 import ru.astrainteractive.astrashop.core.PluginPermission
@@ -10,12 +9,12 @@ import ru.astrainteractive.astrashop.core.PluginPermission
  *
  * Here you should also check for permission
  */
-internal fun CommandManager.reload() = plugin.registerCommand("ashopreload") {
+internal fun CommandManager.reload() = plugin.getCommand("ashopreload")?.setExecutor { sender, command, label, args ->
     if (!sender.toPermissible().hasPermission(PluginPermission.Reload)) {
         kyoriComponentSerializer
             .toComponent(translation.general.noPermission)
             .run(sender::sendMessage)
-        return@registerCommand
+        return@setExecutor true
     }
     kyoriComponentSerializer
         .toComponent(translation.general.reload)
@@ -24,4 +23,5 @@ internal fun CommandManager.reload() = plugin.registerCommand("ashopreload") {
     kyoriComponentSerializer
         .toComponent(translation.general.reloadComplete)
         .run(sender::sendMessage)
+    true
 }
