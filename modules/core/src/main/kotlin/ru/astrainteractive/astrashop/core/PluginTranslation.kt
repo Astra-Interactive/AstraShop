@@ -34,7 +34,9 @@ data class PluginTranslation(
         @SerialName("not_fitted")
         val notFitted: StringDesc.Raw = StringDesc.Raw("Некоторые предметы не вместились. Они лежат на полу"),
         @SerialName("player_not_have_item")
-        val playerNotHaveItem: StringDesc.Raw = StringDesc.Raw("У вас нет такого предмета")
+        val playerNotHaveItem: StringDesc.Raw = StringDesc.Raw("У вас нет такого предмета"),
+        @SerialName("infinite_purchase")
+        val infinitePurchase: StringDesc.Raw = StringDesc.Raw("&6Бесконечная покупка")
     ) {
         fun youSpentAmount(amount: Number) = youSpentAmount.replace("{AMOUNT}", amount.round().toString())
         fun youEarnedAmount(amount: Number) = youEarnedAmount.replace("{AMOUNT}", amount.round().toString())

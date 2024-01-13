@@ -92,6 +92,11 @@ class BuyGUI(
                 .addLore(translation.buttons.shopInfoBuyPrice(buyPrice).let(::toComponent))
                 .addLore(translation.buttons.shopInfoSellPrice(sellPrice).let(::toComponent))
                 .addLore(translation.buttons.shopInfoBalance(balance).let(::toComponent))
+                .apply {
+                    if (state?.item?.isPurchaseInfinite == true) {
+                        addLore(translation.shop.infinitePurchase.let(::toComponent))
+                    }
+                }
                 .build()
         }
 

@@ -35,6 +35,13 @@ object PriceCalculator {
         return sch(stock.toDouble() / median) * price
     }
 
+    private fun getMinPrice(price: Double): Double {
+        return when {
+            price <= 1 -> price * 0.05
+            else -> sqrt(price)
+        }
+    }
+
     /**
      * Calculate sell price from shop
      *
@@ -59,6 +66,6 @@ object PriceCalculator {
         if (!item.isForSell) return 0.0
         if (item.stock == -1) return item.price * 0.7 * amount
         return ((item.stock + 1)..(item.stock + amount))
-            .sumOf { stock -> f(stock, item.price * 0.7).coerceAtLeast(item.price * 0.05) }
+            .sumOf { stock -> f(stock, item.price * 0.7).coerceAtLeast(getMinPrice(item.price * 0.7)) }
     }
 }

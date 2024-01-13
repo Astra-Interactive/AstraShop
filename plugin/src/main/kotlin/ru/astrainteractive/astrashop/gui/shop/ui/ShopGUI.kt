@@ -85,6 +85,11 @@ class ShopGUI(
                 .addLore(translation.buttons.shopInfoBuyPrice(buyPrice).let(::toComponent))
                 .addLore(translation.buttons.shopInfoSellPrice(sellPrice).let(::toComponent))
                 .addLore(translation.menu.menuDeleteItem.let(::toComponent))
+                .apply {
+                    if (item.isPurchaseInfinite) {
+                        addLore(translation.shop.infinitePurchase.let(::toComponent))
+                    }
+                }
                 .setOnClickListener {
                     val isValid = it.isLeftClick && !it.isShiftClick && shopComponent.model.value is Model.List
                     if (!isValid) return@setOnClickListener
