@@ -23,6 +23,8 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
         optionsSection?.set("permission", shopConfig.options.permission)
         optionsSection?.set("workHours", shopConfig.options.workHours)
         optionsSection?.set("title", shopConfig.options.title)
+        optionsSection?.set("index", shopConfig.options.index)
+        optionsSection?.set("page", shopConfig.options.page)
         fileManager.save()
     }
 
@@ -85,7 +87,9 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
             permission = s.getString("permission").orEmpty(),
             workHours = s.getString("workHours").orEmpty(),
             title = StringDesc.Raw(s.getString("title").orEmpty()),
-            titleItem = s.getConfigurationSection("titleItem").let(::parseTitleItem)
+            titleItem = s.getConfigurationSection("titleItem").let(::parseTitleItem),
+            index = s.getInt("index"),
+            page = s.getInt("page"),
         )
     }
 

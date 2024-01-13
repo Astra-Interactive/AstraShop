@@ -65,17 +65,15 @@ class ShopsGUI(
     }
 
     private fun renderLoadedState(state: Model.Loaded) {
-        for (i in 0 until maxItemsPerPage) {
-            val index = i + maxItemsPerPage * page
-            val item = state.shops.getOrNull(index) ?: continue
+        state.shops.filter { it.options.page == page }.forEach { shop ->
             InventorySlot.Builder()
-                .setIndex(i)
-                .setItemStack(item.options.titleItem.toItemStack())
+                .setIndex(shop.options.index)
+                .setItemStack(shop.options.titleItem.toItemStack())
                 .setOnClickListener {
                     menuScope.launch(Dispatchers.IO) {
                         val route = GuiRouter.Route.Shop(
                             playerHolder = playerHolder.copy(shopPage = 0, shopsPage = page),
-                            shopConfig = item
+                            shopConfig = shop
                         )
                         router.open(route)
                     }
