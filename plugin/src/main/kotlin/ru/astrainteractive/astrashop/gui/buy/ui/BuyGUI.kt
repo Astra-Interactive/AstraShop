@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop.gui.buy.ui
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -7,7 +8,6 @@ import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
 import org.jetbrains.kotlin.konan.util.visibleName
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.Menu
@@ -18,7 +18,7 @@ import ru.astrainteractive.astralibs.menu.menu.setIndex
 import ru.astrainteractive.astralibs.menu.menu.setItemStack
 import ru.astrainteractive.astralibs.menu.menu.setMaterial
 import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
-import ru.astrainteractive.astralibs.string.BukkitTranslationContext
+import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
@@ -41,39 +41,40 @@ class BuyGUI(
     private val translation: PluginTranslation,
     private val buyComponent: BuyComponent,
     private val router: GuiRouter,
-    translationContext: BukkitTranslationContext
-) : Menu(), BukkitTranslationContext by translationContext {
+    kyoriComponentSerializer: KyoriComponentSerializer
+) : Menu(), KyoriComponentSerializer by kyoriComponentSerializer {
     override val menuSize: MenuSize = MenuSize.XS
+    override val childComponents: List<CoroutineScope> = listOf(buyComponent)
 
     override var menuTitle: Component = item.toItemStack()
         .itemMeta
         .displayName()
         ?: item.toItemStack().type.visibleName
             .let(StringDesc::Raw)
-            .toComponent()
+            .let(::toComponent)
 
     private val backButton = InventorySlot.Builder()
         .setIndex(9)
         .setMaterial(Material.BARRIER)
-        .setDisplayName(translation.buttons.buttonBack.toComponent())
+        .setDisplayName(translation.buttons.buttonBack.let(::toComponent))
         .setOnClickListener {
             val route = GuiRouter.Route.Shop(
                 playerHolder = playerHolder,
                 shopConfig = shopConfig
             )
-            componentScope.launch(Dispatchers.IO) { router.open(route) }
+            menuScope.launch(Dispatchers.IO) { router.open(route) }
         }.build()
 
     private val buyInfoButton = InventorySlot.Builder()
         .setIndex(1)
         .setMaterial(Material.GREEN_STAINED_GLASS)
-        .setDisplayName(translation.buttons.buttonBuy.toComponent())
+        .setDisplayName(translation.buttons.buttonBuy.let(::toComponent))
         .build()
 
     private val sellInfoButton = InventorySlot.Builder()
         .setIndex(10)
         .setMaterial(Material.RED_STAINED_GLASS)
-        .setDisplayName(translation.buttons.buttonSell.toComponent())
+        .setDisplayName(translation.buttons.buttonSell.let(::toComponent))
         .build()
 
     private val balanceButton: InventorySlot
@@ -86,27 +87,23 @@ class BuyGUI(
             return InventorySlot.Builder()
                 .setIndex(0)
                 .setMaterial(Material.EMERALD)
-                .setDisplayName(translation.buttons.buttonInformation.toComponent())
-                .addLore(translation.buttons.shopInfoStock(stockAmount).toComponent())
-                .addLore(translation.buttons.shopInfoBuyPrice(buyPrice).toComponent())
-                .addLore(translation.buttons.shopInfoSellPrice(sellPrice).toComponent())
-                .addLore(translation.buttons.shopInfoBalance(balance).toComponent())
+                .setDisplayName(translation.buttons.buttonInformation.let(::toComponent))
+                .addLore(translation.buttons.shopInfoStock(stockAmount).let(::toComponent))
+                .addLore(translation.buttons.shopInfoBuyPrice(buyPrice).let(::toComponent))
+                .addLore(translation.buttons.shopInfoSellPrice(sellPrice).let(::toComponent))
+                .addLore(translation.buttons.shopInfoBalance(balance).let(::toComponent))
                 .build()
         }
 
     override fun onCreated() {
         buyComponent.model
             .onEach { render() }
-            .launchIn(componentScope)
+            .launchIn(menuScope)
     }
 
     override fun onInventoryClicked(e: InventoryClickEvent) {
         super.onInventoryClicked(e)
         e.isCancelled = true
-    }
-
-    override fun onInventoryClose(it: InventoryCloseEvent) {
-        close()
     }
 
     @Suppress("ComplexCondition")
@@ -135,9 +132,9 @@ class BuyGUI(
 
         val itemStack = state.item.toItemStack().copy(amount).apply {
             editMeta {
-                it.displayName(title.toComponent())
+                it.displayName(title.let(::toComponent))
             }
-            lore(listOf(priceDescription.toComponent()))
+            lore(listOf(priceDescription.let(::toComponent)))
         }
         InventorySlot.Builder()
             .setIndex(type.startIndex + i)

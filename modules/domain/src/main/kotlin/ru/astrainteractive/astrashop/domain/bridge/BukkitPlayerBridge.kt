@@ -5,7 +5,7 @@ import kotlinx.coroutines.withContext
 import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
-import ru.astrainteractive.astralibs.string.BukkitTranslationContext
+import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
@@ -14,7 +14,7 @@ import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import java.util.UUID
 
 class BukkitPlayerBridge(
-    private val translationContext: BukkitTranslationContext,
+    private val kyoriComponentSerializer: KyoriComponentSerializer,
     private val dispatchers: BukkitDispatchers
 ) : PlayerBridge {
     private fun UUID.toPlayer() = Bukkit.getPlayer(this) ?: error("Player not found")
@@ -25,9 +25,7 @@ class BukkitPlayerBridge(
 
     override fun sendMessage(uuid: UUID, stringDesc: StringDesc) {
         val player = uuid.toPlayer()
-        with(translationContext) {
-            player.sendMessage(stringDesc.toComponent())
-        }
+        kyoriComponentSerializer.toComponent(stringDesc).run(player::sendMessage)
     }
 
     override suspend fun giveOrDropItems(uuid: UUID, item: ShopConfig.ShopItem, amount: Int): Int {

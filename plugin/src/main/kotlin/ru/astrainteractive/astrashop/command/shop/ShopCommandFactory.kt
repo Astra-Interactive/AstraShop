@@ -27,17 +27,20 @@ class ShopCommandFactory(
             commandExecutor = ShopCommandExecutor(dependencies),
             resultHandler = { commandSender, result ->
                 when (result) {
-                    ShopCommand.Output.NoPermission -> with(dependencies.translationContext) {
-                        commandSender.sendMessage(dependencies.translation.general.noPermission)
-                    }
+                    ShopCommand.Output.NoPermission ->
+                        dependencies.kyoriComponentSerializer
+                            .toComponent(dependencies.translation.general.noPermission)
+                            .run(commandSender::sendMessage)
 
-                    ShopCommand.Output.NotPlayer -> with(dependencies.translationContext) {
-                        commandSender.sendMessage(dependencies.translation.general.notPlayer)
-                    }
+                    ShopCommand.Output.NotPlayer ->
+                        dependencies.kyoriComponentSerializer
+                            .toComponent(dependencies.translation.general.notPlayer)
+                            .run(commandSender::sendMessage)
 
-                    ShopCommand.Output.WrongUsage -> with(dependencies.translationContext) {
-                        commandSender.sendMessage(dependencies.translation.general.wrongUsage)
-                    }
+                    ShopCommand.Output.WrongUsage ->
+                        dependencies.kyoriComponentSerializer
+                            .toComponent(dependencies.translation.general.wrongUsage)
+                            .run(commandSender::sendMessage)
 
                     else -> Unit
                 }

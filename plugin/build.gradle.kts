@@ -1,3 +1,4 @@
+
 import ru.astrainteractive.gradleplugin.setupSpigotProcessor
 import ru.astrainteractive.gradleplugin.setupSpigotShadow
 

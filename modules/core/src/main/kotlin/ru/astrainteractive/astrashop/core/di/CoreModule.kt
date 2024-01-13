@@ -12,7 +12,6 @@ import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astralibs.menu.event.DefaultInventoryClickEvent
 import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.serialization.YamlSerializer
-import ru.astrainteractive.astralibs.string.BukkitTranslationContext
 import ru.astrainteractive.astralibs.util.buildWithSpigot
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
@@ -28,7 +27,7 @@ interface CoreModule {
     val dispatchers: Single<BukkitDispatchers>
     val scope: Single<AsyncComponent>
     val inventoryClickEvent: Single<EventListener>
-    val translationContext: BukkitTranslationContext
+    val kyoriComponentSerializer: Reloadable<KyoriComponentSerializer>
 
     class Default : CoreModule {
         override val plugin: Lateinit<JavaPlugin> = Lateinit()
@@ -58,9 +57,8 @@ interface CoreModule {
         override val inventoryClickEvent: Single<EventListener> = Single {
             DefaultInventoryClickEvent()
         }
-        override val translationContext: BukkitTranslationContext by Single {
-            val kyoriComponentSerializer = KyoriComponentSerializer.Legacy
-            BukkitTranslationContext.Default { kyoriComponentSerializer }
+        override val kyoriComponentSerializer: Reloadable<KyoriComponentSerializer> = Reloadable {
+            KyoriComponentSerializer.Legacy
         }
     }
 }

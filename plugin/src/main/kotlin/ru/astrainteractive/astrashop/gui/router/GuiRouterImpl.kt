@@ -22,7 +22,7 @@ internal class GuiRouterImpl(
 ) : GuiRouter {
     private fun quickSell(route: GuiRouter.Route.QuickSell) = QuickSellGUI(
         playerHolder = ShopPlayerHolder(route.player),
-        translationContext = coreModule.translationContext,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
         translation = coreModule.translation.value,
         quickSellComponent = DefaultQuickSellComponent(
             translation = coreModule.translation.value,
@@ -34,7 +34,7 @@ internal class GuiRouterImpl(
     private fun shop(route: GuiRouter.Route.Shop) = ShopGUI(
         shopConfig = route.shopConfig,
         playerHolder = route.playerHolder,
-        translationContext = coreModule.translationContext,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
         translation = coreModule.translation.value,
         router = this,
         shopComponent = DefaultShopComponent(
@@ -45,7 +45,7 @@ internal class GuiRouterImpl(
 
     private fun shops(route: GuiRouter.Route.Shops) = ShopsGUI(
         playerHolder = route.playerHolder,
-        translationContext = coreModule.translationContext,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
         translation = coreModule.translation.value,
         router = this,
         shopsComponent = DefaultShopsComponent(
@@ -56,7 +56,7 @@ internal class GuiRouterImpl(
     private fun buy(route: GuiRouter.Route.Buy) = BuyGUI(
         item = route.shopItem,
         playerHolder = route.playerHolder,
-        translationContext = coreModule.translationContext,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
         translation = coreModule.translation.value,
         shopConfig = route.shopConfig,
         router = this,

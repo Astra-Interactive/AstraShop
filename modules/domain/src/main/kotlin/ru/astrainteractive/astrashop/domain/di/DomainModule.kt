@@ -27,7 +27,7 @@ interface DomainModule {
     class Default(coreModule: CoreModule, apiModule: ApiModule) : DomainModule {
         override val playerBridge: PlayerBridge by Provider {
             BukkitPlayerBridge(
-                translationContext = coreModule.translationContext,
+                kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
                 dispatchers = coreModule.dispatchers.value
             )
         }

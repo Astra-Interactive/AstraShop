@@ -14,7 +14,7 @@ interface CommandManagerElement {
     ) : CommandManagerElement {
         override fun onEnable() {
             val dependencies = CommandManagerDependencies.Default(coreModule, routerModule)
-            CommandManager(dependencies, coreModule.translationContext).create()
+            CommandManager(dependencies).create()
         }
     }
 }

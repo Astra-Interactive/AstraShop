@@ -1,11 +1,12 @@
 package ru.astrainteractive.astrashop.gui.quicksell.presentation
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.astrainteractive.astralibs.string.StringDesc
 
-interface QuickSellComponent {
+interface QuickSellComponent : CoroutineScope {
     val labels: Flow<Label>
 
     sealed interface Label {

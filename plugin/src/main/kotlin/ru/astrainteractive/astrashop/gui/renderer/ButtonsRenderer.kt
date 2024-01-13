@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.gui.util
+package ru.astrainteractive.astrashop.gui.renderer
 
 import org.bukkit.Material
 import ru.astrainteractive.astralibs.menu.clicker.Click
@@ -9,22 +9,21 @@ import ru.astrainteractive.astralibs.menu.menu.setDisplayName
 import ru.astrainteractive.astralibs.menu.menu.setIndex
 import ru.astrainteractive.astralibs.menu.menu.setMaterial
 import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
-import ru.astrainteractive.astralibs.string.BukkitTranslationContext
+import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
 import ru.astrainteractive.astrashop.core.PluginTranslation
 
-class Buttons(
+class ButtonsRenderer(
     private val translation: PluginTranslation,
-    private val translationContext: BukkitTranslationContext,
-    private val menu: Menu
-) : BukkitTranslationContext by translationContext {
+    private val menu: Menu,
+    private val kyoriComponentSerializer: KyoriComponentSerializer
+) : KyoriComponentSerializer by kyoriComponentSerializer {
 
-    @Suppress("FunctionNaming")
     fun backButton(
         onClick: Click,
     ) = InventorySlot.Builder()
         .setIndex(49)
         .setMaterial(Material.PAPER)
-        .setDisplayName(translation.buttons.buttonBack.toComponent())
+        .setDisplayName(translation.buttons.buttonBack.let(::toComponent))
         .setOnClickListener(onClick)
         .build()
 
@@ -32,7 +31,7 @@ class Buttons(
         get() = InventorySlot.Builder()
             .setIndex(53)
             .setMaterial(Material.PAPER)
-            .setDisplayName(translation.menu.menuNextPage.toComponent())
+            .setDisplayName(translation.menu.menuNextPage.let(::toComponent))
             .setOnClickListener { (menu as PaginatedMenu).showNextPage() }
             .build()
 
@@ -40,7 +39,7 @@ class Buttons(
         get() = InventorySlot.Builder()
             .setIndex(45)
             .setMaterial(Material.PAPER)
-            .setDisplayName(translation.menu.menuPrevPage.toComponent())
+            .setDisplayName(translation.menu.menuPrevPage.let(::toComponent))
             .setOnClickListener { (menu as PaginatedMenu).showPrevPage() }
             .build()
 }

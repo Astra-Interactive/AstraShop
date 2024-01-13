@@ -4,7 +4,6 @@ import ru.astrainteractive.astralibs.command.registerCommand
 import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
 import ru.astrainteractive.astrashop.command.CommandManager
 import ru.astrainteractive.astrashop.core.PluginPermission
-import ru.astrainteractive.klibs.kdi.getValue
 
 /**
  * This function called only when ashopreload being called
@@ -13,10 +12,16 @@ import ru.astrainteractive.klibs.kdi.getValue
  */
 internal fun CommandManager.reload() = plugin.registerCommand("ashopreload") {
     if (!sender.toPermissible().hasPermission(PluginPermission.Reload)) {
-        sender.sendMessage(translation.general.noPermission)
+        kyoriComponentSerializer
+            .toComponent(translation.general.noPermission)
+            .run(sender::sendMessage)
         return@registerCommand
     }
-    sender.sendMessage(translation.general.reload)
+    kyoriComponentSerializer
+        .toComponent(translation.general.reload)
+        .run(sender::sendMessage)
     plugin.reloadPlugin()
-    sender.sendMessage(translation.general.reloadComplete)
+    kyoriComponentSerializer
+        .toComponent(translation.general.reloadComplete)
+        .run(sender::sendMessage)
 }

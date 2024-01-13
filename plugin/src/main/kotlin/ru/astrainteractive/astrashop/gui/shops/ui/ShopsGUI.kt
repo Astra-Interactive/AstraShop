@@ -1,54 +1,52 @@
 package ru.astrainteractive.astrashop.gui.shops.ui
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
 import ru.astrainteractive.astralibs.menu.menu.InventorySlot
 import ru.astrainteractive.astralibs.menu.menu.MenuSize
 import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
 import ru.astrainteractive.astralibs.menu.menu.setIndex
 import ru.astrainteractive.astralibs.menu.menu.setItemStack
 import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
-import ru.astrainteractive.astralibs.string.BukkitTranslationContext
+import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
+import ru.astrainteractive.astrashop.gui.renderer.ButtonsRenderer
 import ru.astrainteractive.astrashop.gui.router.GuiRouter
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent
 import ru.astrainteractive.astrashop.gui.shops.presentation.ShopsComponent.Model
-import ru.astrainteractive.astrashop.gui.util.Buttons
 
 class ShopsGUI(
     override val playerHolder: ShopPlayerHolder,
     private val shopsComponent: ShopsComponent,
     translation: PluginTranslation,
-    translationContext: BukkitTranslationContext,
+    kyoriComponentSerializer: KyoriComponentSerializer,
     private val router: GuiRouter
-) : PaginatedMenu() {
-    private val buttons = Buttons(
+) : PaginatedMenu(), KyoriComponentSerializer by kyoriComponentSerializer {
+    override val childComponents: List<CoroutineScope> = listOf(shopsComponent)
+    private val buttonsRenderer = ButtonsRenderer(
         translation = translation,
-        translationContext = translationContext,
-        menu = this
+        menu = this,
+        kyoriComponentSerializer = kyoriComponentSerializer
     )
 
     override val menuSize: MenuSize = MenuSize.XL
 
-    override var menuTitle: Component = with(translationContext) {
-        translation.menu.menuTitle.toComponent()
-    }
+    override var menuTitle: Component = translation.menu.menuTitle.let(::toComponent)
     override var page: Int = playerHolder.shopsPage
     override val maxItemsPerPage: Int = menuSize.size - MenuSize.XXS.size
     override val maxItemsAmount: Int
         get() = shopsComponent.model.value.maxItemsAmount
 
-    override val nextPageButton: InventorySlot = buttons.nextButton
-    override val prevPageButton: InventorySlot = buttons.prevButton
-    override val backPageButton: InventorySlot = buttons.backButton {
+    override val nextPageButton: InventorySlot = buttonsRenderer.nextButton
+    override val prevPageButton: InventorySlot = buttonsRenderer.prevButton
+    override val backPageButton: InventorySlot = buttonsRenderer.backButton {
         inventory.close()
     }
 
@@ -57,18 +55,13 @@ class ShopsGUI(
         e.isCancelled = true
     }
 
-    override fun onInventoryClose(it: InventoryCloseEvent) {
-        shopsComponent.cancel()
-        close()
-    }
-
     override fun onPageChanged() = render()
 
     override fun onCreated() {
         shopsComponent.loadShops()
         shopsComponent.model
             .onEach { render() }
-            .launchIn(componentScope)
+            .launchIn(menuScope)
     }
 
     private fun renderLoadedState(state: Model.Loaded) {
@@ -79,7 +72,7 @@ class ShopsGUI(
                 .setIndex(i)
                 .setItemStack(item.options.titleItem.toItemStack())
                 .setOnClickListener {
-                    componentScope.launch(Dispatchers.IO) {
+                    menuScope.launch(Dispatchers.IO) {
                         val route = GuiRouter.Route.Shop(
                             playerHolder = playerHolder.copy(shopPage = 0, shopsPage = page),
                             shopConfig = item
