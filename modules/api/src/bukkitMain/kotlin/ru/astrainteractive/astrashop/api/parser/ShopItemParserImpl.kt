@@ -3,7 +3,7 @@ package ru.astrainteractive.astrashop.api.parser
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.plugin.Plugin
-import ru.astrainteractive.astralibs.filemanager.SpigotFileManager
+import ru.astrainteractive.astralibs.filemanager.FileConfigurationManager
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
@@ -54,7 +54,7 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
         fileManager.save()
     }
 
-    override fun parseShopFile(fileManager: SpigotFileManager): ShopConfig {
+    override fun parseShopFile(fileManager: FileConfigurationManager): ShopConfig {
         val fileConfiguration = fileManager.fileConfiguration
         val optionsSections = fileConfiguration.getConfigurationSection("options")
             ?: throw ShopParseException("No options section in ${fileConfiguration.name}")
