@@ -1,6 +1,6 @@
 package ru.astrainteractive.astrashop.api.parser
 
-import ru.astrainteractive.astralibs.filemanager.SpigotFileManager
+import ru.astrainteractive.astralibs.filemanager.FileConfigurationManager
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 
 internal interface ShopItemParser {
@@ -17,7 +17,7 @@ internal interface ShopItemParser {
     fun saveItems(shopConfig: ShopConfig)
 
     /**
-     * Parse shop file from [SpigotFileManager]
+     * Parse shop file from [FileConfigurationManager]
      */
-    fun parseShopFile(fileManager: SpigotFileManager): ShopConfig
+    fun parseShopFile(fileManager: FileConfigurationManager): ShopConfig
 }
