@@ -9,7 +9,7 @@ minecraftMultiplatform {
         // Kotlin
         implementation(libs.bundles.kotlin)
         // AstraLibs
-        implementation(libs.minecraft.astralibs.ktxcore)
+        implementation(libs.minecraft.astralibs.core)
         implementation(libs.minecraft.astralibs.orm)
         implementation(libs.klibs.kdi)
         // Test
@@ -18,7 +18,7 @@ minecraftMultiplatform {
         // Spigot dependencies
         "bukkitMainCompileOnly"(libs.minecraft.paper.api)
         "bukkitMainImplementation"(libs.minecraft.bstats)
-        "bukkitMainImplementation"(libs.minecraft.astralibs.spigot.gui)
-        "bukkitMainImplementation"(libs.minecraft.astralibs.spigot.core)
+        "bukkitMainImplementation"(libs.minecraft.astralibs.menu.bukkit)
+        "bukkitMainImplementation"(libs.minecraft.astralibs.core.bukkit)
     }
 }
