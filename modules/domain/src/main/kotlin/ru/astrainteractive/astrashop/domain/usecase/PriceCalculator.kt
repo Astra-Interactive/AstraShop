@@ -36,10 +36,9 @@ object PriceCalculator {
     }
 
     private fun getMinPrice(price: Double): Double {
-        return when {
-            price <= 1 -> price * 0.05
-            else -> sqrt(price)
-        }
+        val powerOfTwo = kotlin.math.log2(price).coerceAtLeast(2.0)
+        val powerOfTen = kotlin.math.log10(price).coerceAtLeast(2.0)
+        return price / powerOfTwo / powerOfTen
     }
 
     /**
