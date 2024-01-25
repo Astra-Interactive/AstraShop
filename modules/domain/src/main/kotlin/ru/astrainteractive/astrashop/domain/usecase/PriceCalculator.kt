@@ -35,10 +35,11 @@ object PriceCalculator {
         return sch(stock.toDouble() / median) * price
     }
 
-    private fun getMinPrice(price: Double): Double {
+    private fun getMinPrice(price: Double, amount: Int): Double {
         val powerOfTwo = kotlin.math.log2(price).coerceAtLeast(2.0)
         val powerOfTen = kotlin.math.log10(price).coerceAtLeast(2.0)
-        return price / powerOfTwo / powerOfTen
+        val amountPowerOfE = kotlin.math.ln(amount.toDouble()).coerceAtLeast(2.0)
+        return price / powerOfTwo / powerOfTen / amountPowerOfE
     }
 
     /**
@@ -65,6 +66,6 @@ object PriceCalculator {
         if (!item.isForSell) return 0.0
         if (item.stock == -1) return item.price * 0.7 * amount
         return ((item.stock + 1)..(item.stock + amount))
-            .sumOf { stock -> f(stock, item.price * 0.7).coerceAtLeast(getMinPrice(item.price * 0.7)) }
+            .sumOf { stock -> f(stock, item.price * 0.7).coerceAtLeast(getMinPrice(item.price * 0.7, stock)) }
     }
 }
