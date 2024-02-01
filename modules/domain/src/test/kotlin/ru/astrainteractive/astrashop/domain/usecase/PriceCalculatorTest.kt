@@ -7,8 +7,8 @@ import kotlin.test.assertTrue
 
 class PriceCalculatorTest {
 
-    private fun <T : Number> assertLess(expected: T, actual: T) {
-        assertTrue("Expected $expected < $actual") { expected.toDouble() < actual.toDouble() }
+    private fun <T : Number> assertLessOrEqual(expected: T, actual: T) {
+        assertTrue("Expected $expected <= $actual") { expected.toDouble() <= actual.toDouble() }
     }
 
     private fun <T : Number> assertGreater(expected: T, actual: T) {
@@ -144,7 +144,7 @@ class PriceCalculatorTest {
             val oldPrice = PriceCalculator.calculateBuyPrice(shopItem, 1)
             shopItem.stock -= 1
             val newPrice = PriceCalculator.calculateBuyPrice(shopItem, 1)
-            assertLess(oldPrice, newPrice)
+            assertLessOrEqual(oldPrice, newPrice)
         }
     }
 

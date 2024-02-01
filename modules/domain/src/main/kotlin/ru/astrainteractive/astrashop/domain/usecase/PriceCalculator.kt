@@ -36,11 +36,15 @@ object PriceCalculator {
     }
 
     private fun getMinPrice(price: Double, amount: Int): Double {
-        val powerOfTwo = kotlin.math.log2(price).coerceAtLeast(2.0)
-        val powerOfTen = kotlin.math.log10(price).coerceAtLeast(2.0)
-        val amountPowerOfE = kotlin.math.ln(amount.toDouble()).coerceAtLeast(2.0)
-        return price / powerOfTwo / powerOfTen / amountPowerOfE
+        val powerOfTwo = kotlin.math.log2(amount.toDouble()).coerceAtLeast(2.0)
+        val amountPowerOfE = kotlin.math.log10(amount.toDouble()).coerceAtLeast(2.0)
+        return price / powerOfTwo / amountPowerOfE
     }
+
+    private val ShopConfig.ShopItem.buyFromShopPrice: Double
+        get() = price
+    private val ShopConfig.ShopItem.playerSellPrice: Double
+        get() = price * 0.95
 
     /**
      * Calculate sell price from shop
@@ -50,11 +54,11 @@ object PriceCalculator {
     fun calculateBuyPrice(item: ShopConfig.ShopItem, amount: Int): Double {
         if (!item.isForPurchase) return 0.0
         if (item.stock == 0 && !item.isPurchaseInfinite) return 0.0
-        if (item.stock == -1) return item.price * amount
+        if (item.stock == -1) return item.buyFromShopPrice * amount
         val maxAmount = if (item.isPurchaseInfinite) amount else item.stock
         val coercedAmount = amount.coerceIn(0, maxAmount)
         return ((maxAmount - coercedAmount + 1)..maxAmount)
-            .sumOf { stock -> f(stock, item.price * 1.6).coerceAtLeast(item.price) }
+            .sumOf { stock -> f(stock, item.buyFromShopPrice).coerceAtLeast(getMinPrice(item.buyFromShopPrice, stock)) }
     }
 
     /**
@@ -64,8 +68,8 @@ object PriceCalculator {
      */
     fun calculateSellPrice(item: ShopConfig.ShopItem, amount: Int): Double {
         if (!item.isForSell) return 0.0
-        if (item.stock == -1) return item.price * 0.7 * amount
+        if (item.stock == -1) return item.playerSellPrice * amount
         return ((item.stock + 1)..(item.stock + amount))
-            .sumOf { stock -> f(stock, item.price * 0.7).coerceAtLeast(getMinPrice(item.price * 0.7, stock)) }
+            .sumOf { stock -> f(stock, item.playerSellPrice).coerceAtLeast(getMinPrice(item.playerSellPrice, stock)) }
     }
 }
