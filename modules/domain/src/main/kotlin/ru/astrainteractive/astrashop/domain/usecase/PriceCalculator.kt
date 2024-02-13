@@ -14,7 +14,6 @@ object PriceCalculator {
      */
     private fun fMedian(x: Double): Double {
         return when {
-            x <= 1 -> 50.0
             x <= 10 -> x * sqrt(x)
             x <= 100 -> (x / (1.0 + x)) * sqrt(x) + x / 2
             x <= 1000 -> (x / (1.0 + x)) * sqrt(x)

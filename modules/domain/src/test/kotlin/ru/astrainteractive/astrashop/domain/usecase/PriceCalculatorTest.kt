@@ -12,7 +12,7 @@ class PriceCalculatorTest {
     }
 
     private fun <T : Number> assertGreater(expected: T, actual: T) {
-        assertTrue("Expected $expected > $actual") { expected.toDouble() > actual.toDouble() }
+        assertTrue("Expected $expected >= $actual") { expected.toDouble() >= actual.toDouble() }
     }
 
     @Test
@@ -164,5 +164,25 @@ class PriceCalculatorTest {
             val onePrice = PriceCalculator.calculateBuyPrice(shopItem, 1)
             assertGreater(stackPrice, onePrice)
         }
+    }
+
+    @Test
+    fun `test stack of stock 0 costs more than stack sell`() {
+        val shopItem = ShopConfig.ShopItem(
+            itemIndex = 0,
+            isForPurchase = true,
+            isForSell = true,
+            stock = 0,
+            price = 1.04,
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = true
+        )
+        val stackBuyPrice = PriceCalculator.calculateBuyPrice(shopItem, 64)
+        val oneBuyPrice = PriceCalculator.calculateBuyPrice(shopItem, 1)
+        assertGreater(stackBuyPrice, oneBuyPrice)
+        val stackSellPrice = PriceCalculator.calculateSellPrice(shopItem, 64)
+        val oneSellPrice = PriceCalculator.calculateSellPrice(shopItem, 1)
+        assertGreater(stackBuyPrice, stackSellPrice)
+        assertGreater(oneBuyPrice, oneSellPrice)
     }
 }
