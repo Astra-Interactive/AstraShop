@@ -185,4 +185,20 @@ class PriceCalculatorTest {
         assertGreater(stackBuyPrice, stackSellPrice)
         assertGreater(oneBuyPrice, oneSellPrice)
     }
+
+    @Test
+    fun `test 4 amount of item with stock 7 is greater than sell`() {
+        val shopItem = ShopConfig.ShopItem(
+            itemIndex = 0,
+            stock = 7,
+            price = 10.17,
+            shopItem = ShopItemStack.Stub,
+            isPurchaseInfinite = false,
+            isForPurchase = true,
+            isForSell = true,
+        )
+        val stackBuyPrice = PriceCalculator.calculateBuyPrice(shopItem, 4)
+        val stackSellPrice = PriceCalculator.calculateSellPrice(shopItem, 4)
+        assertGreater(stackBuyPrice, stackSellPrice)
+    }
 }

@@ -13,12 +13,7 @@ object PriceCalculator {
      * Calculated a median - threshold for item dynamic price
      */
     private fun fMedian(x: Double): Double {
-        return when {
-            x <= 10 -> x * sqrt(x)
-            x <= 100 -> (x / (1.0 + x)) * sqrt(x) + x / 2
-            x <= 1000 -> (x / (1.0 + x)) * sqrt(x)
-            else -> 2.0
-        }
+        return (x / (1.0 + x)) * sqrt(x) + x / 2
     }
 
     /**
