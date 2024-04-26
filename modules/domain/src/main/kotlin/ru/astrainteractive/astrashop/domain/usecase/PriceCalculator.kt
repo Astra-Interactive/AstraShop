@@ -13,7 +13,12 @@ object PriceCalculator {
      * Calculated a median - threshold for item dynamic price
      */
     private fun fMedian(x: Double): Double {
-        return (x / (1.0 + x)) * sqrt(x) + x / 2
+        return when {
+            x <= 10 -> x * sqrt(x)
+            x <= 100 -> (x / (1.0 + x)) * sqrt(x) + x / 2
+            x <= 1000 -> (x / (1.0 + x)) * sqrt(x)
+            else -> 2.0
+        }
     }
 
     /**
@@ -21,11 +26,11 @@ object PriceCalculator {
      * [stock] - amount in shop
      * [price] - static price value
      */
-    private fun f(stock: Int, price: Double): Double {
+    private fun f(stock: Int, price: Double, basePrice: Double): Double {
         if (stock == -1) return price
         if (price <= 0) return 0.0
         if (stock == 0) return 0.0
-        val median = fMedian(price)
+        val median = fMedian(basePrice)
         return sch(stock.toDouble() / median) * price
     }
 
@@ -52,7 +57,11 @@ object PriceCalculator {
         val maxAmount = if (item.isPurchaseInfinite) amount else item.stock
         val coercedAmount = amount.coerceIn(0, maxAmount)
         return ((maxAmount - coercedAmount + 1)..maxAmount)
-            .sumOf { stock -> f(stock, item.buyFromShopPrice).coerceAtLeast(getMinPrice(item.buyFromShopPrice, stock)) }
+            .sumOf { stock ->
+                f(stock, item.buyFromShopPrice, item.price).coerceAtLeast(
+                    getMinPrice(item.buyFromShopPrice, stock)
+                )
+            }
     }
 
     /**
@@ -64,6 +73,10 @@ object PriceCalculator {
         if (!item.isForSell) return 0.0
         if (item.stock == -1) return item.playerSellPrice * amount
         return ((item.stock + 1)..(item.stock + amount))
-            .sumOf { stock -> f(stock, item.playerSellPrice).coerceAtLeast(getMinPrice(item.playerSellPrice, stock)) }
+            .sumOf { stock ->
+                f(stock, item.playerSellPrice, item.price).coerceAtLeast(
+                    getMinPrice(item.playerSellPrice, stock)
+                )
+            }
     }
 }
