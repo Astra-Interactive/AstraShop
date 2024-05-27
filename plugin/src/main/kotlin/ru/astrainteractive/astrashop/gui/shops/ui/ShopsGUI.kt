@@ -7,13 +7,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
-import ru.astrainteractive.astralibs.menu.menu.InventorySlot
-import ru.astrainteractive.astralibs.menu.menu.MenuSize
-import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
-import ru.astrainteractive.astralibs.menu.menu.setIndex
-import ru.astrainteractive.astralibs.menu.menu.setItemStack
-import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
-import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.menu.inventory.PaginatedInventoryMenu
+import ru.astrainteractive.astralibs.menu.inventory.model.InventorySize
+import ru.astrainteractive.astralibs.menu.inventory.model.PageContext
+import ru.astrainteractive.astralibs.menu.slot.InventorySlot
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setIndex
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setItemStack
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setOnClickListener
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
@@ -28,7 +29,7 @@ class ShopsGUI(
     translation: PluginTranslation,
     kyoriComponentSerializer: KyoriComponentSerializer,
     private val router: GuiRouter
-) : PaginatedMenu(), KyoriComponentSerializer by kyoriComponentSerializer {
+) : PaginatedInventoryMenu(), KyoriComponentSerializer by kyoriComponentSerializer {
     override val childComponents: List<CoroutineScope> = listOf(shopsComponent)
     private val buttonsRenderer = ButtonsRenderer(
         translation = translation,
@@ -36,17 +37,18 @@ class ShopsGUI(
         kyoriComponentSerializer = kyoriComponentSerializer
     )
 
-    override val menuSize: MenuSize = MenuSize.XL
+    override val inventorySize: InventorySize = InventorySize.XL
 
-    override var menuTitle: Component = translation.menu.menuTitle.let(::toComponent)
-    override var page: Int = playerHolder.shopsPage
-    override val maxItemsPerPage: Int = menuSize.size - MenuSize.XXS.size
-    override val maxItemsAmount: Int
-        get() = shopsComponent.model.value.maxItemsAmount
+    override var title: Component = translation.menu.menuTitle.let(::toComponent)
+    override var pageContext: PageContext = PageContext(
+        page = playerHolder.shopsPage,
+        maxItems = shopsComponent.model.value.maxItemsAmount,
+        maxItemsPerPage = inventorySize.size - InventorySize.XXS.size
+    )
 
     override val nextPageButton: InventorySlot = buttonsRenderer.nextButton
     override val prevPageButton: InventorySlot = buttonsRenderer.prevButton
-    override val backPageButton: InventorySlot = buttonsRenderer.backButton {
+    private val backPageButton: InventorySlot = buttonsRenderer.backButton {
         inventory.close()
     }
 
@@ -55,24 +57,23 @@ class ShopsGUI(
         e.isCancelled = true
     }
 
-    override fun onPageChanged() = render()
-
-    override fun onCreated() {
+    override fun onInventoryCreated() {
         shopsComponent.loadShops()
         shopsComponent.model
+            .onEach { pageContext = pageContext.copy(maxItems = shopsComponent.model.value.maxItemsAmount) }
             .onEach { render() }
             .launchIn(menuScope)
     }
 
     private fun renderLoadedState(state: Model.Loaded) {
-        state.shops.filter { it.options.page == page }.forEach { shop ->
+        state.shops.filter { it.options.page == pageContext.page }.forEach { shop ->
             InventorySlot.Builder()
                 .setIndex(shop.options.index)
                 .setItemStack(shop.options.titleItem.toItemStack())
                 .setOnClickListener {
                     menuScope.launch(Dispatchers.IO) {
                         val route = GuiRouter.Route.Shop(
-                            playerHolder = playerHolder.copy(shopPage = 0, shopsPage = page),
+                            playerHolder = playerHolder.copy(shopPage = 0, shopsPage = pageContext.page),
                             shopConfig = shop
                         )
                         router.open(route)
@@ -83,6 +84,7 @@ class ShopsGUI(
 
     override fun render() {
         super.render()
+        backPageButton.setInventorySlot()
         when (val state: Model = shopsComponent.model.value) {
             is Model.Loaded -> renderLoadedState(state)
             Model.Loading -> Unit

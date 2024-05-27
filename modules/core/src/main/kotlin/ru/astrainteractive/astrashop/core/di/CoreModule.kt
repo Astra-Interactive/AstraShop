@@ -8,13 +8,13 @@ import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.economy.EconomyProviderFactory
 import ru.astrainteractive.astralibs.event.EventListener
 import ru.astrainteractive.astralibs.filemanager.DefaultFileConfigurationManager
+import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.logging.JUtilFileLogger
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astralibs.menu.event.DefaultInventoryClickEvent
-import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
-import ru.astrainteractive.astralibs.serialization.SerializerExt.parse
-import ru.astrainteractive.astralibs.serialization.SerializerExt.writeIntoFile
-import ru.astrainteractive.astralibs.serialization.YamlSerializer
+import ru.astrainteractive.astralibs.serialization.StringFormatExt.parse
+import ru.astrainteractive.astralibs.serialization.StringFormatExt.writeIntoFile
+import ru.astrainteractive.astralibs.serialization.YamlStringFormat
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.klibs.kdi.Lateinit
 import ru.astrainteractive.klibs.kdi.Reloadable
@@ -36,7 +36,7 @@ interface CoreModule {
         override val plugin: Lateinit<JavaPlugin> = Lateinit()
         override val translation = Reloadable {
             val plugin by plugin
-            val serializer = YamlSerializer()
+            val serializer = YamlStringFormat()
             val fileManager = DefaultFileConfigurationManager(plugin, "translations.yml")
             serializer.parse<PluginTranslation>(fileManager.configFile)
                 .onFailure(Throwable::printStackTrace)

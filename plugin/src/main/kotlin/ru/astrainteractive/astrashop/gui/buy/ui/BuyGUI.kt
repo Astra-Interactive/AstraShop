@@ -9,16 +9,16 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.jetbrains.kotlin.konan.util.visibleName
-import ru.astrainteractive.astralibs.menu.menu.InventorySlot
-import ru.astrainteractive.astralibs.menu.menu.Menu
-import ru.astrainteractive.astralibs.menu.menu.MenuSize
-import ru.astrainteractive.astralibs.menu.menu.addLore
-import ru.astrainteractive.astralibs.menu.menu.setDisplayName
-import ru.astrainteractive.astralibs.menu.menu.setIndex
-import ru.astrainteractive.astralibs.menu.menu.setItemStack
-import ru.astrainteractive.astralibs.menu.menu.setMaterial
-import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
-import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.menu.inventory.InventoryMenu
+import ru.astrainteractive.astralibs.menu.inventory.model.InventorySize
+import ru.astrainteractive.astralibs.menu.slot.InventorySlot
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.addLore
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setDisplayName
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setIndex
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setItemStack
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setMaterial
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setOnClickListener
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
@@ -42,16 +42,18 @@ class BuyGUI(
     private val buyComponent: BuyComponent,
     private val router: GuiRouter,
     kyoriComponentSerializer: KyoriComponentSerializer
-) : Menu(), KyoriComponentSerializer by kyoriComponentSerializer {
-    override val menuSize: MenuSize = MenuSize.XS
+) : InventoryMenu(), KyoriComponentSerializer by kyoriComponentSerializer {
+    override val inventorySize: InventorySize = InventorySize.XS
     override val childComponents: List<CoroutineScope> = listOf(buyComponent)
 
-    override var menuTitle: Component = item.toItemStack()
-        .itemMeta
-        .displayName()
-        ?: item.toItemStack().type.visibleName
-            .let(StringDesc::Raw)
-            .let(::toComponent)
+    override val title: Component by lazy {
+        item.toItemStack()
+            .itemMeta
+            .displayName()
+            ?: item.toItemStack().type.visibleName
+                .let(StringDesc::Raw)
+                .let(::toComponent)
+    }
 
     private val backButton = InventorySlot.Builder()
         .setIndex(9)
@@ -100,7 +102,7 @@ class BuyGUI(
                 .build()
         }
 
-    override fun onCreated() {
+    override fun onInventoryCreated() {
         buyComponent.model
             .onEach { render() }
             .launchIn(menuScope)

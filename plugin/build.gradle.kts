@@ -12,12 +12,16 @@ minecraftMultiplatform {
     dependencies {
         // Kotlin
         implementation(libs.bundles.kotlin)
+        // klibs
+        implementation(libs.klibs.mikro)
         // AstraLibs
         implementation(libs.minecraft.astralibs.core)
         implementation(libs.minecraft.astralibs.orm)
         implementation(libs.klibs.kdi)
         implementation(libs.minecraft.astralibs.menu.bukkit)
         implementation(libs.minecraft.astralibs.core.bukkit)
+        implementation(libs.minecraft.astralibs.command)
+        implementation(libs.minecraft.astralibs.command.bukkit)
         // Test
         testImplementation(libs.bundles.testing.kotlin)
         testImplementation(libs.tests.kotlin.test)
