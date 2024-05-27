@@ -1,20 +1,22 @@
 package ru.astrainteractive.astrashop.gui.renderer
 
 import org.bukkit.Material
+import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.menu.clicker.Click
-import ru.astrainteractive.astralibs.menu.menu.InventorySlot
-import ru.astrainteractive.astralibs.menu.menu.Menu
-import ru.astrainteractive.astralibs.menu.menu.PaginatedMenu
-import ru.astrainteractive.astralibs.menu.menu.setDisplayName
-import ru.astrainteractive.astralibs.menu.menu.setIndex
-import ru.astrainteractive.astralibs.menu.menu.setMaterial
-import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
-import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.menu.inventory.InventoryMenu
+import ru.astrainteractive.astralibs.menu.inventory.PaginatedInventoryMenu
+import ru.astrainteractive.astralibs.menu.inventory.util.PaginatedInventoryMenuExt.showNextPage
+import ru.astrainteractive.astralibs.menu.inventory.util.PaginatedInventoryMenuExt.showPrevPage
+import ru.astrainteractive.astralibs.menu.slot.InventorySlot
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setDisplayName
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setIndex
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setMaterial
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setOnClickListener
 import ru.astrainteractive.astrashop.core.PluginTranslation
 
 class ButtonsRenderer(
     private val translation: PluginTranslation,
-    private val menu: Menu,
+    private val menu: InventoryMenu,
     private val kyoriComponentSerializer: KyoriComponentSerializer
 ) : KyoriComponentSerializer by kyoriComponentSerializer {
 
@@ -32,7 +34,7 @@ class ButtonsRenderer(
             .setIndex(53)
             .setMaterial(Material.PAPER)
             .setDisplayName(translation.menu.menuNextPage.let(::toComponent))
-            .setOnClickListener { (menu as PaginatedMenu).showNextPage() }
+            .setOnClickListener { (menu as PaginatedInventoryMenu).showNextPage() }
             .build()
 
     val prevButton: InventorySlot
@@ -40,6 +42,6 @@ class ButtonsRenderer(
             .setIndex(45)
             .setMaterial(Material.PAPER)
             .setDisplayName(translation.menu.menuPrevPage.let(::toComponent))
-            .setOnClickListener { (menu as PaginatedMenu).showPrevPage() }
+            .setOnClickListener { (menu as PaginatedInventoryMenu).showPrevPage() }
             .build()
 }

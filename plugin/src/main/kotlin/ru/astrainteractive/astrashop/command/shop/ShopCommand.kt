@@ -1,10 +1,9 @@
 package ru.astrainteractive.astrashop.command.shop
 
 import org.bukkit.entity.Player
-import ru.astrainteractive.astralibs.command.api.Command
-import ru.astrainteractive.astrashop.command.shop.ShopCommand.Output
+import ru.astrainteractive.astralibs.command.api.command.BukkitCommand
 
-interface ShopCommand : Command<Output, Output> {
+interface ShopCommand : BukkitCommand {
     sealed interface Output {
         data object NotPlayer : Output
         data object NoPermission : Output

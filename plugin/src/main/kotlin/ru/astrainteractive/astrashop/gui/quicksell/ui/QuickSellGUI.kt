@@ -7,14 +7,14 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
-import ru.astrainteractive.astralibs.menu.menu.InventorySlot
-import ru.astrainteractive.astralibs.menu.menu.Menu
-import ru.astrainteractive.astralibs.menu.menu.MenuSize
-import ru.astrainteractive.astralibs.menu.menu.setDisplayName
-import ru.astrainteractive.astralibs.menu.menu.setIndex
-import ru.astrainteractive.astralibs.menu.menu.setMaterial
-import ru.astrainteractive.astralibs.menu.menu.setOnClickListener
-import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.menu.inventory.InventoryMenu
+import ru.astrainteractive.astralibs.menu.inventory.model.InventorySize
+import ru.astrainteractive.astralibs.menu.slot.InventorySlot
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setDisplayName
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setIndex
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setMaterial
+import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setOnClickListener
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.gui.model.ShopPlayerHolder
 import ru.astrainteractive.astrashop.gui.quicksell.presentation.DefaultQuickSellComponent
@@ -25,10 +25,10 @@ class QuickSellGUI(
     private val translation: PluginTranslation,
     private val quickSellComponent: DefaultQuickSellComponent,
     kyoriComponentSerializer: KyoriComponentSerializer
-) : Menu(), KyoriComponentSerializer by kyoriComponentSerializer {
+) : InventoryMenu(), KyoriComponentSerializer by kyoriComponentSerializer {
     override val childComponents: List<CoroutineScope> = listOf(quickSellComponent)
-    override val menuSize: MenuSize = MenuSize.XXS
-    override var menuTitle: Component = translation.menu.quickSellTitle.let(::toComponent)
+    override val inventorySize: InventorySize = InventorySize.XXS
+    override var title: Component = translation.menu.quickSellTitle.let(::toComponent)
 
     private val backButton = InventorySlot.Builder()
         .setIndex(8)
@@ -38,7 +38,7 @@ class QuickSellGUI(
             inventory.close()
         }.build()
 
-    override fun onCreated() {
+    override fun onInventoryCreated() {
         render()
         quickSellComponent.labels
             .onEach {

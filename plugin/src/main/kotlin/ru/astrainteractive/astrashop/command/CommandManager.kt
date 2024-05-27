@@ -12,6 +12,6 @@ class CommandManager(
 
     override fun create() {
         reload()
-        ShopCommandFactory(this, this.plugin).create()
+        ShopCommandFactory(this, this.plugin).register()
     }
 }

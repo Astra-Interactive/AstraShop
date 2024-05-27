@@ -2,7 +2,7 @@ package ru.astrainteractive.astrashop.command.di
 
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.BukkitDispatchers
-import ru.astrainteractive.astralibs.serialization.KyoriComponentSerializer
+import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
 import ru.astrainteractive.astrashop.AstraShop
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.core.di.CoreModule

@@ -1,7 +1,7 @@
 package ru.astrainteractive.astrashop.gui.router
 
 import kotlinx.coroutines.withContext
-import ru.astrainteractive.astralibs.menu.menu.Menu
+import ru.astrainteractive.astralibs.menu.core.Menu
 import ru.astrainteractive.astrashop.api.di.ApiModule
 import ru.astrainteractive.astrashop.core.di.CoreModule
 import ru.astrainteractive.astrashop.domain.di.DomainModule
