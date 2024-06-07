@@ -5,9 +5,8 @@ import ru.astrainteractive.astrashop.api.di.BukkitApiModule
 import ru.astrainteractive.astrashop.core.di.CoreModule
 import ru.astrainteractive.astrashop.domain.di.DomainModule
 import ru.astrainteractive.astrashop.gui.router.di.RouterModule
-import ru.astrainteractive.klibs.kdi.Module
 
-interface RootModule : Module {
+interface RootModule {
     val coreModule: CoreModule
     val apiModule: ApiModule
     val domainModule: DomainModule
