@@ -118,9 +118,9 @@ internal class ShopItemParserImpl(
                 itemsAdder != null -> SpigotShopItemStack.ItemsAdder(itemsAdder)
                 else -> {
                     error {
-                        """Could not parse item type for ${s.name}\n
-                           Material: ${s.getString("material")}\n
-                           itemStack: ${s.getItemStack("itemStack")}\n
+                        """Could not parse item type for ${s.name}
+                           Material: ${s.getString("material")}
+                           itemStack: ${s.getItemStack("itemStack")}
                            itemsAdder: ${s.getString("items_adder")}
                         """.trimIndent()
                     }
