@@ -1,6 +1,7 @@
 package ru.astrainteractive.astrashop.domain.usecase
 
 import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.logging.BukkitLogger
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
@@ -10,10 +11,10 @@ import java.util.UUID
 
 class SellUseCase(
     private val economy: EconomyProvider,
-    private val logger: Logger,
     private val playerBridge: PlayerBridge,
     private val translation: PluginTranslation
-) : UseCase.Suspended<SellUseCase.Param, SellUseCase.Result> {
+) : UseCase.Suspended<SellUseCase.Param, SellUseCase.Result>,
+    Logger by BukkitLogger("SellUseCase") {
 
     class Param(
         val amount: Int,
@@ -50,11 +51,7 @@ class SellUseCase(
         val money = PriceCalculator.calculateSellPrice(item, sellAmount)
         economy.addMoney(input.playerUUID, money)
         playerBridge.sendMessage(input.playerUUID, translation.shop.youEarnedAmount(money))
-        logger.info(
-            "BuyUseCase",
-            "$playerName sold $sellAmount of ${item.shopItem} for $money",
-            logInFile = false
-        )
+        info { "$playerName sold $sellAmount of ${item.shopItem} for $money" }
         return Result.Success(sellAmount)
     }
 }

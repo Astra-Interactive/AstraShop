@@ -4,6 +4,8 @@ import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.plugin.Plugin
 import ru.astrainteractive.astralibs.filemanager.FileConfigurationManager
+import ru.astrainteractive.astralibs.logging.BukkitLogger
+import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
@@ -12,7 +14,10 @@ import ru.astrainteractive.astrashop.api.parser.ShopItemParser.ShopParseExceptio
 import ru.astrainteractive.astrashop.api.parser.util.associate
 import ru.astrainteractive.astrashop.api.parser.util.getFileManager
 
-internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
+internal class ShopItemParserImpl(
+    private val plugin: Plugin
+) : ShopItemParser,
+    Logger by BukkitLogger("ShopItemParser") {
 
     override fun saveOptions(shopConfig: ShopConfig) {
         val fileManager = shopConfig.getFileManager(plugin)
@@ -111,7 +116,16 @@ internal class ShopItemParserImpl(private val plugin: Plugin) : ShopItemParser {
                 itemStack != null -> SpigotShopItemStack.ItemStackStack(itemStack)
                 material != null -> SpigotShopItemStack.Material(material)
                 itemsAdder != null -> SpigotShopItemStack.ItemsAdder(itemsAdder)
-                else -> throw ShopParseException("Shop item should contain either itemStack or material")
+                else -> {
+                    error {
+                        """Could not parse item type for ${s.name}\n
+                           Material: ${s.getString("material")}\n
+                           itemStack: ${s.getItemStack("itemStack")}\n
+                           itemsAdder: ${s.getString("items_adder")}
+                        """.trimIndent()
+                    }
+                    throw ShopParseException("Shop item should contain either itemStack or material")
+                }
             },
             price = price,
             isForSell = s.getBoolean("is_for_sell", true),

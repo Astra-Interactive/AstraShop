@@ -1,6 +1,7 @@
 package ru.astrainteractive.astrashop.domain.usecase
 
 import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.logging.BukkitLogger
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
@@ -10,10 +11,10 @@ import java.util.UUID
 
 class BuyUseCase(
     private val economy: EconomyProvider,
-    private val logger: Logger,
     private val playerBridge: PlayerBridge,
     private val translation: PluginTranslation
-) : UseCase.Suspended<BuyUseCase.Param, BuyUseCase.Result> {
+) : UseCase.Suspended<BuyUseCase.Param, BuyUseCase.Result>,
+    Logger by BukkitLogger("BuyUseCase") {
 
     class Param(
         val amount: Int,
@@ -58,22 +59,14 @@ class BuyUseCase(
         // Buy item
         val notFittedAmount = playerBridge.giveOrDropItems(input.playerUUID, item, amount)
         if (notFittedAmount == 0) {
-            logger.info(
-                "BuyUseCase",
-                "$playerName bought $amount of ${item.shopItem} for $totalPrice",
-                logInFile = true
-            )
+            info { "$playerName bought $amount of ${item.shopItem} for $totalPrice" }
             return Result.Success(-amount)
         }
         playerBridge.sendMessage(
             input.playerUUID,
             translation.shop.notFitted
         )
-        logger.info(
-            "BuyUseCase",
-            "$playerName bought $amount of ${item.shopItem} for $totalPrice",
-            logInFile = true
-        )
+        info { "$playerName bought $amount of ${item.shopItem} for $totalPrice" }
         return Result.Success(-amount)
     }
 }
