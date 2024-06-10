@@ -1,10 +1,3 @@
-buildscript {
-    dependencies {
-        classpath("ru.astrainteractive.gradleplugin:convention:1.3.1")
-        classpath("ru.astrainteractive.gradleplugin:minecraft:1.3.1")
-    }
-}
-
 plugins {
     java
     `java-library`
