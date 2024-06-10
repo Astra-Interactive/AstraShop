@@ -11,6 +11,8 @@ import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.menu.inventory.PaginatedInventoryMenu
 import ru.astrainteractive.astralibs.menu.inventory.model.InventorySize
 import ru.astrainteractive.astralibs.menu.inventory.model.PageContext
+import ru.astrainteractive.astralibs.menu.inventory.util.PageContextExt.isFirstPage
+import ru.astrainteractive.astralibs.menu.inventory.util.PageContextExt.isLastPage
 import ru.astrainteractive.astralibs.menu.slot.InventorySlot
 import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setIndex
 import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setItemStack
@@ -85,6 +87,8 @@ class ShopsGUI(
     override fun render() {
         super.render()
         backPageButton.setInventorySlot()
+        if (!pageContext.isLastPage) nextPageButton.setInventorySlot()
+        if (!pageContext.isFirstPage) prevPageButton.setInventorySlot()
         when (val state: Model = shopsComponent.model.value) {
             is Model.Loaded -> renderLoadedState(state)
             Model.Loading -> Unit

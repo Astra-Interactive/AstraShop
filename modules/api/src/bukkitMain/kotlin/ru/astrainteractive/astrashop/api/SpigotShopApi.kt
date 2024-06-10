@@ -25,7 +25,6 @@ internal class SpigotShopApi(
         return withContext(limitedDispatcher) {
             getYmlFiles(plugin)
                 .mapNotNull(::shopFileOrNull)
-                .orEmpty()
         }
     }
 

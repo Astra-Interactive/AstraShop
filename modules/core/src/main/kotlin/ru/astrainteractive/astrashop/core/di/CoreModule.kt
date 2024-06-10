@@ -9,8 +9,6 @@ import ru.astrainteractive.astralibs.economy.EconomyProviderFactory
 import ru.astrainteractive.astralibs.event.EventListener
 import ru.astrainteractive.astralibs.filemanager.DefaultFileConfigurationManager
 import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
-import ru.astrainteractive.astralibs.logging.JUtilFileLogger
-import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astralibs.menu.event.DefaultInventoryClickEvent
 import ru.astrainteractive.astralibs.serialization.StringFormatExt.parse
 import ru.astrainteractive.astralibs.serialization.StringFormatExt.writeIntoFile
@@ -20,13 +18,11 @@ import ru.astrainteractive.klibs.kdi.Lateinit
 import ru.astrainteractive.klibs.kdi.Reloadable
 import ru.astrainteractive.klibs.kdi.Single
 import ru.astrainteractive.klibs.kdi.getValue
-import java.io.File
 
 interface CoreModule {
     val plugin: Lateinit<JavaPlugin>
     val translation: Reloadable<PluginTranslation>
     val economyProvider: Single<EconomyProvider>
-    val logger: Single<Logger>
     val dispatchers: Single<BukkitDispatchers>
     val scope: Single<AsyncComponent>
     val inventoryClickEvent: Single<EventListener>
@@ -45,13 +41,6 @@ interface CoreModule {
         }
         override val economyProvider: Single<EconomyProvider> = Single {
             EconomyProviderFactory(plugin.value).create()
-        }
-        override val logger: Single<Logger> = Single {
-            JUtilFileLogger(
-                tag = "AstraShop",
-                folder = File(plugin.value.dataFolder, "logs"),
-                logger = plugin.value.logger
-            )
         }
         override val dispatchers: Single<BukkitDispatchers> = Single {
             val plugin by plugin
