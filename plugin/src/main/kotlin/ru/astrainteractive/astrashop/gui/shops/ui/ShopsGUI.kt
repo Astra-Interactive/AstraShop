@@ -12,7 +12,6 @@ import ru.astrainteractive.astralibs.menu.inventory.PaginatedInventoryMenu
 import ru.astrainteractive.astralibs.menu.inventory.model.InventorySize
 import ru.astrainteractive.astralibs.menu.inventory.model.PageContext
 import ru.astrainteractive.astralibs.menu.inventory.util.PageContextExt.isFirstPage
-import ru.astrainteractive.astralibs.menu.inventory.util.PageContextExt.isLastPage
 import ru.astrainteractive.astralibs.menu.slot.InventorySlot
 import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setIndex
 import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setItemStack
@@ -44,7 +43,7 @@ class ShopsGUI(
     override var title: Component = translation.menu.menuTitle.let(::toComponent)
     override var pageContext: PageContext = PageContext(
         page = playerHolder.shopsPage,
-        maxItems = shopsComponent.model.value.maxItemsAmount,
+        maxItems = shopsComponent.model.value.maxPages,
         maxItemsPerPage = inventorySize.size - InventorySize.XXS.size
     )
 
@@ -62,12 +61,24 @@ class ShopsGUI(
     override fun onInventoryCreated() {
         shopsComponent.loadShops()
         shopsComponent.model
-            .onEach { pageContext = pageContext.copy(maxItems = shopsComponent.model.value.maxItemsAmount) }
-            .onEach { render() }
+            .onEach {
+                pageContext = pageContext.copy(
+                    maxItems = runCatching {
+                        val loadedModel = (shopsComponent.model.value as? Model.Loaded) ?: error("Not loaded")
+                        val lastShopPage = loadedModel.shops.maxBy { it.options.page }
+                        val lastIndex = lastShopPage.items.maxOf { it.value.itemIndex }
+                        lastShopPage.options.page * lastIndex
+                    }.getOrDefault(0)
+                )
+                render()
+            }
             .launchIn(menuScope)
     }
 
     private fun renderLoadedState(state: Model.Loaded) {
+        val lastPage = state.shops.maxOf { it.options.page }
+        if (pageContext.page < lastPage) nextPageButton.setInventorySlot()
+        if (!pageContext.isFirstPage) prevPageButton.setInventorySlot()
         state.shops.filter { it.options.page == pageContext.page }.forEach { shop ->
             InventorySlot.Builder()
                 .setIndex(shop.options.index)
@@ -87,8 +98,6 @@ class ShopsGUI(
     override fun render() {
         super.render()
         backPageButton.setInventorySlot()
-        if (!pageContext.isLastPage) nextPageButton.setInventorySlot()
-        if (!pageContext.isFirstPage) prevPageButton.setInventorySlot()
         when (val state: Model = shopsComponent.model.value) {
             is Model.Loaded -> renderLoadedState(state)
             Model.Loading -> Unit

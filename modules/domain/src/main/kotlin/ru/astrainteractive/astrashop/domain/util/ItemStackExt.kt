@@ -26,13 +26,22 @@ object ItemStackExt {
     }
 
     fun TitleItemStack.toItemStack(): ItemStack {
-        this as SpigotTitleItemStack
-        return ItemStack(material).apply {
-            editMeta {
-                it.setDisplayName(name)
-                it.setCustomModelData(customModelData)
+        return when (this) {
+            is SpigotTitleItemStack.Default -> ItemStack(material).apply {
+                editMeta {
+                    it.setDisplayName(name)
+                    it.setCustomModelData(customModelData)
+                }
+                lore = this@toItemStack.lore
             }
-            lore = this@toItemStack.lore
+
+            is SpigotTitleItemStack.ItemsAdder -> {
+                CustomStack.getInstance(namespaceId)
+                    ?.itemStack
+                    ?: error("Item $namespaceId not found in itemsAdder registry")
+            }
+
+            else -> error("${this::class} is not ${SpigotTitleItemStack::class}")
         }
     }
 }

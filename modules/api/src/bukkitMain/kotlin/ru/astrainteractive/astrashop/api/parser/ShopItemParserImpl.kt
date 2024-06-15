@@ -74,13 +74,32 @@ internal class ShopItemParserImpl(
         )
     }
 
-    private fun parseTitleItem(s: ConfigurationSection?): SpigotTitleItemStack {
-        return SpigotTitleItemStack(
-            material = s?.getString("material")?.let(Material::getMaterial) ?: Material.EMERALD,
-            customModelData = s?.getInt("customModelData") ?: 0,
-            name = s?.getString("name") ?: "",
-            lore = s?.getStringList("lore") ?: emptyList()
+    private fun parseMaterialItem(s: ConfigurationSection): SpigotTitleItemStack.Default? {
+        return SpigotTitleItemStack.Default(
+            material = s.getString("material")?.let(Material::getMaterial) ?: return null,
+            customModelData = s.getInt("customModelData"),
+            name = s.getString("name").orEmpty(),
+            lore = s.getStringList("lore").orEmpty()
         )
+    }
+
+    private fun parseItemsAdderItem(s: ConfigurationSection): SpigotTitleItemStack.ItemsAdder? {
+        return SpigotTitleItemStack.ItemsAdder(
+            namespaceId = s.getString("namespace_id") ?: return null,
+            name = s.getString("name").orEmpty(),
+            lore = s.getStringList("lore").orEmpty()
+        )
+    }
+
+    private fun parseTitleItem(s: ConfigurationSection?): SpigotTitleItemStack {
+        val createDefault = {
+            SpigotTitleItemStack.Default(
+                material = Material.PAPER,
+                customModelData = 0,
+                name = "ERROR",
+            )
+        }
+        return s?.let(::parseMaterialItem) ?: s?.let(::parseItemsAdderItem) ?: createDefault.invoke()
     }
 
     /**
