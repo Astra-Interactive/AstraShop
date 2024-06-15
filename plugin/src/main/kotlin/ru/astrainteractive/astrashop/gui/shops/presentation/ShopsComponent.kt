@@ -10,14 +10,14 @@ interface ShopsComponent : CoroutineScope {
     fun loadShops()
 
     sealed interface Model {
-        val maxItemsAmount: Int
+        val maxPages: Int
 
         data object Loading : Model {
-            override val maxItemsAmount: Int = 0
+            override val maxPages: Int = 0
         }
 
         class Loaded(val shops: List<ShopConfig>) : Model {
-            override val maxItemsAmount: Int = shops.size
+            override val maxPages: Int = shops.maxOf { it.options.page }
         }
     }
 }
