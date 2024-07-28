@@ -15,6 +15,12 @@ object ItemStackExt {
         is SpigotShopItemStack.ItemsAdder -> {
             CustomStack.getInstance(shopItem.namespaceId)
                 ?.itemStack
+                ?.let { itemStack ->
+                    // TODO temporal fix for items adder alpha
+                    val clonedItemStack = ItemStack(itemStack.type, itemStack.amount)
+                    clonedItemStack.itemMeta = itemStack.itemMeta.clone()
+                    clonedItemStack
+                }
                 ?: error("Item ${shopItem.namespaceId} not found in itemsAdder registry")
         }
 
@@ -38,6 +44,12 @@ object ItemStackExt {
             is SpigotTitleItemStack.ItemsAdder -> {
                 CustomStack.getInstance(namespaceId)
                     ?.itemStack
+                    ?.let { itemStack ->
+                        // TODO temporal fix for items adder alpha
+                        val clonedItemStack = ItemStack(itemStack.type, itemStack.amount)
+                        clonedItemStack.itemMeta = itemStack.itemMeta.clone()
+                        clonedItemStack
+                    }
                     ?: error("Item $namespaceId not found in itemsAdder registry")
             }
 
