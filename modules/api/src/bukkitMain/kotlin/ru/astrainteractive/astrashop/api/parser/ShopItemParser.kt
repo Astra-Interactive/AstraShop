@@ -1,7 +1,7 @@
 package ru.astrainteractive.astrashop.api.parser
 
-import ru.astrainteractive.astralibs.filemanager.FileConfigurationManager
 import ru.astrainteractive.astrashop.api.model.ShopConfig
+import java.io.File
 
 internal interface ShopItemParser {
     class ShopParseException(message: String) : Exception(message)
@@ -17,7 +17,7 @@ internal interface ShopItemParser {
     fun saveItems(shopConfig: ShopConfig)
 
     /**
-     * Parse shop file from [FileConfigurationManager]
+     * Parse shop file from [File]
      */
-    fun parseShopFile(fileManager: FileConfigurationManager): ShopConfig
+    fun parseShopFile(fileManager: File): ShopConfig
 }

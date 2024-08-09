@@ -1,27 +1,28 @@
 package ru.astrainteractive.astrashop.command.shop
 
 import ru.astrainteractive.astralibs.command.api.context.BukkitCommandContext
-import ru.astrainteractive.astralibs.command.api.sideeffect.BukkitCommandSideEffect
+import ru.astrainteractive.astralibs.command.api.error.ErrorHandler
+import ru.astrainteractive.astralibs.command.api.exception.NoPermissionException
 import ru.astrainteractive.astrashop.command.di.CommandManagerDependencies
 
-internal class ShopCommandSideEffect(
+internal class ShopCommandErrorHandler(
     dependencies: CommandManagerDependencies
-) : BukkitCommandSideEffect<ShopCommand.Output>,
+) : ErrorHandler<BukkitCommandContext>,
     CommandManagerDependencies by dependencies {
-    override fun handle(commandContext: BukkitCommandContext, result: ShopCommand.Output) {
+    override fun handle(commandContext: BukkitCommandContext, throwable: Throwable) {
         val commandSender = commandContext.sender
-        when (result) {
-            ShopCommand.Output.NoPermission ->
+        when (throwable) {
+            is NoPermissionException ->
                 kyoriComponentSerializer
                     .toComponent(translation.general.noPermission)
                     .run(commandSender::sendMessage)
 
-            ShopCommand.Output.NotPlayer ->
+            is ShopCommand.Error.NotPlayer ->
                 kyoriComponentSerializer
                     .toComponent(translation.general.notPlayer)
                     .run(commandSender::sendMessage)
 
-            ShopCommand.Output.WrongUsage ->
+            is ShopCommand.Error.WrongUsage ->
                 kyoriComponentSerializer
                     .toComponent(translation.general.wrongUsage)
                     .run(commandSender::sendMessage)
