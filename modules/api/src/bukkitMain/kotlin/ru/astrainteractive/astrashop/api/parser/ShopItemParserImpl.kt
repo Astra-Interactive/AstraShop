@@ -2,8 +2,8 @@ package ru.astrainteractive.astrashop.api.parser
 
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
-import ru.astrainteractive.astralibs.filemanager.FileConfigurationManager
 import ru.astrainteractive.astralibs.logging.BukkitLogger
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astralibs.string.StringDesc
@@ -12,7 +12,8 @@ import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItemStack
 import ru.astrainteractive.astrashop.api.parser.ShopItemParser.ShopParseException
 import ru.astrainteractive.astrashop.api.parser.util.associate
-import ru.astrainteractive.astrashop.api.parser.util.getFileManager
+import ru.astrainteractive.astrashop.api.parser.util.getFile
+import java.io.File
 
 internal class ShopItemParserImpl(
     private val plugin: Plugin
@@ -20,8 +21,8 @@ internal class ShopItemParserImpl(
     Logger by BukkitLogger("ShopItemParser") {
 
     override fun saveOptions(shopConfig: ShopConfig) {
-        val fileManager = shopConfig.getFileManager(plugin)
-        val fileConfiguration = fileManager.fileConfiguration
+        val file = shopConfig.getFile(plugin)
+        val fileConfiguration = YamlConfiguration.loadConfiguration(file)
         val optionsSection = fileConfiguration.getConfigurationSection("options")
 
         optionsSection?.set("lore", shopConfig.options.lore)
@@ -30,12 +31,12 @@ internal class ShopItemParserImpl(
         optionsSection?.set("title", shopConfig.options.title)
         optionsSection?.set("index", shopConfig.options.index)
         optionsSection?.set("page", shopConfig.options.page)
-        fileManager.save()
+        fileConfiguration.save(file)
     }
 
     override fun saveItems(shopConfig: ShopConfig) {
-        val fileManager = shopConfig.getFileManager(plugin)
-        val fileConfiguration = fileManager.fileConfiguration
+        val file = shopConfig.getFile(plugin)
+        val fileConfiguration = YamlConfiguration.loadConfiguration(file)
         fileConfiguration.set("items", null)
         shopConfig.items.forEach { (index, item) ->
             val path = "items.$index"
@@ -56,11 +57,11 @@ internal class ShopItemParserImpl(
             itemSection?.set("is_for_purchase", item.isForPurchase)
             itemSection?.set("is_for_sell", item.isForSell)
         }
-        fileManager.save()
+        fileConfiguration.save(file)
     }
 
-    override fun parseShopFile(fileManager: FileConfigurationManager): ShopConfig {
-        val fileConfiguration = fileManager.fileConfiguration
+    override fun parseShopFile(file: File): ShopConfig {
+        val fileConfiguration = YamlConfiguration.loadConfiguration(file)
         val optionsSections = fileConfiguration.getConfigurationSection("options")
             ?: throw ShopParseException("No options section in ${fileConfiguration.name}")
         val itemsSection = fileConfiguration.getConfigurationSection("items")
@@ -68,7 +69,7 @@ internal class ShopItemParserImpl(
         val options = parseOption(optionsSections)
         val items = itemsSection?.associate { it.name to parseItem(it) } ?: emptyMap()
         return ShopConfig(
-            configName = fileManager.name,
+            configName = file.name,
             options = options,
             items = HashMap(items)
         )

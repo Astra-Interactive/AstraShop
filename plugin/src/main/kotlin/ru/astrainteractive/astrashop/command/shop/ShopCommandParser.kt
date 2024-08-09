@@ -2,26 +2,22 @@ package ru.astrainteractive.astrashop.command.shop
 
 import org.bukkit.entity.Player
 import ru.astrainteractive.astralibs.command.api.context.BukkitCommandContext
-import ru.astrainteractive.astralibs.command.api.parser.BukkitCommandParser
-import ru.astrainteractive.astralibs.permission.BukkitPermissibleExt.toPermissible
+import ru.astrainteractive.astralibs.command.api.context.BukkitCommandContextExt.requirePermission
+import ru.astrainteractive.astralibs.command.api.parser.CommandParser
 import ru.astrainteractive.astrashop.command.shop.ShopCommand.Output
 import ru.astrainteractive.astrashop.core.PluginPermission
 
-class ShopCommandParser : BukkitCommandParser<Output> {
+class ShopCommandParser : CommandParser<Output, BukkitCommandContext> {
     override fun parse(commandContext: BukkitCommandContext): Output {
         val sender = commandContext.sender
         val args = commandContext.args
-        if (sender !is Player) return Output.NotPlayer
-        if (!sender.toPermissible().hasPermission(PluginPermission.UseShop)) {
-            return Output.NoPermission
-        }
+        if (sender !is Player) throw ShopCommand.Error.NotPlayer
+        commandContext.requirePermission(PluginPermission.UseShop)
         if (args.isEmpty()) return Output.OpenShops(sender)
         if (args.getOrNull(0) == "qs") {
-            if (!sender.toPermissible().hasPermission(PluginPermission.QuickSell)) {
-                return Output.NoPermission
-            }
+            commandContext.requirePermission(PluginPermission.QuickSell)
             return Output.OpenQuickSell(sender)
         }
-        return Output.WrongUsage
+        throw ShopCommand.Error.WrongUsage
     }
 }

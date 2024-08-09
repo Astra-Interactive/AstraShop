@@ -3,11 +3,10 @@ package ru.astrainteractive.astrashop.api
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.Plugin
-import ru.astrainteractive.astralibs.filemanager.DefaultFileConfigurationManager
-import ru.astrainteractive.astralibs.filemanager.FileConfigurationManager
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.parser.ShopItemParserImpl
 import ru.astrainteractive.astrashop.api.parser.util.getYmlFiles
+import java.io.File
 
 internal class SpigotShopApi(
     private val plugin: Plugin,
@@ -15,8 +14,8 @@ internal class SpigotShopApi(
 ) : ShopApi {
     private val limitedDispatcher = Dispatchers.IO.limitedParallelism(1)
 
-    private fun shopFileOrNull(fileManager: FileConfigurationManager): ShopConfig? {
-        return runCatching { shopItemParser.parseShopFile(fileManager) }
+    private fun shopFileOrNull(file: File): ShopConfig? {
+        return runCatching { shopItemParser.parseShopFile(file) }
             .onFailure(Throwable::printStackTrace)
             .getOrNull()
     }
@@ -30,7 +29,7 @@ internal class SpigotShopApi(
 
     override suspend fun fetchShop(shopFileName: String): ShopConfig {
         return withContext(limitedDispatcher) {
-            DefaultFileConfigurationManager(plugin, shopFileName).let(shopItemParser::parseShopFile)
+            shopItemParser.parseShopFile(plugin.dataFolder.resolve(shopFileName))
         }
     }
 

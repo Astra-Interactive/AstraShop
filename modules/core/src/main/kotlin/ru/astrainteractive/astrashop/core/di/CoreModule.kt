@@ -7,7 +7,6 @@ import ru.astrainteractive.astralibs.async.DefaultBukkitDispatchers
 import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.economy.EconomyProviderFactory
 import ru.astrainteractive.astralibs.event.EventListener
-import ru.astrainteractive.astralibs.filemanager.DefaultFileConfigurationManager
 import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.menu.event.DefaultInventoryClickEvent
 import ru.astrainteractive.astralibs.serialization.StringFormatExt.parse
@@ -33,11 +32,11 @@ interface CoreModule {
         override val translation = Reloadable {
             val plugin by plugin
             val serializer = YamlStringFormat()
-            val fileManager = DefaultFileConfigurationManager(plugin, "translations.yml")
-            serializer.parse<PluginTranslation>(fileManager.configFile)
+            val config = plugin.dataFolder.resolve("translations.yml")
+            serializer.parse<PluginTranslation>(config)
                 .onFailure(Throwable::printStackTrace)
                 .getOrElse { PluginTranslation() }
-                .also { serializer.writeIntoFile(it, fileManager.configFile) }
+                .also { serializer.writeIntoFile(it, config) }
         }
         override val economyProvider: Single<EconomyProvider> = Single {
             EconomyProviderFactory(plugin.value).create()
