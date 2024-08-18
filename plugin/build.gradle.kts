@@ -38,7 +38,7 @@ minecraftMultiplatform {
         implementation(projects.modules.api.bukkitMain)
     }
 }
-val destination = File("D:\\Minecraft Servers\\Servers\\conf.smp\\smp\\plugins")
+val destination = File("/Users/romanmakeev/Desktop/Server/SMP/smp/plugins")
     .takeIf(File::exists)
     ?: File(rootDir, "jars")
 
