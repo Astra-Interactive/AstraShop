@@ -4,9 +4,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.astrainteractive.astralibs.async.AsyncComponent
-import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astrashop.api.ShopApi
 import ru.astrainteractive.astrashop.api.model.ShopConfig
+import ru.astrainteractive.astrashop.core.di.factory.CurrencyEconomyProviderFactory
 import ru.astrainteractive.astrashop.domain.interactor.BuyInteractor
 import ru.astrainteractive.astrashop.domain.interactor.SellInteractor
 import ru.astrainteractive.astrashop.gui.buy.presentation.BuyComponent.Model
@@ -18,7 +18,7 @@ class DefaultBuyComponent(
     private val shopItem: ShopConfig.ShopItem,
     private val playerUUID: UUID,
     private val shopApi: ShopApi,
-    private val economy: EconomyProvider,
+    private val currencyEconomyProviderFactory: CurrencyEconomyProviderFactory,
     private val sellInteractor: SellInteractor,
     private val buyInteractor: BuyInteractor
 ) : AsyncComponent(), BuyComponent {
@@ -39,11 +39,18 @@ class DefaultBuyComponent(
         if (item == null) {
             model.value = Model.Error
         } else {
+            val economy = when (val currencyId = item.buyCurrencyId) {
+                null -> currencyEconomyProviderFactory.findDefault()
+                else -> currencyEconomyProviderFactory.findByCurrencyId(currencyId)
+            }
+            if (economy == null) {
+                error { "#invoke could not find currency with id ${item.buyCurrencyId} (or default currency)" }
+            }
             model.value = Model.Loaded(
-                item,
-                shopConfig.options,
-                shopConfig,
-                economy.getBalance(playerUUID)?.toInt() ?: 0
+                item = item,
+                shopConfig = shopConfig.options,
+                instance = shopConfig,
+                playerBalance = economy.getBalance(playerUUID)?.toInt() ?: 0
             )
         }
     }

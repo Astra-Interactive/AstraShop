@@ -56,6 +56,8 @@ internal class ShopItemParserImpl(
             itemSection?.set("is_purchase_infinite", item.isPurchaseInfinite)
             itemSection?.set("is_for_purchase", item.isForPurchase)
             itemSection?.set("is_for_sell", item.isForSell)
+            itemSection?.set("sell_currency_id", item.sellCurrencyId)
+            itemSection?.set("buy_currency_id", item.buyCurrencyId)
         }
         fileConfiguration.save(file)
     }
@@ -63,7 +65,7 @@ internal class ShopItemParserImpl(
     override fun parseShopFile(file: File): ShopConfig {
         val fileConfiguration = YamlConfiguration.loadConfiguration(file)
         val optionsSections = fileConfiguration.getConfigurationSection("options")
-            ?: throw ShopParseException("No options section in ${fileConfiguration.name}")
+            ?: throw ShopParseException("No options section in ${fileConfiguration.name} -> ${file.name}")
         val itemsSection = fileConfiguration.getConfigurationSection("items")
 
         val options = parseOption(optionsSections)
@@ -150,7 +152,9 @@ internal class ShopItemParserImpl(
             price = price,
             isForSell = s.getBoolean("is_for_sell", true),
             isForPurchase = s.getBoolean("is_for_purchase", true),
-            isPurchaseInfinite = s.getBoolean("is_purchase_infinite", false)
+            isPurchaseInfinite = s.getBoolean("is_purchase_infinite", false),
+            sellCurrencyId = s.getString("sell_currency_id"),
+            buyCurrencyId = s.getString("buy_currency_id"),
         )
     }
 }

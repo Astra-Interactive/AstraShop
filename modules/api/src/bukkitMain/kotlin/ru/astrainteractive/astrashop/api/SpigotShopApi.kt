@@ -22,14 +22,17 @@ internal class SpigotShopApi(
 
     override suspend fun fetchShopList(): List<ShopConfig> {
         return withContext(limitedDispatcher) {
-            getYmlFiles(plugin)
-                .mapNotNull(::shopFileOrNull)
+            getYmlFiles(plugin).mapNotNull(::shopFileOrNull)
         }
     }
 
     override suspend fun fetchShop(shopFileName: String): ShopConfig {
         return withContext(limitedDispatcher) {
-            shopItemParser.parseShopFile(plugin.dataFolder.resolve(shopFileName))
+            shopItemParser.parseShopFile(
+                plugin.dataFolder
+                    .resolve("shops")
+                    .resolve(shopFileName)
+            )
         }
     }
 

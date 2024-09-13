@@ -33,7 +33,7 @@ interface DomainModule {
         }
         override val buyUseCase: BuyUseCase by Provider {
             BuyUseCase(
-                economy = coreModule.economyProvider.value,
+                currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
                 playerBridge = playerBridge,
                 translation = coreModule.translation.value
             )
@@ -45,7 +45,7 @@ interface DomainModule {
         }
         override val sellUseCase: SellUseCase by Provider {
             SellUseCase(
-                economy = coreModule.economyProvider.value,
+                currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
                 playerBridge = playerBridge,
                 translation = coreModule.translation.value
             )

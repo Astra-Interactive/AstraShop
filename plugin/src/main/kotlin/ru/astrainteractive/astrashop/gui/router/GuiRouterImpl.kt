@@ -64,7 +64,7 @@ internal class GuiRouterImpl(
             shopFileName = route.shopConfig.configName,
             shopApi = apiModule.shopApi,
             sellInteractor = domainModule.sellInteractor,
-            economy = coreModule.economyProvider.value,
+            currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
             buyInteractor = domainModule.buyInteractor,
             playerUUID = route.playerHolder.player.uniqueId,
             shopItem = route.shopItem

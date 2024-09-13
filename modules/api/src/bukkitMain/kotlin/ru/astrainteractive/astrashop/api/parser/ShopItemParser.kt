@@ -19,5 +19,5 @@ internal interface ShopItemParser {
     /**
      * Parse shop file from [File]
      */
-    fun parseShopFile(fileManager: File): ShopConfig
+    fun parseShopFile(file: File): ShopConfig
 }
