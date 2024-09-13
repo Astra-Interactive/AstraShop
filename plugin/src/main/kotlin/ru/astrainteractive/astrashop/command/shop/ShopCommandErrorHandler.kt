@@ -2,7 +2,7 @@ package ru.astrainteractive.astrashop.command.shop
 
 import ru.astrainteractive.astralibs.command.api.context.BukkitCommandContext
 import ru.astrainteractive.astralibs.command.api.error.ErrorHandler
-import ru.astrainteractive.astralibs.command.api.exception.NoPermissionException
+import ru.astrainteractive.astralibs.command.api.exception.DefaultCommandException
 import ru.astrainteractive.astrashop.command.di.CommandManagerDependencies
 
 internal class ShopCommandErrorHandler(
@@ -12,7 +12,7 @@ internal class ShopCommandErrorHandler(
     override fun handle(commandContext: BukkitCommandContext, throwable: Throwable) {
         val commandSender = commandContext.sender
         when (throwable) {
-            is NoPermissionException ->
+            is DefaultCommandException.NoPermissionException ->
                 kyoriComponentSerializer
                     .toComponent(translation.general.noPermission)
                     .run(commandSender::sendMessage)
@@ -27,7 +27,7 @@ internal class ShopCommandErrorHandler(
                     .toComponent(translation.general.wrongUsage)
                     .run(commandSender::sendMessage)
 
-            else -> Unit
+            else -> error("Unhandled error $throwable::class")
         }
     }
 }

@@ -14,8 +14,8 @@ dependencies {
     implementation(libs.minecraft.astralibs.core.bukkit)
     implementation(libs.klibs.mikro)
     // Spigot dependencies
-    compileOnly(libs.minecraft.paper.api)
     implementation(libs.minecraft.bstats)
+    compileOnly(libs.minecraft.paper.api)
     compileOnly(libs.minecraft.papi)
     compileOnly(libs.minecraft.vaultapi)
     implementation(libs.minecraft.bstats)

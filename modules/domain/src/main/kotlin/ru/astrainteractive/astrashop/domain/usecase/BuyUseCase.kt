@@ -1,16 +1,16 @@
 package ru.astrainteractive.astrashop.domain.usecase
 
-import ru.astrainteractive.astralibs.economy.EconomyProvider
 import ru.astrainteractive.astralibs.logging.BukkitLogger
 import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
+import ru.astrainteractive.astrashop.core.di.factory.CurrencyEconomyProviderFactory
 import ru.astrainteractive.astrashop.domain.bridge.PlayerBridge
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 import java.util.UUID
 
 class BuyUseCase(
-    private val economy: EconomyProvider,
+    private val currencyEconomyProviderFactory: CurrencyEconomyProviderFactory,
     private val playerBridge: PlayerBridge,
     private val translation: PluginTranslation
 ) : UseCase.Suspended<BuyUseCase.Param, BuyUseCase.Result>,
@@ -31,7 +31,14 @@ class BuyUseCase(
         val item = input.shopItem
         val amount = input.amount
         val playerName = playerBridge.getName(input.playerUUID)
-
+        val economy = when (val currencyId = input.shopItem.buyCurrencyId) {
+            null -> currencyEconomyProviderFactory.findDefault()
+            else -> currencyEconomyProviderFactory.findByCurrencyId(currencyId)
+        }
+        if (economy == null) {
+            error { "#invoke could not find currency with id ${input.shopItem.buyCurrencyId} (or default currency)" }
+            return Result.Failure
+        }
         // Is item for sale
 
         val totalPrice = PriceCalculator.calculateBuyPrice(item, amount)

@@ -19,6 +19,8 @@ data class ShopConfig(
 
     data class ShopItem(
         val itemIndex: Int,
+        val sellCurrencyId: String? = null,
+        val buyCurrencyId: String? = null,
         val isForSell: Boolean,
         val isPurchaseInfinite: Boolean,
         val isForPurchase: Boolean,
