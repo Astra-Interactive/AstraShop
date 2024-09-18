@@ -22,7 +22,7 @@ import ru.astrainteractive.astralibs.menu.slot.util.InventorySlotBuilderExt.setO
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
-import ru.astrainteractive.astrashop.domain.usecase.PriceCalculator
+import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.copy
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
 import ru.astrainteractive.astrashop.gui.buy.model.BuyType

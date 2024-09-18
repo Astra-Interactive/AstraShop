@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.domain.usecase
+package ru.astrainteractive.astrashop.domain.calculator
 
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import kotlin.math.sqrt

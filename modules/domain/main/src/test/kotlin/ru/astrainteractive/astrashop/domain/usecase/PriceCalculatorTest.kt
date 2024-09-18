@@ -4,6 +4,7 @@ import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.ShopItemStack
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 
 class PriceCalculatorTest {
 
