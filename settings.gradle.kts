@@ -42,6 +42,9 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "AstraShop"
 
 include("plugin")
-include(":modules:api")
-include(":modules:core")
-include(":modules:domain")
+include(":modules:api:main")
+include(":modules:api:bukkit")
+include(":modules:core:main")
+include(":modules:core:bukkit")
+include(":modules:domain:main")
+include(":modules:domain:bukkit")

@@ -17,7 +17,7 @@ class ShopCommandExecutor(
                 router.open(route)
             }
 
-            is ShopCommand.Output.OpenShops -> scope.launch(dispatchers.BukkitAsync) {
+            is ShopCommand.Output.OpenShops -> scope.launch(dispatchers.IO) {
                 val route = GuiRouter.Route.Shops(ShopPlayerHolder(input.player))
                 router.open(route)
             }

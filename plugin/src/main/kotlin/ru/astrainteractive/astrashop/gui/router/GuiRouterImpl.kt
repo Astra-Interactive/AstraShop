@@ -72,7 +72,7 @@ internal class GuiRouterImpl(
     )
 
     override suspend fun open(route: GuiRouter.Route) {
-        val menu: Menu = withContext(coreModule.dispatchers.value.BukkitAsync) {
+        val menu: Menu = withContext(coreModule.dispatchers.IO) {
             when (route) {
                 is GuiRouter.Route.QuickSell -> quickSell(route)
                 is GuiRouter.Route.Shops -> shops(route)
@@ -80,7 +80,7 @@ internal class GuiRouterImpl(
                 is GuiRouter.Route.Buy -> buy(route)
             }
         }
-        withContext(coreModule.dispatchers.value.BukkitMain) {
+        withContext(coreModule.dispatchers.Main) {
             menu.open()
         }
     }
