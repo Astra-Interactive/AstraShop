@@ -5,6 +5,7 @@ import ru.astrainteractive.astrashop.api.di.BukkitApiModule
 import ru.astrainteractive.astrashop.core.di.BukkitCoreModule
 import ru.astrainteractive.astrashop.domain.di.BukkitDomainModule
 import ru.astrainteractive.astrashop.domain.di.DomainModule
+import ru.astrainteractive.astrashop.gui.router.di.BukkitRouterModule
 import ru.astrainteractive.astrashop.gui.router.di.RouterModule
 
 interface RootModule {
@@ -31,7 +32,11 @@ interface RootModule {
         }
 
         override val routerModule: RouterModule by lazy {
-            RouterModule.Default(this)
+            BukkitRouterModule(
+                coreModule = coreModule,
+                apiModule = apiModule,
+                domainModule = domainModule
+            )
         }
     }
 }

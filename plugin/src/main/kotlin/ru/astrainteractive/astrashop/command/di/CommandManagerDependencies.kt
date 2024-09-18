@@ -19,7 +19,10 @@ interface CommandManagerDependencies {
     val kyoriComponentSerializer: KyoriComponentSerializer
     val router: GuiRouter
 
-    class Default(coreModule: BukkitCoreModule, routerModule: RouterModule) : CommandManagerDependencies {
+    class Default(
+        coreModule: BukkitCoreModule,
+        routerModule: RouterModule
+    ) : CommandManagerDependencies {
         override val plugin: AstraShop by Provider {
             coreModule.plugin.value as AstraShop
         }
