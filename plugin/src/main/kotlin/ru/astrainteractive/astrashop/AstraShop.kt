@@ -36,7 +36,7 @@ class AstraShop : JavaPlugin() {
     override fun onDisable() {
         HandlerList.unregisterAll(this)
         rootModule.coreModule.inventoryClickEvent.value.onDisable()
-        rootModule.coreModule.scope.value.close()
+        rootModule.coreModule.scope.close()
         Bukkit.getOnlinePlayers().forEach {
             it.closeInventory()
         }
