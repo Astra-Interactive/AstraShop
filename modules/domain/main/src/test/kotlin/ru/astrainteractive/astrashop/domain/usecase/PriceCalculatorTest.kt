@@ -2,9 +2,9 @@ package ru.astrainteractive.astrashop.domain.usecase
 
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.ShopItemStack
+import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 import kotlin.test.Test
 import kotlin.test.assertTrue
-import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
 
 class PriceCalculatorTest {
 
