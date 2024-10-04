@@ -14,6 +14,10 @@ internal class SpigotShopApi(
 ) : ShopApi {
     private val limitedDispatcher = Dispatchers.IO.limitedParallelism(1)
 
+    private fun flatMapPrices(){
+
+    }
+
     private fun shopFileOrNull(file: File): ShopConfig? {
         return runCatching { shopItemParser.parseShopFile(file) }
             .onFailure(Throwable::printStackTrace)
