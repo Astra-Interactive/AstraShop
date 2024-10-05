@@ -16,11 +16,13 @@ internal inline fun <T, K> ConfigurationSection.associate(
     }.associate { it }
 }
 
-internal fun ShopConfig.getFile(plugin: Plugin): File = plugin.dataFolder.resolve(configName)
+internal fun ShopConfig.getFile(plugin: Plugin): File = plugin.dataFolder
+    .resolve("shops")
+    .resolve(configName)
 
-internal fun getYmlFiles(plugin: Plugin) = File(plugin.dataFolder, "shops")
+internal fun getYmlFiles(plugin: Plugin) = plugin.dataFolder
+    .resolve("shops")
     .listFiles()
     .orEmpty()
     .filterNotNull()
     .filter { it.extension.equals("yml", ignoreCase = true) }
-    .map { plugin.dataFolder.resolve("shops${File.separator}${it.name}") }

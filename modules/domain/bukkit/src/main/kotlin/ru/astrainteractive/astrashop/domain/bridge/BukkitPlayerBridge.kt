@@ -8,15 +8,19 @@ import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.string.StringDesc
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
+import ru.astrainteractive.astrashop.core.util.getValue
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.copy
 import ru.astrainteractive.astrashop.domain.util.ItemStackExt.toItemStack
+import ru.astrainteractive.klibs.kstorage.api.Krate
 import ru.astrainteractive.klibs.mikro.core.dispatchers.KotlinDispatchers
 import java.util.UUID
 
 internal class BukkitPlayerBridge(
-    private val kyoriComponentSerializer: KyoriComponentSerializer,
+    private val kyoriComponentSerializerKrate: Krate<KyoriComponentSerializer>,
     private val dispatchers: KotlinDispatchers
 ) : PlayerBridge {
+    private val kyoriComponentSerializer by kyoriComponentSerializerKrate
+
     private fun UUID.toPlayer() = Bukkit.getPlayer(this) ?: error("Player not found")
 
     override fun getName(uuid: UUID): String {

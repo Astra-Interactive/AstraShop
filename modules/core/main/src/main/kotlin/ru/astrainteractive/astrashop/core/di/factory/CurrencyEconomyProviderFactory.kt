@@ -1,8 +1,8 @@
 package ru.astrainteractive.astrashop.core.di.factory
 
-import ru.astrainteractive.astralibs.economy.EconomyProvider
+import ru.astrainteractive.astralibs.economy.EconomyFacade
 
 interface CurrencyEconomyProviderFactory {
-    fun findByCurrencyId(currencyId: String): EconomyProvider?
-    fun findDefault(): EconomyProvider?
+    fun findByCurrencyId(currencyId: String): EconomyFacade?
+    fun findDefault(): EconomyFacade?
 }

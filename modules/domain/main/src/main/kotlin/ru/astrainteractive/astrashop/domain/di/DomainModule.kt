@@ -8,8 +8,6 @@ import ru.astrainteractive.astrashop.domain.interactor.SellInteractor
 import ru.astrainteractive.astrashop.domain.usecase.BuyUseCase
 import ru.astrainteractive.astrashop.domain.usecase.ChangeStockAmountUseCase
 import ru.astrainteractive.astrashop.domain.usecase.SellUseCase
-import ru.astrainteractive.klibs.kdi.Provider
-import ru.astrainteractive.klibs.kdi.getValue
 
 interface DomainModule {
     // UseCase
@@ -28,39 +26,32 @@ interface DomainModule {
         apiModule: ApiModule,
         createPlayerBridge: () -> PlayerBridge
     ) : DomainModule {
-        override val playerBridge: PlayerBridge by Provider {
-            createPlayerBridge.invoke()
-        }
-        override val buyUseCase: BuyUseCase by Provider {
-            BuyUseCase(
-                currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
-                playerBridge = playerBridge,
-                translation = coreModule.translation.value
-            )
-        }
-        override val changeStockAmountUseCase: ChangeStockAmountUseCase by Provider {
-            ChangeStockAmountUseCase(
-                shopApi = apiModule.shopApi
-            )
-        }
-        override val sellUseCase: SellUseCase by Provider {
-            SellUseCase(
-                currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
-                playerBridge = playerBridge,
-                translation = coreModule.translation.value
-            )
-        }
-        override val buyInteractor: BuyInteractor by Provider {
-            BuyInteractor(
-                buyUseCase = buyUseCase,
-                changeStockAmountUseCase = changeStockAmountUseCase,
-            )
-        }
-        override val sellInteractor: SellInteractor by Provider {
-            SellInteractor(
-                sellUseCase = sellUseCase,
-                changeStockAmountUseCase = changeStockAmountUseCase
-            )
-        }
+        override val playerBridge: PlayerBridge = createPlayerBridge.invoke()
+
+        override val buyUseCase = BuyUseCase(
+            currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
+            playerBridge = playerBridge,
+            translationKrate = coreModule.translation
+        )
+
+        override val changeStockAmountUseCase = ChangeStockAmountUseCase(
+            shopApi = apiModule.shopApi
+        )
+
+        override val sellUseCase = SellUseCase(
+            currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
+            playerBridge = playerBridge,
+            translationKrate = coreModule.translation
+        )
+
+        override val buyInteractor = BuyInteractor(
+            buyUseCase = buyUseCase,
+            changeStockAmountUseCase = changeStockAmountUseCase,
+        )
+
+        override val sellInteractor = SellInteractor(
+            sellUseCase = sellUseCase,
+            changeStockAmountUseCase = changeStockAmountUseCase
+        )
     }
 }

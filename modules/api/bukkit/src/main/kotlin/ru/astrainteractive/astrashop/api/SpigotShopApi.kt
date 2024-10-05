@@ -1,8 +1,10 @@
 package ru.astrainteractive.astrashop.api
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.bukkit.plugin.Plugin
+import ru.astrainteractive.astralibs.logging.JUtiltLogger
+import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.parser.ShopItemParserImpl
 import ru.astrainteractive.astrashop.api.parser.util.getYmlFiles
@@ -11,23 +13,23 @@ import java.io.File
 internal class SpigotShopApi(
     private val plugin: Plugin,
     private val shopItemParser: ShopItemParserImpl
-) : ShopApi {
-    private val limitedDispatcher = Dispatchers.IO.limitedParallelism(1)
+) : ShopApi, Logger by JUtiltLogger("AstraShop-SpigotShopApi") {
+    private val mutex = Mutex()
 
     private fun shopFileOrNull(file: File): ShopConfig? {
         return runCatching { shopItemParser.parseShopFile(file) }
-            .onFailure(Throwable::printStackTrace)
+            .onFailure { error { "#shopFileOrNull ${it.message} ${it.cause?.message}" } }
             .getOrNull()
     }
 
     override suspend fun fetchShopList(): List<ShopConfig> {
-        return withContext(limitedDispatcher) {
+        return mutex.withLock {
             getYmlFiles(plugin).mapNotNull(::shopFileOrNull)
         }
     }
 
     override suspend fun fetchShop(shopFileName: String): ShopConfig {
-        return withContext(limitedDispatcher) {
+        return mutex.withLock {
             shopItemParser.parseShopFile(
                 plugin.dataFolder
                     .resolve("shops")
@@ -37,7 +39,7 @@ internal class SpigotShopApi(
     }
 
     override suspend fun updateShop(shopConfig: ShopConfig) {
-        return withContext(limitedDispatcher) {
+        return mutex.withLock {
             shopItemParser.saveItems(shopConfig)
         }
     }

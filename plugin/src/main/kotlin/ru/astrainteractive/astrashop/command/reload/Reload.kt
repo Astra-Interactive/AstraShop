@@ -19,7 +19,7 @@ internal fun CommandManager.reload() = plugin.getCommand("ashopreload")?.setExec
     kyoriComponentSerializer
         .toComponent(translation.general.reload)
         .run(sender::sendMessage)
-    plugin.reloadPlugin()
+    plugin.onReload()
     kyoriComponentSerializer
         .toComponent(translation.general.reloadComplete)
         .run(sender::sendMessage)

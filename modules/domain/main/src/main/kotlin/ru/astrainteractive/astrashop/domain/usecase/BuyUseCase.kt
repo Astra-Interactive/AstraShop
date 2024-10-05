@@ -5,17 +5,20 @@ import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.PluginTranslation
 import ru.astrainteractive.astrashop.core.di.factory.CurrencyEconomyProviderFactory
+import ru.astrainteractive.astrashop.core.util.getValue
 import ru.astrainteractive.astrashop.domain.bridge.PlayerBridge
 import ru.astrainteractive.astrashop.domain.calculator.PriceCalculator
+import ru.astrainteractive.klibs.kstorage.api.Krate
 import ru.astrainteractive.klibs.mikro.core.domain.UseCase
 import java.util.UUID
 
 class BuyUseCase(
     private val currencyEconomyProviderFactory: CurrencyEconomyProviderFactory,
     private val playerBridge: PlayerBridge,
-    private val translation: PluginTranslation
+    private val translationKrate: Krate<PluginTranslation>
 ) : UseCase.Suspended<BuyUseCase.Param, BuyUseCase.Result>,
     Logger by JUtiltLogger("BuyUseCase") {
+    private val translation by translationKrate
 
     class Param(
         val amount: Int,

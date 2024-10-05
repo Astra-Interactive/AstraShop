@@ -1,9 +1,8 @@
-import ru.astrainteractive.gradleplugin.setupSpigotProcessor
-import ru.astrainteractive.gradleplugin.setupSpigotShadow
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
+    alias(libs.plugins.klibs.minecraft.shadow)
+    alias(libs.plugins.klibs.minecraft.resource.processor)
 }
 
 dependencies {
@@ -14,7 +13,6 @@ dependencies {
     // AstraLibs
     implementation(libs.minecraft.astralibs.core)
     implementation(libs.minecraft.astralibs.orm)
-    implementation(libs.klibs.kdi)
     implementation(libs.minecraft.astralibs.menu.bukkit)
     implementation(libs.minecraft.astralibs.core.bukkit)
     implementation(libs.minecraft.astralibs.command)
@@ -39,9 +37,18 @@ dependencies {
     implementation(projects.modules.gui.bukkit)
 }
 
-val destination = File("/home/makeevrserg/Desktop/server/data/plugins")
-    .takeIf(File::exists)
-    ?: File(rootDir, "jars")
+minecraftProcessResource {
+    spigotResourceProcessor.process()
+}
 
-setupSpigotShadow(destination)
-setupSpigotProcessor()
+setupShadow {
+    destination = File("/home/makeevrserg/Desktop/server/data/plugins")
+        .takeIf { it.exists() }
+        ?: File(rootDir, "jars")
+    configureDefaults()
+    requireShadowJarTask {
+        minimize {
+            exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.version.get()}"))
+        }
+    }
+}

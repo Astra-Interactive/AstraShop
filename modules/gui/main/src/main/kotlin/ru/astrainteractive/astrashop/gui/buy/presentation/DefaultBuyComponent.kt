@@ -3,7 +3,9 @@ package ru.astrainteractive.astrashop.gui.buy.presentation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import ru.astrainteractive.astralibs.async.AsyncComponent
+import ru.astrainteractive.astralibs.async.CoroutineFeature
+import ru.astrainteractive.astralibs.logging.JUtiltLogger
+import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.ShopApi
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.di.factory.CurrencyEconomyProviderFactory
@@ -21,7 +23,9 @@ class DefaultBuyComponent(
     private val currencyEconomyProviderFactory: CurrencyEconomyProviderFactory,
     private val sellInteractor: SellInteractor,
     private val buyInteractor: BuyInteractor
-) : AsyncComponent(), BuyComponent {
+) : CoroutineFeature by CoroutineFeature.Default(Dispatchers.IO),
+    Logger by JUtiltLogger("DefaultBuyComponent"),
+    BuyComponent {
 
     override val model = MutableStateFlow<Model>(Model.Loading)
 
@@ -50,14 +54,14 @@ class DefaultBuyComponent(
                 item = item,
                 shopConfig = shopConfig.options,
                 instance = shopConfig,
-                playerBalance = economy.getBalance(playerUUID)?.toInt() ?: 0
+                playerBalance = economy?.getBalance(playerUUID)?.toInt() ?: 0
             )
         }
     }
 
     override fun onBuyClicked(amount: Int) {
         val state = model.value as? Model.Loaded ?: return
-        componentScope.launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
             buyInteractor.invoke(
                 BuyInteractor.Param(
                     amount,
@@ -72,7 +76,7 @@ class DefaultBuyComponent(
 
     override fun onSellClicked(amount: Int) {
         val state = model.value as? Model.Loaded ?: return
-        componentScope.launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
             sellInteractor.invoke(
                 SellInteractor.Param(
                     amount,
@@ -86,6 +90,6 @@ class DefaultBuyComponent(
     }
 
     init {
-        componentScope.launch(Dispatchers.IO) { loadItems() }
+        launch(Dispatchers.IO) { loadItems() }
     }
 }
