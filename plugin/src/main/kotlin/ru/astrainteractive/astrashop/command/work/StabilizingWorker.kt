@@ -20,18 +20,16 @@ class StabilizingWorker(
     override val period: Duration = options.period
 
     override suspend fun doWork() {
-        info { "#doWork Stabilizing happened in $configName" }
         val shop = shopApi.fetchShop(configName)
         shop.items
             .forEach { (_, shopItem) ->
                 val median = PriceCalculator.fMedian(shopItem.price).toInt()
                 val diff = abs(shopItem.stock - median)
-                if (diff == 0) return
                 val sign = if (Random.nextBoolean()) -1 else 1
                 val change = sign.times(diff)
                     .times(options.power)
                     .toInt()
-                    .coerceAtLeast(1)
+                if (diff == 0) return@forEach
                 shopItem.stock = (shopItem.stock + change).coerceAtLeast(0)
             }
         shopApi.updateShop(shop)

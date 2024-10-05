@@ -19,7 +19,6 @@ class FluctuationsWorker(
     override val period: Duration = options.period
 
     override suspend fun doWork() {
-        info { "#doWork Fluctuations happened in $configName" }
         val shop = shopApi.fetchShop(configName)
         shop.items
             .forEach { (_, shopItem) ->
