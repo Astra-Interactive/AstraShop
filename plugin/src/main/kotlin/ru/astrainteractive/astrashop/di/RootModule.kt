@@ -1,5 +1,8 @@
 package ru.astrainteractive.astrashop.di
 
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.bukkit.event.HandlerList
 import ru.astrainteractive.astralibs.lifecycle.Lifecycle
 import ru.astrainteractive.astrashop.api.di.ApiModule
 import ru.astrainteractive.astrashop.api.di.BukkitApiModule
@@ -61,6 +64,8 @@ interface RootModule {
             },
             onDisable = {
                 lifecycles.forEach(Lifecycle::onDisable)
+                HandlerList.unregisterAll(coreModule.plugin)
+                Bukkit.getOnlinePlayers().forEach(Player::closeInventory)
             }
         )
     }

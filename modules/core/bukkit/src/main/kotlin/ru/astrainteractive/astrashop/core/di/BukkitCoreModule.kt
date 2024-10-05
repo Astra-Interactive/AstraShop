@@ -2,7 +2,6 @@ package ru.astrainteractive.astrashop.core.di
 
 import ru.astrainteractive.astralibs.async.AsyncComponent
 import ru.astrainteractive.astralibs.async.DefaultBukkitDispatchers
-import ru.astrainteractive.astralibs.event.EventListener
 import ru.astrainteractive.astralibs.kyori.KyoriComponentSerializer
 import ru.astrainteractive.astralibs.lifecycle.Lifecycle
 import ru.astrainteractive.astralibs.menu.event.DefaultInventoryClickEvent
@@ -17,11 +16,10 @@ import ru.astrainteractive.klibs.kdi.Reloadable
 
 interface BukkitCoreModule : CoreModule {
     val plugin: LifecyclePlugin
-    val inventoryClickEvent: EventListener
 
     class Default(override val plugin: LifecyclePlugin) : BukkitCoreModule {
 
-        override val inventoryClickEvent = DefaultInventoryClickEvent()
+        private val inventoryClickEvent = DefaultInventoryClickEvent()
 
         override val currencyEconomyProviderFactory: CurrencyEconomyProviderFactory =
             BukkitCurrencyEconomyProviderFactory(plugin)
