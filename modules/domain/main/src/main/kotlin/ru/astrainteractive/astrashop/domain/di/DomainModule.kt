@@ -8,7 +8,6 @@ import ru.astrainteractive.astrashop.domain.interactor.SellInteractor
 import ru.astrainteractive.astrashop.domain.usecase.BuyUseCase
 import ru.astrainteractive.astrashop.domain.usecase.ChangeStockAmountUseCase
 import ru.astrainteractive.astrashop.domain.usecase.SellUseCase
-import ru.astrainteractive.klibs.kdi.getValue
 
 interface DomainModule {
     // UseCase
@@ -32,7 +31,7 @@ interface DomainModule {
         override val buyUseCase = BuyUseCase(
             currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
             playerBridge = playerBridge,
-            translation = coreModule.translation.value
+            translationKrate = coreModule.translation
         )
 
         override val changeStockAmountUseCase = ChangeStockAmountUseCase(
@@ -42,7 +41,7 @@ interface DomainModule {
         override val sellUseCase = SellUseCase(
             currencyEconomyProviderFactory = coreModule.currencyEconomyProviderFactory,
             playerBridge = playerBridge,
-            translation = coreModule.translation.value
+            translationKrate = coreModule.translation
         )
 
         override val buyInteractor = BuyInteractor(

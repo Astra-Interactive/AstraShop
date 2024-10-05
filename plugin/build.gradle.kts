@@ -14,7 +14,6 @@ dependencies {
     // AstraLibs
     implementation(libs.minecraft.astralibs.core)
     implementation(libs.minecraft.astralibs.orm)
-    implementation(libs.klibs.kdi)
     implementation(libs.minecraft.astralibs.menu.bukkit)
     implementation(libs.minecraft.astralibs.core.bukkit)
     implementation(libs.minecraft.astralibs.command)

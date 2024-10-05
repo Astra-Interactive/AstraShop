@@ -12,7 +12,7 @@ class BukkitDomainModule(
     apiModule = apiModule,
     createPlayerBridge = {
         BukkitPlayerBridge(
-            kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
+            kyoriComponentSerializerKrate = coreModule.kyoriComponentSerializer,
             dispatchers = coreModule.dispatchers
         )
     }

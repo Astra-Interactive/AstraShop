@@ -26,7 +26,7 @@ interface GuiModule {
     ) : GuiModule {
         override fun createQuickSellComponent(route: GuiRouter.Route.QuickSell): QuickSellComponent {
             return DefaultQuickSellComponent(
-                translation = coreModule.translation.value,
+                translation = coreModule.translation.cachedValue,
                 shopApi = apiModule.shopApi,
                 sellInteractor = domainModule.sellInteractor,
             )

@@ -19,24 +19,24 @@ internal class BukkitGuiRouter(
         playerHolder = Bukkit.getPlayer(route.playerUUID)
             ?.let(::BukkitShopPlayerHolder)
             ?: error("Could not find player with UUID ${route.playerUUID}"),
-        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
-        translation = coreModule.translation.value,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.cachedValue,
+        translation = coreModule.translation.cachedValue,
         quickSellComponent = guiModule.createQuickSellComponent(route)
     )
 
     private fun shop(route: GuiRouter.Route.Shop) = ShopGUI(
         shopConfig = route.shopConfig,
         playerHolder = route.playerHolder as BukkitShopPlayerHolder,
-        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
-        translation = coreModule.translation.value,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.cachedValue,
+        translation = coreModule.translation.cachedValue,
         router = this,
         shopComponent = guiModule.createShopComponent(route)
     )
 
     private fun shops(route: GuiRouter.Route.Shops) = ShopsGUI(
         playerHolder = route.playerHolder as BukkitShopPlayerHolder,
-        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
-        translation = coreModule.translation.value,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.cachedValue,
+        translation = coreModule.translation.cachedValue,
         router = this,
         shopsComponent = guiModule.createShopsComponent(route)
     )
@@ -44,8 +44,8 @@ internal class BukkitGuiRouter(
     private fun buy(route: GuiRouter.Route.Buy) = BuyGUI(
         item = route.shopItem,
         playerHolder = route.playerHolder as BukkitShopPlayerHolder,
-        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.value,
-        translation = coreModule.translation.value,
+        kyoriComponentSerializer = coreModule.kyoriComponentSerializer.cachedValue,
+        translation = coreModule.translation.cachedValue,
         shopConfig = route.shopConfig,
         router = this,
         buyComponent = guiModule.createBuyComponent(route)
