@@ -46,4 +46,9 @@ setupShadow {
         .takeIf { it.exists() }
         ?: File(rootDir, "jars")
     configureDefaults()
+    requireShadowJarTask {
+        minimize {
+            exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.version.get()}"))
+        }
+    }
 }
