@@ -58,9 +58,8 @@ object PriceCalculator {
         val coercedAmount = amount.coerceIn(0, maxAmount)
         return ((maxAmount - coercedAmount + 1)..maxAmount)
             .sumOf { stock ->
-                f(stock, item.buyFromShopPrice, item.price).coerceAtLeast(
-                    getMinPrice(item.buyFromShopPrice, stock)
-                )
+                f(stock, item.buyFromShopPrice, item.price)
+                    .coerceAtLeast(item.playerSellPrice)
             }
     }
 
@@ -74,9 +73,9 @@ object PriceCalculator {
         if (item.stock == -1) return item.playerSellPrice * amount
         return ((item.stock + 1)..(item.stock + amount))
             .sumOf { stock ->
-                f(stock, item.playerSellPrice, item.price).coerceAtLeast(
-                    getMinPrice(item.playerSellPrice, stock)
-                )
+                f(stock, item.playerSellPrice, item.price)
+                    .coerceAtLeast(getMinPrice(item.playerSellPrice, stock))
+                    .coerceAtMost(item.playerSellPrice)
             }
     }
 }
