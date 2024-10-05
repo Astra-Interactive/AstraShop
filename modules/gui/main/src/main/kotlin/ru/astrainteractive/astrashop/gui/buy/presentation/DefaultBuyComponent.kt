@@ -4,6 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.astrainteractive.astralibs.async.CoroutineFeature
+import ru.astrainteractive.astralibs.logging.JUtiltLogger
+import ru.astrainteractive.astralibs.logging.Logger
 import ru.astrainteractive.astrashop.api.ShopApi
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.core.di.factory.CurrencyEconomyProviderFactory
@@ -21,7 +23,9 @@ class DefaultBuyComponent(
     private val currencyEconomyProviderFactory: CurrencyEconomyProviderFactory,
     private val sellInteractor: SellInteractor,
     private val buyInteractor: BuyInteractor
-) : CoroutineFeature by CoroutineFeature.Default(Dispatchers.IO), BuyComponent {
+) : CoroutineFeature by CoroutineFeature.Default(Dispatchers.IO),
+    Logger by JUtiltLogger("DefaultBuyComponent"),
+    BuyComponent {
 
     override val model = MutableStateFlow<Model>(Model.Loading)
 
@@ -50,7 +54,7 @@ class DefaultBuyComponent(
                 item = item,
                 shopConfig = shopConfig.options,
                 instance = shopConfig,
-                playerBalance = economy.getBalance(playerUUID)?.toInt() ?: 0
+                playerBalance = economy?.getBalance(playerUUID)?.toInt() ?: 0
             )
         }
     }

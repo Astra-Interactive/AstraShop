@@ -1,5 +1,6 @@
 package ru.astrainteractive.astrashop.api.parser
 
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
@@ -25,9 +26,6 @@ internal class ShopItemParserImpl(
         val fileConfiguration = YamlConfiguration.loadConfiguration(file)
         val optionsSection = fileConfiguration.getConfigurationSection("options")
 
-        optionsSection?.set("lore", shopConfig.options.lore)
-        optionsSection?.set("permission", shopConfig.options.permission)
-        optionsSection?.set("workHours", shopConfig.options.workHours)
         optionsSection?.set("title", shopConfig.options.title)
         optionsSection?.set("index", shopConfig.options.index)
         optionsSection?.set("page", shopConfig.options.page)
@@ -65,11 +63,17 @@ internal class ShopItemParserImpl(
     override fun parseShopFile(file: File): ShopConfig {
         val fileConfiguration = YamlConfiguration.loadConfiguration(file)
         val optionsSections = fileConfiguration.getConfigurationSection("options")
-            ?: throw ShopParseException("No options section in ${fileConfiguration.name} -> ${file.name}")
+            ?: throw ShopParseException("No options section in ${fileConfiguration.name} in file ${file.name}")
         val itemsSection = fileConfiguration.getConfigurationSection("items")
 
         val options = parseOption(optionsSections)
-        val items = itemsSection?.associate { it.name to parseItem(it) } ?: emptyMap()
+        val items = buildMap {
+            itemsSection
+                ?.associate { it.name to tryParseItem(it).getOrNull() }
+                .orEmpty()
+                .filterValues { it != null }
+                .forEach { (k, v) -> if (v != null) put(k, v) }
+        }
         return ShopConfig(
             configName = file.name,
             options = options,
@@ -87,11 +91,19 @@ internal class ShopItemParserImpl(
     }
 
     private fun parseItemsAdderItem(s: ConfigurationSection): SpigotTitleItemStack.ItemsAdder? {
-        return SpigotTitleItemStack.ItemsAdder(
+        val itemsAdderItem = SpigotTitleItemStack.ItemsAdder(
             namespaceId = s.getString("namespace_id") ?: return null,
             name = s.getString("name").orEmpty(),
-            lore = s.getStringList("lore").orEmpty()
+            lore = s.getStringList("lore")
         )
+        if (!isItemsAdderEnabled) {
+            error {
+                "You have ItemsAdder title item ${itemsAdderItem.name} " +
+                    "${itemsAdderItem.namespaceId} but the plugin is disabled"
+            }
+            return null
+        }
+        return itemsAdderItem
     }
 
     private fun parseTitleItem(s: ConfigurationSection?): SpigotTitleItemStack {
@@ -110,9 +122,6 @@ internal class ShopItemParserImpl(
      */
     private fun parseOption(s: ConfigurationSection): ShopConfig.Options {
         return ShopConfig.Options(
-            lore = s.getStringList("lore").orEmpty(),
-            permission = s.getString("permission").orEmpty(),
-            workHours = s.getString("workHours").orEmpty(),
             title = StringDesc.Raw(s.getString("title").orEmpty()),
             titleItem = s.getConfigurationSection("titleItem").let(::parseTitleItem),
             index = s.getInt("index"),
@@ -120,10 +129,13 @@ internal class ShopItemParserImpl(
         )
     }
 
+    private val isItemsAdderEnabled: Boolean
+        get() = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")
+
     /**
      * Parse here section of items.<item>
      */
-    private fun parseItem(s: ConfigurationSection): ShopConfig.ShopItem {
+    private fun tryParseItem(s: ConfigurationSection): Result<ShopConfig.ShopItem> = kotlin.runCatching {
         val itemStack = s.getItemStack("itemStack")
         val material = s.getString("material")?.let(Material::getMaterial)
         val itemsAdder = s.getString("items_adder")
@@ -131,13 +143,19 @@ internal class ShopItemParserImpl(
         val itemIndex = s.name.toIntOrNull() ?: throw ShopParseException("Item in items.<item> should be number!")
         val stock = s.getInt("stock", -1)
         val price = s.getDouble("price", 0.0)
-        return ShopConfig.ShopItem(
+        ShopConfig.ShopItem(
             itemIndex = itemIndex,
             stock = stock,
             shopItem = when {
                 itemStack != null -> SpigotShopItemStack.ItemStackStack(itemStack)
                 material != null -> SpigotShopItemStack.Material(material)
-                itemsAdder != null -> SpigotShopItemStack.ItemsAdder(itemsAdder)
+                itemsAdder != null -> {
+                    if (!isItemsAdderEnabled) {
+                        throw ShopParseException("Can't parse ItemsAdder item as plugin not enabled")
+                    }
+                    SpigotShopItemStack.ItemsAdder(itemsAdder)
+                }
+
                 else -> {
                     error {
                         """Could not parse item type for ${s.name}

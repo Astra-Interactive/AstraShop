@@ -8,11 +8,8 @@ data class ShopConfig(
     val items: HashMap<String, ShopItem>
 ) {
     data class Options(
-        val lore: List<String>,
-        val permission: String,
         val page: Int,
         val index: Int,
-        val workHours: String,
         val title: StringDesc.Raw,
         val titleItem: TitleItemStack
     )

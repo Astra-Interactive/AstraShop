@@ -52,7 +52,8 @@ interface RootModule {
 
         private val lifecycles: List<Lifecycle>
             get() = listOf(
-                coreModule.lifecycle
+                coreModule.lifecycle,
+                commandsModule.lifecycle
             )
 
         override val lifecycle: Lifecycle = Lifecycle.Lambda(
