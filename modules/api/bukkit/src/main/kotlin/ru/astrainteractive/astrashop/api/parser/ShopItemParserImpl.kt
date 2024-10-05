@@ -12,6 +12,8 @@ import ru.astrainteractive.astrashop.api.model.ShopConfig
 import ru.astrainteractive.astrashop.api.model.SpigotShopItemStack
 import ru.astrainteractive.astrashop.api.model.SpigotTitleItemStack
 import ru.astrainteractive.astrashop.api.parser.ShopItemParser.ShopParseException
+import ru.astrainteractive.astrashop.api.parser.editor.FluctuationsSectionEditor
+import ru.astrainteractive.astrashop.api.parser.editor.StabilizingSectionEditor
 import ru.astrainteractive.astrashop.api.parser.util.associate
 import ru.astrainteractive.astrashop.api.parser.util.getFile
 import java.io.File
@@ -21,20 +23,34 @@ internal class ShopItemParserImpl(
 ) : ShopItemParser,
     Logger by BukkitLogger("ShopItemParser") {
 
+    private fun writeOptions(s: ConfigurationSection, options: ShopConfig.Options) {
+        s.set("title", options.title.raw)
+        s.set("index", options.index)
+        s.set("page", options.page)
+        println("Writing options -> ${options.stabilizing}")
+        StabilizingSectionEditor.write(
+            options.stabilizing,
+            s.withSection(StabilizingSectionEditor.SECTION)
+        )
+        FluctuationsSectionEditor.write(
+            options.fluctuations,
+            s.withSection(FluctuationsSectionEditor.SECTION)
+        )
+    }
+
     override fun saveOptions(shopConfig: ShopConfig) {
         val file = shopConfig.getFile(plugin)
         val fileConfiguration = YamlConfiguration.loadConfiguration(file)
-        val optionsSection = fileConfiguration.getConfigurationSection("options")
 
-        optionsSection?.set("title", shopConfig.options.title)
-        optionsSection?.set("index", shopConfig.options.index)
-        optionsSection?.set("page", shopConfig.options.page)
+        val s = fileConfiguration.withSection("options")
+        writeOptions(s, shopConfig.options)
         fileConfiguration.save(file)
     }
 
     override fun saveItems(shopConfig: ShopConfig) {
         val file = shopConfig.getFile(plugin)
         val fileConfiguration = YamlConfiguration.loadConfiguration(file)
+
         fileConfiguration.set("items", null)
         shopConfig.items.forEach { (index, item) ->
             val path = "items.$index"
@@ -57,6 +73,7 @@ internal class ShopItemParserImpl(
             itemSection?.set("sell_currency_id", item.sellCurrencyId)
             itemSection?.set("buy_currency_id", item.buyCurrencyId)
         }
+        writeOptions(fileConfiguration.withSection("options"), shopConfig.options)
         fileConfiguration.save(file)
     }
 
@@ -117,6 +134,10 @@ internal class ShopItemParserImpl(
         return s?.let(::parseMaterialItem) ?: s?.let(::parseItemsAdderItem) ?: createDefault.invoke()
     }
 
+    private fun ConfigurationSection.withSection(path: String): ConfigurationSection {
+        return getConfigurationSection(path) ?: createSection(path)
+    }
+
     /**
      * Parse here section of options
      */
@@ -126,6 +147,12 @@ internal class ShopItemParserImpl(
             titleItem = s.getConfigurationSection("titleItem").let(::parseTitleItem),
             index = s.getInt("index"),
             page = s.getInt("page"),
+            stabilizing = StabilizingSectionEditor.read(
+                s.withSection(StabilizingSectionEditor.SECTION)
+            ),
+            fluctuations = FluctuationsSectionEditor.read(
+                s.withSection(FluctuationsSectionEditor.SECTION)
+            ),
         )
     }
 

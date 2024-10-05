@@ -7,6 +7,7 @@ import ru.astrainteractive.astralibs.lifecycle.Lifecycle
 import ru.astrainteractive.astrashop.api.di.ApiModule
 import ru.astrainteractive.astrashop.api.di.BukkitApiModule
 import ru.astrainteractive.astrashop.command.di.CommandsModule
+import ru.astrainteractive.astrashop.command.work.di.WorkerModule
 import ru.astrainteractive.astrashop.core.LifecyclePlugin
 import ru.astrainteractive.astrashop.core.di.BukkitCoreModule
 import ru.astrainteractive.astrashop.domain.di.BukkitDomainModule
@@ -22,6 +23,7 @@ interface RootModule {
     val domainModule: DomainModule
     val routerModule: RouterModule
     val commandsModule: CommandsModule
+    val workerModule: WorkerModule
 
     class Default(plugin: LifecyclePlugin) : RootModule {
         override val coreModule by lazy {
@@ -50,10 +52,13 @@ interface RootModule {
             )
         }
 
+        override val workerModule: WorkerModule = WorkerModule.Default(apiModule)
+
         private val lifecycles: List<Lifecycle>
             get() = listOf(
                 coreModule.lifecycle,
-                commandsModule.lifecycle
+                commandsModule.lifecycle,
+                workerModule.lifecycle
             )
 
         override val lifecycle: Lifecycle = Lifecycle.Lambda(

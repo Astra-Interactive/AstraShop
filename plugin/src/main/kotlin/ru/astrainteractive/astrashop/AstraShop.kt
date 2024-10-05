@@ -14,7 +14,7 @@ class AstraShop : LifecyclePlugin() {
         rootModule.lifecycle.onDisable()
     }
 
-    fun reloadPlugin() {
+    override fun onReload() {
         rootModule.lifecycle.onReload()
     }
 }
