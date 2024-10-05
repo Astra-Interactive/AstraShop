@@ -3,7 +3,6 @@ package ru.astrainteractive.astrashop
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
-import ru.astrainteractive.astrashop.command.di.CommandManagerElement
 import ru.astrainteractive.astrashop.di.RootModule
 
 /**
@@ -22,11 +21,6 @@ class AstraShop : JavaPlugin() {
      * This method called when server starts or PlugMan load plugin.
      */
     override fun onEnable() {
-        CommandManagerElement.Default(
-            rootModule.coreModule,
-            rootModule.routerModule
-        ).onEnable()
-
         rootModule.coreModule.inventoryClickEvent.value.onEnable(this)
     }
 
