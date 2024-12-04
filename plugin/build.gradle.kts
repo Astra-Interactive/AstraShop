@@ -12,7 +12,6 @@ dependencies {
     implementation(libs.klibs.mikro)
     // AstraLibs
     implementation(libs.minecraft.astralibs.core)
-    implementation(libs.minecraft.astralibs.orm)
     implementation(libs.minecraft.astralibs.menu.bukkit)
     implementation(libs.minecraft.astralibs.core.bukkit)
     implementation(libs.minecraft.astralibs.command)
@@ -38,10 +37,10 @@ dependencies {
 }
 
 minecraftProcessResource {
-    spigotResourceProcessor.process()
+    bukkit()
 }
 
-setupShadow {
+astraShadowJar {
     destination = File("/home/makeevrserg/Desktop/server/data/plugins")
         .takeIf { it.exists() }
         ?: File(rootDir, "jars")

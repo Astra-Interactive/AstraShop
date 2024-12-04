@@ -50,6 +50,12 @@ object ItemStackExt {
                         clonedItemStack.itemMeta = itemStack.itemMeta.clone()
                         clonedItemStack
                     }
+                    ?.apply {
+                        editMeta {
+                            it.setDisplayName(name)
+                        }
+                        lore = this@toItemStack.lore
+                    }
                     ?: error("Item $namespaceId not found in itemsAdder registry")
             }
 
