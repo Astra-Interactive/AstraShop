@@ -12,7 +12,6 @@ dependencies {
     implementation(libs.klibs.mikro)
     // AstraLibs
     implementation(libs.minecraft.astralibs.core)
-    implementation(libs.minecraft.astralibs.orm)
     implementation(libs.minecraft.astralibs.menu.bukkit)
     implementation(libs.minecraft.astralibs.core.bukkit)
     implementation(libs.minecraft.astralibs.command)
@@ -42,7 +41,7 @@ minecraftProcessResource {
 }
 
 setupShadow {
-    destination = File("/home/makeevrserg/Desktop/server/data/plugins")
+    destination = File("/run/media/makeevrserg/WDGOLD2TB/MinecraftServers/Servers/conf.smp/smp/plugins")
         .takeIf { it.exists() }
         ?: File(rootDir, "jars")
     configureDefaults()
