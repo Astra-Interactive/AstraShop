@@ -39,7 +39,6 @@ class ShopWorkerLifecycle(
                     ).run(workers::add)
                 }
             }
-            info { "#onEnable enabled ${workers.size} workers" }
             workers.forEach(Worker::start)
         }
     }

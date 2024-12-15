@@ -1,4 +1,4 @@
-package ru.astrainteractive.astrashop.api.parser.editor
+package ru.astrainteractive.astrashop.api.parser.editor.api
 
 import org.bukkit.configuration.ConfigurationSection
 

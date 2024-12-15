@@ -27,7 +27,6 @@ internal class ShopItemParserImpl(
         s.set("title", options.title.raw)
         s.set("index", options.index)
         s.set("page", options.page)
-        println("Writing options -> ${options.stabilizing}")
         StabilizingSectionEditor.write(
             options.stabilizing,
             s.withSection(StabilizingSectionEditor.SECTION)
