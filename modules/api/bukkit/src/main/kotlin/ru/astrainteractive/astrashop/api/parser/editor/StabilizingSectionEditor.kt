@@ -3,6 +3,7 @@ package ru.astrainteractive.astrashop.api.parser.editor
 import org.bukkit.configuration.ConfigurationSection
 import ru.astrainteractive.astrashop.api.model.ShopConfig
 import kotlin.time.Duration.Companion.milliseconds
+import ru.astrainteractive.astrashop.api.parser.editor.api.SectionEditor
 
 object StabilizingSectionEditor : SectionEditor<ShopConfig.Options.Stabilizing> {
     override fun read(s: ConfigurationSection): ShopConfig.Options.Stabilizing {
